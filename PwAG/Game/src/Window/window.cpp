@@ -1,6 +1,54 @@
 #include "pch.h"
 #include "window.h"
 
+#pragma region GLFW callback functions
+void framebuffer_size_callback(GLFWwindow* window, const int width, const int height)
+{
+	glViewport(0, 0, width, height);
+	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (userWindow)
+	{
+		userWindow->windowResizeCallback(width, height);
+	}
+}
+
+void window_close_callback(GLFWwindow* window)
+{
+	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (userWindow)
+	{
+		userWindow->windowCloseCallback(glfwWindowShouldClose(window));
+	}
+}
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (userWindow)
+	{
+		userWindow->keyCallback(key, scancode, action, mods);
+	}
+}
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (userWindow)
+	{
+		userWindow->mouseButtonCallback(button, action, mods);
+	}
+}
+
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	auto* userWindow = reinterpret_cast<Window*>(glfwGetWindowUserPointer(window));
+	if (userWindow)
+	{
+		userWindow->cursorPositionCallback(xpos, ypos);
+	}
+}
+#pragma endregion
+
 Window::Window(uint32_t width, uint32_t height, WindowMode mode, std::string title)
 	: width(width), height(height), mode(mode), title(std::move(title))
 {
@@ -16,21 +64,58 @@ Window::~Window()
 	}
 }
 
-void Window::initialize()
+void Window::attachEventManager(EventManager& manager)
 {
-	initOpenGL();
-	createGLFWWindow();
+	this->eventManager = &manager;
+
+	glfwSetWindowCloseCallback(glfwWindowPtr, window_close_callback);
+	glfwSetFramebufferSizeCallback(glfwWindowPtr, framebuffer_size_callback);
+	glfwSetKeyCallback(glfwWindowPtr, key_callback);
+	glfwSetMouseButtonCallback(glfwWindowPtr, mouse_button_callback);
+	glfwSetCursorPosCallback(glfwWindowPtr, cursor_position_callback);
+
+	glfwSetWindowUserPointer(glfwWindowPtr, reinterpret_cast<void*>(this));
 }
 
-void Window::initOpenGL() const
+#pragma region GLFW->Event manager callbacks
+void Window::windowCloseCallback(bool shouldCloseWindow)
 {
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	eventManager->windowCloseCallback(shouldCloseWindow);
+}
+
+void Window::windowResizeCallback(int width, int height)
+{
+	eventManager->windowSizeCallback(width, height);
+}
+
+void Window::keyCallback(int key, int scancode, int action, int mods)
+{
+	eventManager->keyCallback(key, scancode, action, mods);
+}
+
+void Window::mouseButtonCallback(int button, int action, int mods)
+{
+	eventManager->mouseButtonCallback(button, action, mods);
+}
+
+void Window::cursorPositionCallback(double x, double y)
+{
+	eventManager->cursorPositionCallback(x, y);
+}
+#pragma endregion
+
+void Window::initialize()
+{
+	createGLFWWindow();
+	initOpenGL();
 }
 
 void Window::createGLFWWindow()
 {
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	switch (mode)
 	{
 	case WindowMode::eWindowed:
@@ -43,6 +128,9 @@ void Window::createGLFWWindow()
 		createWindowedFullscreenWindow();
 		break;
 	}
+	glfwMakeContextCurrent(glfwWindowPtr);
+	
+	//glfwSetWindowIcon()
 }
 
 void Window::createWindowedWindow()
@@ -88,3 +176,16 @@ void Window::centerWindow() const
 	}
 
 }
+
+void Window::initOpenGL() const
+{
+	if(!gladLoadGLLoader(reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+	{
+		//TODO init exception
+	}
+
+	glViewport(0, 0, width, height);
+
+	glEnable(GL_DEPTH_TEST);
+}
+

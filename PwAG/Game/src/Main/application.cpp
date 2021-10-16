@@ -4,6 +4,11 @@
 Application::Application()
 {
 	glfwInit();
+
+	eventManager.registerKeyboard(keyboard);
+	eventManager.registerMouse(mouse);
+
+	window.attachEventManager(eventManager);
 }
 
 Application::~Application()
@@ -13,8 +18,7 @@ Application::~Application()
 
 void Application::run()
 {
-	bool mainLoopCondition = true;
-	while(mainLoopCondition)
+	while(!glfwWindowShouldClose(window.getGLFWWindow()))
 	{
 		//temporary MVC replacement?
 
@@ -26,6 +30,16 @@ void Application::run()
 
 void Application::processInput()
 {
+	eventManager.checkForEvents();
+	while (eventManager.isEventQueueEmpty())
+	{
+		switch (eventManager.getLatestEventType())
+		{
+		case EventType::eWindowClosed:
+			this->mainLoopCondition = false;
+			break;
+		}
+	}
 }
 
 void Application::update()
@@ -34,4 +48,7 @@ void Application::update()
 
 void Application::render()
 {
+	window.clearToColor(255, 201, 14);
+
+	window.swapBuffers();
 }

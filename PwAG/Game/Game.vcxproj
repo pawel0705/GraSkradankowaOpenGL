@@ -92,6 +92,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Event system\eventManager.cpp" />
     <ClCompile Include="src\Main\application.cpp" />
     <ClCompile Include="src\Main\main.cpp" />
     <ClCompile Include="src\PCH\pch.cpp">
@@ -107,6 +108,10 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Event system\keyboard.h" />
+    <ClInclude Include="src\Event system\mouse.h" />
+    <ClInclude Include="src\Event system\eventManager.h" />
+    <ClInclude Include="src\Event system\eventType.h" />
     <ClInclude Include="src\Main\application.h" />
     <ClInclude Include="src\Main\config.h" />
     <ClInclude Include="src\PCH\pch.h" />

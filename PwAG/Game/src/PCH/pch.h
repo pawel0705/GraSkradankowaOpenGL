@@ -3,8 +3,11 @@
 
 // C++
 #include <iostream>
+#include <cstdint>
+#include <queue>
 
 // additional dependencies
+#include "glad/glad.h"
 #include "GLFW/glfw3.h"
 
 // this project
