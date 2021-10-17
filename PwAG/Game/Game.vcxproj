@@ -94,6 +94,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="gameObject.cpp" />
+    <ClCompile Include="maze.cpp" />
     <ClCompile Include="src\Rendering system\Shader\shaderProgram.cpp" />
     <ClCompile Include="src\Rendering system\Shader\shader.cpp" />
     <ClCompile Include="src\Event system\eventManager.cpp" />
@@ -112,6 +115,9 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="gameObject.h" />
+    <ClInclude Include="maze.h" />
     <ClInclude Include="src\Rendering system\Shader\shaderProgram.h" />
     <ClInclude Include="src\Rendering system\Shader\shader.h" />
     <ClInclude Include="src\Event system\keyboard.h" />
