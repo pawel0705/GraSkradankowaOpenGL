@@ -97,6 +97,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="gameObject.cpp" />
     <ClCompile Include="maze.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="src\Rendering system\Shader\shaderProgram.cpp" />
     <ClCompile Include="src\Rendering system\Shader\shader.cpp" />
     <ClCompile Include="src\Event system\eventManager.cpp" />
@@ -113,12 +114,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\Window\window.cpp" />
+    <ClCompile Include="texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="dataOBJ.h" />
     <ClInclude Include="gameObject.h" />
     <ClInclude Include="maze.h" />
+    <ClInclude Include="mesh.h" />
     <ClInclude Include="objReader.h" />
     <ClInclude Include="src\Rendering system\Shader\shaderProgram.h" />
     <ClInclude Include="src\Rendering system\Shader\shader.h" />
@@ -131,6 +134,7 @@
     <ClInclude Include="src\PCH\pch.h" />
     <ClInclude Include="src\Window\window.h" />
     <ClInclude Include="src\Window\windowMode.h" />
+    <ClInclude Include="texture.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
