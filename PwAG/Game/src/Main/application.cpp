@@ -31,7 +31,7 @@ void Application::run()
 void Application::processInput()
 {
 	eventManager.checkForEvents();
-	while (eventManager.isEventQueueEmpty())
+	while (!eventManager.isEventQueueEmpty())
 	{
 		switch (eventManager.getLatestEventType())
 		{

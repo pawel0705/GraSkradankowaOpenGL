@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -94,6 +94,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Rendering system\Shader\shaderProgram.cpp" />
+    <ClCompile Include="src\Rendering system\Shader\shader.cpp" />
     <ClCompile Include="src\Event system\eventManager.cpp" />
     <ClCompile Include="src\Main\application.cpp" />
     <ClCompile Include="src\Main\main.cpp" />
@@ -110,6 +112,8 @@
     <ClCompile Include="src\Window\window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Rendering system\Shader\shaderProgram.h" />
+    <ClInclude Include="src\Rendering system\Shader\shader.h" />
     <ClInclude Include="src\Event system\keyboard.h" />
     <ClInclude Include="src\Event system\mouse.h" />
     <ClInclude Include="src\Event system\eventManager.h" />
