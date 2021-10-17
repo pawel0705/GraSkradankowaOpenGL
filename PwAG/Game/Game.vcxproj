@@ -116,8 +116,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="dataOBJ.h" />
     <ClInclude Include="gameObject.h" />
     <ClInclude Include="maze.h" />
+    <ClInclude Include="objReader.h" />
     <ClInclude Include="src\Rendering system\Shader\shaderProgram.h" />
     <ClInclude Include="src\Rendering system\Shader\shader.h" />
     <ClInclude Include="src\Event system\keyboard.h" />
