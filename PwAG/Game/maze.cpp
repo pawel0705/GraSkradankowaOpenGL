@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "maze.h"
+#include "objReader.h"
 
 
 Maze::Maze() {
-
+	this->InitMaze();
 }
 
 void Maze::InitMaze() {
@@ -37,11 +38,17 @@ void Maze::InitMaze() {
 		std::stringstream maze_line(singleline);
 		for (int i = 0; i < this->mazeDimension; i++)
 		{
-			maze_line >> this->mazeIndexData[j][i];
+			maze_line >> this->mazeIndexData[i][j];
 		}
 	}
 
 	mazefile.close();
+
+	this->InitMazeMaterials();
+	this->InitMazeTextures();
+	this->InitObjModels();
+	this->InitMazeShaders();
+	this->InitMatrixMVP();
 }
 
 void Maze::InitMatrixMVP() {
@@ -58,20 +65,40 @@ void Maze::InitMatrixMVP() {
 }
 
 void Maze::InitMazeShaders() {
-	// TODO init shaders
-	//this->shaderProgram = new ShaderProgram();
+
+	this->fragmentShader = Shader::createShaderFromFile("frag.fs", Shader::Type::eFragment);
+	this->vertexShader = Shader::createShaderFromFile("vert.vs", Shader::Type::eVertex);
+
+	this->shaderProgram = new ShaderProgram();
+	this->shaderProgram->attachShader(this->fragmentShader);
+	this->shaderProgram->attachShader(this->vertexShader);
+	this->shaderProgram->linkShaderProgram();
 }
 
 void Maze::InitMazeMaterials() {
-	// TODO
+	this->material = new Material(glm::vec3(0.95));
 }
 
 void Maze::InitMazeTextures() {
-	// TODO
+	this->wallTexture = new Texture("Textures/grass.bmp");
 }
 
 void Maze::InitObjModels() {
-	// TODO load walls as .obj and other models
+
+	std::vector<DataOBJ> wallsObjects = readObj("Models/cube.obj");
+
+	for (int i = 0; i < this->mazeDimension; i++)
+	{
+		for (int j = 0; j < this->mazeDimension; j++)
+		{
+			if (this->mazeIndexData[i][j] == 1) {
+				this->walls.push_back(new GameObject(material, this->wallTexture, wallsObjects, glm::vec3(i * 2.f, -0.5f, j * 2.f)));
+			}
+			else if (this->mazeIndexData[i][j] == 2) {
+				this->camera = new Camera(glm::vec3(i * 2.f, 40.0f, j * 2.f));
+			}
+		}
+	}
 }
 
 void Maze::DrawMaze() {
@@ -105,5 +132,10 @@ Maze::~Maze() {
 	this->floors.clear();
 
 	delete this->camera;
+
 	delete this->shaderProgram;
+
+	delete this->material;
+
+	delete this->wallTexture;
 }

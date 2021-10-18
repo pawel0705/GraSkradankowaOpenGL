@@ -26,6 +26,8 @@ void Texture::initializeTexture() {
 
 }
 
+// Routine to read a bitmap file. 
+// Works only for uncompressed bmp files of 24-bit color. !!!
 BitMapFile* Texture::readBmpImage(const std::string& filePath)
 {
 	BitMapFile* bmp = new BitMapFile;

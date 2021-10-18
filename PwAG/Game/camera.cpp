@@ -8,9 +8,9 @@ Camera::Camera() {
 }
 
 Camera::Camera(glm::vec3 position) {
-	this->transformation.cameraFront = glm::vec3(.0f, .0f, -1.0f);
+	this->transformation.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->speed = 1.0f;
-	this->zoom = 20.0f;
+	this->zoom = 45.0f;
 	this->transformation.cameraPitch = -70;
 	this->transformation.cameraYaw = -90;
 	this->transformation.cameraPosition = position;

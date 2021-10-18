@@ -9,6 +9,7 @@ public:
 		eFragment
 	};
 
+	Shader();
 	Shader(const Shader&) = delete;
 	Shader(Shader&&) noexcept;
 	~Shader();

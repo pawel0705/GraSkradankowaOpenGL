@@ -42,6 +42,15 @@ private:
 	std::vector<GameObject*> floors;
 
 	ShaderProgram* shaderProgram;
+
+	Shader vertexShader;
+	Shader fragmentShader;
+
 	Camera* camera;
+
+	Material* material;
+
+	Texture* wallTexture;
+
 };
 

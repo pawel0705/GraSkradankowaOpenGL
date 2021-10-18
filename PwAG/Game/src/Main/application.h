@@ -1,5 +1,6 @@
 #pragma once
 #include "../Window/window.h"
+#include "../../maze.h"
 
 #pragma region GLFW event callbacks
 void framebuffer_size_callback(GLFWwindow* window, const int width, const int height);
@@ -33,6 +34,8 @@ private:
 	EventManager eventManager;
 	Keyboard keyboard;
 	Mouse mouse;
+
+	Maze* maze;
 
 	bool mainLoopCondition = true;
 };

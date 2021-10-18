@@ -18,6 +18,8 @@ Application::~Application()
 
 void Application::run()
 {
+	this->maze = new Maze();
+
 	while(!glfwWindowShouldClose(window.getGLFWWindow()))
 	{
 		//temporary MVC replacement?
@@ -49,6 +51,8 @@ void Application::update()
 void Application::render()
 {
 	window.clearToColor(255, 201, 14);
+
+	this->maze->DrawMaze();
 
 	window.swapBuffers();
 }

@@ -54,7 +54,7 @@ void Mesh::InitializeMesh() {
 }
 
 void Mesh::SetMeshUniform(ShaderProgram* shaderProgram) {
-	shaderProgram->setMat4("MatrixModel", matrixModel);
+	shaderProgram->setMat4("ModelMatrix", matrixModel);
 }
 
 void Mesh::SetMatrixModel(glm::vec3 position, glm::vec3 origin, glm::vec3 rotation, glm::vec3 scale)
