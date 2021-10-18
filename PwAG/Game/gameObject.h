@@ -1,12 +1,19 @@
 #pragma once
 #include "pch.h"
 #include "src/Rendering system/Shader/shaderProgram.h"
+#include "texture.h"
+#include "material.h"
+#include "mesh.h"
 
 class GameObject
 {
 public:
 	GameObject();
-	GameObject(glm::vec3 objectPosition = glm::vec3(1.f),
+	GameObject(
+		Material* material,
+		Texture* texture,
+		std::vector<DataOBJ> mesh,
+		glm::vec3 objectPosition = glm::vec3(1.f),
 		glm::vec3 objectOrigin = glm::vec3(0.f),
 		glm::vec3 objectRotation = glm::vec3(0.f),
 		glm::vec3 objectScale = glm::vec3(0.f));
@@ -23,13 +30,15 @@ public:
 	~GameObject();
 
 private:
-	// TODO material, texture, mesh
-
 	struct {
 		glm::vec3 objectPosition;
 		glm::vec3 objectOrigin;
 		glm::vec3 objectRotation;
 		glm::vec3 objectScale;
 	} transformation;
+
+	Texture* texture;
+	Material* material;
+	Mesh* mesh;
 };
 

@@ -22,6 +22,8 @@ public:
 	int GetTextureWidth() const;
 	int GetTextureHeight() const;
 
+	~Texture();
+
 private:
 	GLuint texture;
 	BitMapFile* bmp;
@@ -29,7 +31,5 @@ private:
 	BitMapFile* readBmpImage(const std::string &filePath);
 
 	void initializeTexture();
-
-	~Texture();
 };
 
