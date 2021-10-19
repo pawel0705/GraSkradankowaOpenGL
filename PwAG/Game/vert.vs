@@ -1,4 +1,4 @@
-﻿#version 430 
+#version 430 
 
 uniform mat4 ModelMatrix;
 uniform mat4 ViewMatrix;
