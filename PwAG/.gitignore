@@ -17,8 +17,7 @@
 mono_crash.*
 
 # Build results
-out/
-out-int/
+
 
 [Dd]ebug/
 [Dd]ebugPublic/
@@ -34,6 +33,11 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+
+!Game/dependencies/lib/*
+
+out/
+out-int/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
