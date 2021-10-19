@@ -14,6 +14,8 @@
 #include "GLM/include/glm.hpp"
 #include "GLM/include/gtc/matrix_transform.hpp"
 #include "GLM/include/gtc/type_ptr.hpp"
+#include <ft2build.h>
+#include FT_FREETYPE_H
 
 // this project
 #include "../Main/config.h"
