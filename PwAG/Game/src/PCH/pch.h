@@ -20,5 +20,9 @@
 // this project
 #include "../Main/config.h"
 #include "../Window/windowMode.h"
+#include "../Rendering system/Shader/shaderProgram.h"
+#include "../Rendering system/ABE Objects/vao.h"
+#include "../Rendering system/ABE Objects/vbo.h"
+#include "../Rendering system/ABE Objects/ebo.h"
 
 #endif

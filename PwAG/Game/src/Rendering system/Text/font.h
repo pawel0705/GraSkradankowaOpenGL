@@ -1,7 +1,10 @@
 #pragma once
 
+class Text;
+
 class Font
 {
+	friend class Text;
 public:
 	Font(const std::string& fontFilePath, uint32_t size);
 
