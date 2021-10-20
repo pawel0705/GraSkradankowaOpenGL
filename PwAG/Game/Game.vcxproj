@@ -95,6 +95,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="font.cpp" />
     <ClCompile Include="gameObject.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="maze.cpp" />
@@ -120,6 +121,7 @@
   <ItemGroup>
     <ClInclude Include="camera.h" />
     <ClInclude Include="dataOBJ.h" />
+    <ClInclude Include="font.h" />
     <ClInclude Include="gameObject.h" />
     <ClInclude Include="material.h" />
     <ClInclude Include="maze.h" />
