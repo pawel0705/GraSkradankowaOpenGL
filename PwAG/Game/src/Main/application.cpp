@@ -52,7 +52,8 @@ void Application::render()
 {
 	window.clearToColor(255, 201, 14);
 
-	this->maze->DrawMaze();
+	// TODO na razie od razu gra, póŸniej jakaœ maszyna stanów do menu itp
+	this->maze->drawMaze();
 
 	window.swapBuffers();
 }

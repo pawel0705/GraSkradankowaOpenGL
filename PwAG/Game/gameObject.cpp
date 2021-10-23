@@ -28,44 +28,44 @@ GameObject::GameObject(
 	}
 }
 
-void GameObject::Draw(ShaderProgram* shaderProgram) {
+void GameObject::draw(ShaderProgram* shaderProgram) {
 	shaderProgram->useShader();
 
 	this->texture->bindTexture(0);
 
-	this->material->SetMaterialAmbientUniform(*shaderProgram);
+	this->material->setMaterialShaderUniforms(*shaderProgram);
 
-	this->mesh->SetMatrixModel(
+	this->mesh->setMatrixModel(
 		this->transformation.objectPosition,
 		this->transformation.objectOrigin,
 		this->transformation.objectRotation,
 		this->transformation.objectScale);
 
-	this->mesh->SetMeshUniform(shaderProgram);
-	this->mesh->DrawMesh(shaderProgram);
+	this->mesh->setMeshUniform(shaderProgram);
+	this->mesh->drawMesh(shaderProgram);
 }
 
-void GameObject::SetPosition(const glm::vec3 position)
+void GameObject::setPosition(const glm::vec3 position)
 {
 	this->transformation.objectPosition = position;
 }
 
-void GameObject::SetOrigin(const glm::vec3 origin)
+void GameObject::setOrigin(const glm::vec3 origin)
 {
 	this->transformation.objectOrigin = origin;
 }
 
-void GameObject::SetRotation(const glm::vec3 rotation)
+void GameObject::setRotation(const glm::vec3 rotation)
 {
 	this->transformation.objectRotation = rotation;
 }
 
-void GameObject::SetScale(const glm::vec3 scale)
+void GameObject::setScale(const glm::vec3 scale)
 {
 	this->transformation.objectScale = scale;
 }
 
-glm::vec3 GameObject::GetPosition() {
+glm::vec3 GameObject::getPosition() {
 	return this->transformation.objectPosition;
 }
 

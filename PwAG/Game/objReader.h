@@ -8,7 +8,7 @@
 
 #include "dataOBJ.h"
 
-std::vector<DataOBJ> readObj(const std::string& objPathName) {
+std::vector<DataOBJ> readObj(const std::string& objPathName, glm::vec3 color = glm::vec3(1.0, 0.0, 0.0)) {
 
 	std::vector<unsigned int> vertexIndices;
 	std::vector<unsigned int> uvIndices;
@@ -106,6 +106,7 @@ std::vector<DataOBJ> readObj(const std::string& objPathName) {
 		data.vertex = vertex;
 		data.uv = uv;
 		data.normal = normal;
+		data.color = color;
 
 		objData.push_back(data);
 	}

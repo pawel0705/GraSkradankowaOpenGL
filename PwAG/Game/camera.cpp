@@ -1,25 +1,26 @@
 #include "pch.h"
 #include "camera.h"
 
-
-
 Camera::Camera() {
 
 }
 
 Camera::Camera(glm::vec3 position) {
-	this->transformation.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-	this->speed = 1.0f;
-	this->zoom = 45.0f;
-	this->transformation.cameraPitch = -70;
-	this->transformation.cameraYaw = -90;
 	this->transformation.cameraPosition = position;
+
+	this->transformation.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->transformation.cameraToWorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-	this->UpdateEulerAngels();
+	this->transformation.cameraPitch = 0;
+	this->transformation.cameraYaw = -90;
+
+	this->speed = 1.0f;
+	this->zoom = 45.0f;
+
+	this->updateEulerAngels();
 }
 
-void Camera::UpdateEulerAngels() {
+void Camera::updateEulerAngels() {
 
 	// recalculate camera's front vector
 	this->transformation.cameraFront = glm::normalize(glm::vec3(
@@ -32,11 +33,11 @@ void Camera::UpdateEulerAngels() {
 	this->transformation.cameraUpDown = glm::normalize(glm::cross(this->transformation.cameraRightLeft, this->transformation.cameraFront));
 }
 
-void Camera::SetCameraUniforms(ShaderProgram* shaderProgram) {
+void Camera::setCameraUniforms(ShaderProgram* shaderProgram) {
 	shaderProgram->setMat4("ViewMatrix", glm::lookAt(this->transformation.cameraPosition, this->transformation.cameraPosition + this->transformation.cameraFront, this->transformation.cameraUpDown));
 }
 
-float Camera::GetCameraZoom() const {
+float Camera::getCameraZoom() const {
 	return this->zoom;
 }
 

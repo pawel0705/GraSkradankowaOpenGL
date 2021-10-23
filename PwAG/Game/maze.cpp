@@ -1,14 +1,15 @@
 #include "pch.h"
 #include "maze.h"
 #include "objReader.h"
+#include "tileType.h"
 
 
 Maze::Maze() {
-	this->InitMaze();
+	this->initMaze();
 }
 
-void Maze::InitMaze() {
-	std::string mazeDataFileName = "maze1.txt";
+void Maze::initMaze() {
+	std::string mazeDataFileName = "Maps/map_1.txt";
 
 	std::ifstream mazefile;
 	mazefile.open(mazeDataFileName);
@@ -44,16 +45,16 @@ void Maze::InitMaze() {
 
 	mazefile.close();
 
-	this->InitMazeMaterials();
-	this->InitMazeTextures();
-	this->InitObjModels();
-	this->InitMazeShaders();
-	this->InitMatrixMVP();
+	this->initMazeMaterials();
+	this->initMazeTextures();
+	this->initObjModels();
+	this->initMazeShaders();
+	this->initMatrixMVP();
 }
 
-void Maze::InitMatrixMVP() {
+void Maze::initMatrixMVP() {
 	glm::mat4 projectionMatrix = glm::perspective(
-		glm::radians(this->camera->GetCameraZoom()),
+		glm::radians(this->camera->getCameraZoom()),
 		(float)Config::g_defaultWidth / (float)Config::g_defaultHeight,
 		0.1f,
 		100.0f
@@ -61,10 +62,10 @@ void Maze::InitMatrixMVP() {
 
 	this->shaderProgram->useShader();
 	this->shaderProgram->setMat4("ProjectionMatrix", projectionMatrix);
-	this->camera->SetCameraUniforms(this->shaderProgram);
+	this->camera->setCameraUniforms(this->shaderProgram);
 }
 
-void Maze::InitMazeShaders() {
+void Maze::initMazeShaders() {
 
 	this->fragmentShader = Shader::createShaderFromFile("frag.fs", Shader::Type::eFragment);
 	this->vertexShader = Shader::createShaderFromFile("vert.vs", Shader::Type::eVertex);
@@ -75,39 +76,55 @@ void Maze::InitMazeShaders() {
 	this->shaderProgram->linkShaderProgram();
 }
 
-void Maze::InitMazeMaterials() {
+void Maze::initMazeMaterials() {
 	this->material = new Material(glm::vec3(0.95));
 }
 
-void Maze::InitMazeTextures() {
-	this->wallTexture = new Texture("Textures/grass.bmp");
+void Maze::initMazeTextures() {
+	this->wallTexture = new Texture("Textures/wall.bmp");
+	this->floorTexture = new Texture("Textures/floor.bmp");
+	this->ceilingTexture = new Texture("Textures/ceiling.bmp");
 }
 
-void Maze::InitObjModels() {
+void Maze::initObjModels() {
 
-	std::vector<DataOBJ> wallsObjects = readObj("Models/cube.obj");
+	std::vector<DataOBJ> cubeObjects = readObj("Models/cube.obj");
+	std::vector<DataOBJ> planeObjects = readObj("Models/plate.obj", glm::vec3(0.0, 1.0, 0.0));
 
 	for (int i = 0; i < this->mazeDimension; i++)
 	{
 		for (int j = 0; j < this->mazeDimension; j++)
 		{
-			if (this->mazeIndexData[i][j] == 1) {
-				this->walls.push_back(new GameObject(material, this->wallTexture, wallsObjects, glm::vec3(i * 2.f, -0.5f, j * 2.f)));
+			if (this->mazeIndexData[i][j] == (int)TileType::WALL) {
+				this->walls.push_back(new GameObject(material, this->wallTexture, cubeObjects, glm::vec3(i * 2.f, 0.0f, j * 2.f)));
 			}
-			else if (this->mazeIndexData[i][j] == 2) {
-				this->camera = new Camera(glm::vec3(i * 2.f, 40.0f, j * 2.f));
+			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
+				this->camera = new Camera(glm::vec3(i * 2.f, 0.1f, j * 2.f));
+				this->floors.push_back(new GameObject(material, this->floorTexture, planeObjects, glm::vec3(i * 2.f, -1.0f, j * 2.f)));
+			}
+			else if (this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE) {
+				this->floors.push_back(new GameObject(material, this->floorTexture, planeObjects, glm::vec3(i * 2.f, -1.0f, j * 2.f)));
+				this->ceilings.push_back(new GameObject(material, this->ceilingTexture, planeObjects, glm::vec3(i * 2.f, 1.0f, j * 2.f)));
 			}
 		}
 	}
 }
 
-void Maze::DrawMaze() {
+void Maze::drawMaze() {
 	this->shaderProgram->useShader();
-	this->camera->SetCameraUniforms(this->shaderProgram);
+	this->camera->setCameraUniforms(this->shaderProgram);
 
 
 	for (auto& element : this->walls) {
-		element->Draw(this->shaderProgram);
+		element->draw(this->shaderProgram);
+	}
+
+	for (auto& element : this->floors) {
+		element->draw(this->shaderProgram);
+	}
+
+	for (auto& element : this->ceilings) {
+		element->draw(this->shaderProgram);
 	}
 }
 

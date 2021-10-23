@@ -146,5 +146,8 @@
     <ClInclude Include="src\Rendering system\ABE Objects\ebo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="tileType.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -147,6 +147,7 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vao.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vbo.h" />
+    <ClInclude Include="tileType.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,12 +10,6 @@
 #include "camera.h"
 #include "src/Rendering system/Shader/shaderProgram.h"
 
-enum class MazeBlocks {
-	FLOOR = 0,
-	ROCK_WALL = 1,
-	// todo jakieœ inne 
-};
-
 class Maze
 {
 public:
@@ -23,16 +17,17 @@ public:
 	glm::vec3 endPosition;
 
 	Maze();
-	void InitMaze();
-	void InitMatrixMVP();
-	void InitMazeShaders();
-	void InitMazeMaterials();
-	void InitMazeTextures();
-	void InitObjModels();
 
-	void DrawMaze();
+	void initMaze();
+	void initMatrixMVP();
+	void initMazeShaders();
+	void initMazeMaterials();
+	void initMazeTextures();
+	void initObjModels();
 
-	~Maze();
+	void drawMaze();
+
+	virtual ~Maze();
 
 private:
 	int mazeDimension;
@@ -40,6 +35,7 @@ private:
 
 	std::vector<GameObject*> walls;
 	std::vector<GameObject*> floors;
+	std::vector<GameObject*> ceilings;
 
 	ShaderProgram* shaderProgram;
 
@@ -51,6 +47,7 @@ private:
 	Material* material;
 
 	Texture* wallTexture;
-
+	Texture* floorTexture;
+	Texture* ceilingTexture;
 };
 

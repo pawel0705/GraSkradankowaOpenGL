@@ -20,10 +20,10 @@ Mesh::Mesh(DataOBJ* vertices, int verticesSize, GLuint* indices, int indicesSize
 		this->indices[i] = indices[i];
 	}
 
-	this->InitializeMesh();
+	this->initializeMesh();
 }
 
-void Mesh::InitializeMesh() {
+void Mesh::initializeMesh() {
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 
@@ -53,11 +53,11 @@ void Mesh::InitializeMesh() {
 	glBindVertexArray(0);
 }
 
-void Mesh::SetMeshUniform(ShaderProgram* shaderProgram) {
+void Mesh::setMeshUniform(ShaderProgram* shaderProgram) {
 	shaderProgram->setMat4("ModelMatrix", matrixModel);
 }
 
-void Mesh::SetMatrixModel(glm::vec3 position, glm::vec3 origin, glm::vec3 rotation, glm::vec3 scale)
+void Mesh::setMatrixModel(glm::vec3 position, glm::vec3 origin, glm::vec3 rotation, glm::vec3 scale)
 {
 	this->matrixModel = glm::mat4(1.f);
 	this->matrixModel = glm::translate(this->matrixModel, origin);
@@ -68,7 +68,7 @@ void Mesh::SetMatrixModel(glm::vec3 position, glm::vec3 origin, glm::vec3 rotati
 	this->matrixModel = glm::scale(this->matrixModel, scale);
 }
 
-void Mesh::DrawMesh(ShaderProgram* shaderProgram) {
+void Mesh::drawMesh(ShaderProgram* shaderProgram) {
 	glBindVertexArray(VAO);
 	shaderProgram->useShader();
 
