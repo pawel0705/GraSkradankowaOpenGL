@@ -9,11 +9,8 @@ public:
 	Font(const std::string& fontFilePath, uint32_t size);
 	Font(const Font&) = delete;
 	Font(Font&&);
-
-	~Font()
-	{
-		std::cout << "Koniec!" << std::endl;
-	}
+	~Font();
+		//glDeleteTextures(1, &atlasTextureID);
 	Font& operator=(const Font&) = delete;
 
 private:

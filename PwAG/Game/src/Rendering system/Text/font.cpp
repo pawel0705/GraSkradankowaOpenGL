@@ -42,7 +42,6 @@ Font::Font(const std::string& fontFilePath, uint32_t size)
 	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &atlasTextureID);
 	glBindTexture(GL_TEXTURE_2D, atlasTextureID);
-	std::cout << atlasTextureID << std::endl;
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasWidth, atlasHeight, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
 
@@ -76,22 +75,6 @@ Font::Font(const std::string& fontFilePath, uint32_t size)
 		characters.insert(std::make_pair(i, c));
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
-	std::cout << atlasTextureID << std::endl;
-
-
-	/*GLuint fbo;
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, atlasTextureID, 0);
-
-	int data_size = atlasWidth * atlasHeight * 1;
-	GLubyte* pixels = new GLubyte[atlasWidth * atlasHeight * 1];
-	glReadPixels(0, 0, atlasWidth, atlasHeight, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
-	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDeleteFramebuffers(1, &fbo);
-
-	stbi_write_bmp("FILE.bmp", atlasWidth, atlasHeight, 1, pixels);*/
 
 	FT_Done_Face(face);
 	FT_Done_FreeType(freetype);
@@ -104,4 +87,12 @@ Font::Font(Font&& other)
 
 	atlasTextureID = other.atlasTextureID;
 	other.atlasTextureID = 0;
+}
+
+Font::~Font()
+{
+	if (atlasTextureID != 0) 
+	{
+		glDeleteTextures(1, &atlasTextureID);
+	}
 }
