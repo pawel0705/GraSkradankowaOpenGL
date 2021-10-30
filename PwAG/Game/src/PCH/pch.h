@@ -10,12 +10,18 @@
 
 // additional dependencies
 #include "glad/glad.h"
+
 #include "GLFW/glfw3.h"
+
 #include "GLM/include/glm.hpp"
 #include "GLM/include/gtc/matrix_transform.hpp"
 #include "GLM/include/gtc/type_ptr.hpp"
+
 #include <ft2build.h>
 #include FT_FREETYPE_H
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "../SourceDep/stb_image.h"
 
 // this project
 #include "../Main/config.h"

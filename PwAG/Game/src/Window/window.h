@@ -26,7 +26,6 @@ public:
 	void swapBuffers() const
 	{
 		glfwSwapBuffers(glfwWindowPtr);
-		glfwPollEvents();
 	}
 
 	GLFWwindow*& getGLFWWindow()

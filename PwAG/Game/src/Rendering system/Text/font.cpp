@@ -19,6 +19,8 @@ Font::Font(const std::string& fontFilePath, uint32_t size)
 
 	FT_Set_Pixel_Sizes(face, 0, size);
 
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
 	FT_GlyphSlot glyphSlot = face->glyph;
 	uint32_t atlasWidth = 0;
 	uint32_t atlasHeight = 0;
@@ -27,6 +29,7 @@ Font::Font(const std::string& fontFilePath, uint32_t size)
 	{
 		if (FT_Load_Char(face, i, FT_LOAD_RENDER))
 		{
+			std::cout << "Couldn't load glyph for character '" << static_cast<unsigned char>(i) << "'." << std::endl;
 			continue;
 		}
 
@@ -34,13 +37,19 @@ Font::Font(const std::string& fontFilePath, uint32_t size)
 		atlasHeight = std::max(atlasHeight, glyphSlot->bitmap.rows);
 	}
 
-	GLuint texture;
-	glActiveTexture(GL_TEXTURE0);
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	atlasSize = { atlasWidth, atlasHeight };
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasWidth, atlasHeight, 0, GL_ALPHA, GL_UNSIGNED_BYTE, nullptr);
+	glActiveTexture(GL_TEXTURE0);
+	glGenTextures(1, &atlasTextureID);
+	glBindTexture(GL_TEXTURE_2D, atlasTextureID);
+	std::cout << atlasTextureID << std::endl;
+
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlasWidth, atlasHeight, 0, GL_RED, GL_UNSIGNED_BYTE, 0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	uint32_t xOffset = 0;
 	uint32_t yOffset = 0;
@@ -48,19 +57,51 @@ Font::Font(const std::string& fontFilePath, uint32_t size)
 	{
 		if (FT_Load_Char(face, i, FT_LOAD_RENDER))
 		{
+			std::cout << "Couldn't load glyph for character '" << static_cast<unsigned char>(i) << "'." << std::endl;
 			continue;
 		}
+		//FT_GlyphSlot glyphSlot = face->glyph;
 
-		glTexSubImage2D(GL_TEXTURE_2D, 0, xOffset, yOffset, glyphSlot->bitmap.width, glyphSlot->bitmap.rows, GL_ALPHA, GL_UNSIGNED_BYTE, glyphSlot->bitmap.buffer);
+		glTexSubImage2D(GL_TEXTURE_2D, 0, xOffset, yOffset, glyphSlot->bitmap.width, glyphSlot->bitmap.rows, GL_RED, GL_UNSIGNED_BYTE, glyphSlot->bitmap.buffer);
+
+		Character c;
+		c.advance = { glyphSlot->advance.x >> 6, glyphSlot->advance.y >> 6 };
+		c.size = { glyphSlot->bitmap.width, glyphSlot->bitmap.rows };
+		c.bearing = { glyphSlot->bitmap_left, glyphSlot->bitmap_top };
+		c.atlasOffset = { xOffset, yOffset };
+
 		xOffset += glyphSlot->bitmap.width;
 		yOffset += 0; //for now, atlas is just one row
 
-		Character c;
-		c.advance = {glyphSlot->advance.x >> 6, glyphSlot->advance.y >> 6};
-		c.size = {glyphSlot->bitmap.width, glyphSlot->bitmap.rows};
-		c.bearing = {glyphSlot->bitmap_left, glyphSlot->bitmap_top};
-		c.atlasOffset = {xOffset / atlasWidth, yOffset / atlasHeight};
-
 		characters.insert(std::make_pair(i, c));
 	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	std::cout << atlasTextureID << std::endl;
+
+
+	/*GLuint fbo;
+	glGenFramebuffers(1, &fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, atlasTextureID, 0);
+
+	int data_size = atlasWidth * atlasHeight * 1;
+	GLubyte* pixels = new GLubyte[atlasWidth * atlasHeight * 1];
+	glReadPixels(0, 0, atlasWidth, atlasHeight, GL_ALPHA, GL_UNSIGNED_BYTE, pixels);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glDeleteFramebuffers(1, &fbo);
+
+	stbi_write_bmp("FILE.bmp", atlasWidth, atlasHeight, 1, pixels);*/
+
+	FT_Done_Face(face);
+	FT_Done_FreeType(freetype);
+}
+
+Font::Font(Font&& other)
+{
+	characters.swap(other.characters);
+	atlasSize = other.atlasSize;
+
+	atlasTextureID = other.atlasTextureID;
+	other.atlasTextureID = 0;
 }

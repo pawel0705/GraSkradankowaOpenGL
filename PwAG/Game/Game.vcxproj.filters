@@ -146,5 +146,15 @@
     <ClInclude Include="src\Rendering system\ABE Objects\ebo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="src\SourceDep\stb_image.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SourceDep\stb_image_write.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\text.vert" />
+    <None Include="Shaders\text.frag" />
   </ItemGroup>
 </Project>

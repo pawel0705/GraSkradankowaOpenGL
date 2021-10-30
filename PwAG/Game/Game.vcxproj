@@ -61,7 +61,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -79,7 +79,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -141,12 +141,18 @@
     <ClInclude Include="src\Main\application.h" />
     <ClInclude Include="src\Main\config.h" />
     <ClInclude Include="src\PCH\pch.h" />
+    <ClInclude Include="src\SourceDep\stb_image.h" />
+    <ClInclude Include="src\SourceDep\stb_image_write.h" />
     <ClInclude Include="src\Window\window.h" />
     <ClInclude Include="src\Window\windowMode.h" />
     <ClInclude Include="src\Rendering system\Text\text.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vao.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vbo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\text.frag" />
+    <None Include="Shaders\text.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

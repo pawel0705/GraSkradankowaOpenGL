@@ -24,6 +24,10 @@ public:
 	{
 		glBufferData(GL_ARRAY_BUFFER, size, vertices, usage);
 	}
+	void bufferSubData(const void* vertices, GLsizeiptr size)
+	{
+		glBufferSubData(GL_ARRAY_BUFFER, 0, size, vertices);
+	}
 	void setAttributesPointers(GLuint index, GLint size, GLenum type, GLsizei stride, const void* offset)
 	{
 		glVertexAttribPointer(index, size, type, GL_FALSE, stride, offset);

@@ -2,6 +2,7 @@
 #include "application.h"
 
 Application::Application()
+	: tmpDefaultFont(std::move(Font("res/fonts/Segan.ttf", 64))), testText(100, 810, "Testowe", tmpDefaultFont)
 {
 	glfwInit();
 
@@ -19,6 +20,13 @@ Application::~Application()
 void Application::run()
 {
 	this->maze = new Maze();
+
+	Shader textVert = Shader::createShaderFromFile("Shaders/text.vert", Shader::Type::eVertex);
+	Shader textFrag = Shader::createShaderFromFile("Shaders/text.frag", Shader::Type::eFragment);
+
+	textShader.attachShader(textVert);
+	textShader.attachShader(textFrag);
+	textShader.linkShaderProgram();
 
 	while(!glfwWindowShouldClose(window.getGLFWWindow()))
 	{
@@ -50,9 +58,15 @@ void Application::update()
 
 void Application::render()
 {
-	window.clearToColor(255, 201, 14);
+	window.clearToColor(80, 80, 80);
 
 	this->maze->DrawMaze();
+
+	textShader.useShader();
+	auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));
+	textShader.setMat4("MVP", projection);
+	
+	testText.render(textShader);
 
 	window.swapBuffers();
 }

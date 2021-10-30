@@ -1,6 +1,7 @@
 #pragma once
 #include "../Window/window.h"
 #include "../../maze.h"
+#include "../Rendering system/Text/text.h"
 
 #pragma region GLFW event callbacks
 void framebuffer_size_callback(GLFWwindow* window, const int width, const int height);
@@ -36,6 +37,10 @@ private:
 	Mouse mouse;
 
 	Maze* maze;
+
+	Font tmpDefaultFont;
+	Text testText;
+	ShaderProgram textShader;
 
 	bool mainLoopCondition = true;
 };
