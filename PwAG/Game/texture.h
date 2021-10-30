@@ -16,13 +16,13 @@ public:
 	Texture();
 	Texture(const std::string& textureFilePath);
 
-	void bindTexture(int textureId);
+	void bindTexture(unsigned int unit);
 	void unbindTexture();
 
-	int GetTextureWidth() const;
-	int GetTextureHeight() const;
+	int getTextureWidth() const;
+	int getTextureHeight() const;
 
-	~Texture();
+	virtual ~Texture();
 
 private:
 	GLuint texture;

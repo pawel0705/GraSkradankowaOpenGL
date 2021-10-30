@@ -6,11 +6,12 @@ public:
 	Material();
 	Material(glm::vec3 ambient);
 
-	void SetMaterialAmbientUniform(ShaderProgram &shaderProgram);
+	void setMaterialShaderUniforms(ShaderProgram &shaderProgram);
 
-	~Material();
+	virtual ~Material();
 
 private:
-	glm::vec3 ambient;
+	// glm::vec3 ambient;
+	// TODO wartoœci definiuj¹ce materia³, takie jak œwiat³o ambient itp.
 };
 

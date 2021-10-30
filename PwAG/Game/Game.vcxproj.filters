@@ -156,5 +156,11 @@
   <ItemGroup>
     <None Include="Shaders\text.vert" />
     <None Include="Shaders\text.frag" />
+    <ClInclude Include="tileType.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="transformationOBJ.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

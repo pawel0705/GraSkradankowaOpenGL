@@ -60,7 +60,8 @@ void Application::render()
 {
 	window.clearToColor(80, 80, 80);
 
-	this->maze->DrawMaze();
+	// TODO na razie od razu gra, póŸniej jakaœ maszyna stanów do menu itp
+	this->maze->drawMaze();
 
 	textShader.useShader();
 	auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));

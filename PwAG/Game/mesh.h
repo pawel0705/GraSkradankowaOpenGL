@@ -9,16 +9,14 @@ public:
 	Mesh();
 	Mesh(DataOBJ* vertices, int verticesSize, GLuint* indices, int indicesSize);
 
-	void DrawMesh(ShaderProgram* shaderProgram);
-	void SetMeshUniform(ShaderProgram* shaderProgram);
-	void SetMatrixModel(glm::vec3 position, glm::vec3 origin, glm::vec3 rotation, glm::vec3 scale);
+	void setMeshUniform(ShaderProgram* shaderProgram);
+	void setMatrixModel(glm::vec3 meshPosition, glm::vec3 meshOrigin, glm::vec3 meshRotation, glm::vec3 meshScale);
 
-	~Mesh();
-
+	virtual ~Mesh();
 private:
 	DataOBJ* vertices;
 	GLuint* indices;
-	
+
 	int verticesSize;
 	int indicesSize;
 
@@ -26,6 +24,6 @@ private:
 
 	GLuint VAO, VBO, EBO;
 
-	void InitializeMesh();
+	friend class GameObject;
 };
 

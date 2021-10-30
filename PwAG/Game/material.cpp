@@ -6,11 +6,11 @@ Material::Material() {
 }
 
 Material::Material(glm::vec3 ambient) {
-	this->ambient = ambient;
+
 }
 
-void Material::SetMaterialAmbientUniform(ShaderProgram& shaderProgram) {
-	shaderProgram.setVec3f("material.ambient", this->ambient);
+void Material::setMaterialShaderUniforms(ShaderProgram& shaderProgram) {
+	shaderProgram.setInt("diffuse", 0);
 }
 
 Material::~Material()

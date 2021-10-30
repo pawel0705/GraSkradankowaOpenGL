@@ -149,6 +149,8 @@
     <ClInclude Include="texture.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vao.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vbo.h" />
+    <ClInclude Include="tileType.h" />
+    <ClInclude Include="transformationOBJ.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\text.frag" />

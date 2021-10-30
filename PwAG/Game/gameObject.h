@@ -4,6 +4,7 @@
 #include "texture.h"
 #include "material.h"
 #include "mesh.h"
+#include "transformationOBJ.h"
 
 class GameObject
 {
@@ -13,32 +14,32 @@ public:
 		Material* material,
 		Texture* texture,
 		std::vector<DataOBJ> mesh,
-		glm::vec3 objectPosition = glm::vec3(1.f),
-		glm::vec3 objectOrigin = glm::vec3(0.f),
-		glm::vec3 objectRotation = glm::vec3(0.f),
-		glm::vec3 objectScale = glm::vec3(1.f));
+		TransformationOBJ transformation,
+		std::vector<GLfloat> offsets,
+		int instances);
 
-	void Draw(ShaderProgram* shaderProgram);
+	void draw(ShaderProgram* shaderProgram);
 
-	void SetPosition(const glm::vec3 position);
-	void SetOrigin(const glm::vec3 origin);
-	void SetRotation(const glm::vec3 rotation);
-	void SetScale(const glm::vec3 scale);
+	void setPosition(const glm::vec3 position);
+	void setOrigin(const glm::vec3 origin);
+	void setRotation(const glm::vec3 rotation);
+	void setScale(const glm::vec3 scale);
 
-	glm::vec3 GetPosition();
+	glm::vec3 getPosition();
 
 	~GameObject();
 
 private:
-	struct {
-		glm::vec3 objectPosition;
-		glm::vec3 objectOrigin;
-		glm::vec3 objectRotation;
-		glm::vec3 objectScale;
-	} transformation;
+	TransformationOBJ transformation;
 
 	Texture* texture;
 	Material* material;
 	Mesh* mesh;
+
+	std::vector<GLfloat> offsets;
+
+	int instances;
+
+	void initGameObject();
 };
 

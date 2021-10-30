@@ -10,15 +10,13 @@ GameObject::GameObject(
 	Material* material,
 	Texture* texture,
 	std::vector<DataOBJ> mesh,
-	glm::vec3 objectPosition,
-	glm::vec3 objectOrigin,
-	glm::vec3 objectRotation,
-	glm::vec3 objectScale) {
+	TransformationOBJ transformation,
+	std::vector<GLfloat> offsets,
+	int instances) {
 	
-	this->transformation.objectPosition = objectPosition;
-	this->transformation.objectOrigin = objectOrigin;
-	this->transformation.objectRotation = objectRotation;
-	this->transformation.objectScale = objectScale;
+	this->transformation = transformation;
+	this->offsets = offsets;
+	this->instances = instances;
 
 	this->material = material;
 	this->texture = texture;
@@ -26,46 +24,85 @@ GameObject::GameObject(
 	if (mesh.size() > 0) {
 		this->mesh = new Mesh(mesh.data(), mesh.size(), nullptr, 0);
 	}
+
+	this->initGameObject();
 }
 
-void GameObject::Draw(ShaderProgram* shaderProgram) {
+void GameObject::initGameObject() {
+	glGenVertexArrays(1, &this->mesh->VAO);
+	glBindVertexArray(this->mesh->VAO);
+
+	glGenBuffers(1, &this->mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, this->mesh->VBO);
+	glBufferData(GL_ARRAY_BUFFER, this->mesh->verticesSize * sizeof(DataOBJ), this->mesh->vertices, GL_STATIC_DRAW);
+
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, vertex));
+	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, color));
+	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, uv));
+	glEnableVertexAttribArray(2);
+
+	GLuint offsetBuffer;
+	glGenBuffers(1, &offsetBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, offsetBuffer);
+	glBufferData(GL_ARRAY_BUFFER, this->instances * 3 * sizeof(GLfloat), &this->offsets[0], GL_STATIC_DRAW);
+	glEnableVertexAttribArray(3);
+
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
+	glVertexAttribDivisor(3, 1);
+
+	glBindVertexArray(0);
+}
+
+void GameObject::draw(ShaderProgram* shaderProgram) {
 	shaderProgram->useShader();
 
 	this->texture->bindTexture(0);
 
-	this->material->SetMaterialAmbientUniform(*shaderProgram);
+	this->material->setMaterialShaderUniforms(*shaderProgram);
 
-	this->mesh->SetMatrixModel(
+	this->mesh->setMatrixModel(
 		this->transformation.objectPosition,
 		this->transformation.objectOrigin,
 		this->transformation.objectRotation,
 		this->transformation.objectScale);
 
-	this->mesh->SetMeshUniform(shaderProgram);
-	this->mesh->DrawMesh(shaderProgram);
+	this->mesh->setMeshUniform(shaderProgram);
+
+	glBindVertexArray(this->mesh->VAO);
+
+	if (this->mesh->indicesSize > 0) {
+		glDrawElementsInstanced(GL_TRIANGLES, this->mesh->indicesSize, GL_UNSIGNED_INT, 0, this->instances);
+	}
+	else {
+		glDrawArraysInstanced(GL_TRIANGLES, 0, this->mesh->verticesSize, this->instances);
+	}
 }
 
-void GameObject::SetPosition(const glm::vec3 position)
+void GameObject::setPosition(const glm::vec3 position)
 {
 	this->transformation.objectPosition = position;
 }
 
-void GameObject::SetOrigin(const glm::vec3 origin)
+void GameObject::setOrigin(const glm::vec3 origin)
 {
 	this->transformation.objectOrigin = origin;
 }
 
-void GameObject::SetRotation(const glm::vec3 rotation)
+void GameObject::setRotation(const glm::vec3 rotation)
 {
 	this->transformation.objectRotation = rotation;
 }
 
-void GameObject::SetScale(const glm::vec3 scale)
+void GameObject::setScale(const glm::vec3 scale)
 {
 	this->transformation.objectScale = scale;
 }
 
-glm::vec3 GameObject::GetPosition() {
+glm::vec3 GameObject::getPosition() {
 	return this->transformation.objectPosition;
 }
 
