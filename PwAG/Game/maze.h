@@ -33,9 +33,9 @@ private:
 	int mazeDimension;
 	int** mazeIndexData;
 
-	std::vector<GameObject*> walls;
-	std::vector<GameObject*> floors;
-	std::vector<GameObject*> ceilings;
+	GameObject* walls;
+	GameObject* floors;
+	GameObject* ceilings;
 
 	ShaderProgram* shaderProgram;
 

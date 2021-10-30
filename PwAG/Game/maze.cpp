@@ -30,7 +30,7 @@ void Maze::initMaze() {
 	{
 		this->mazeIndexData[i] = new int[this->mazeDimension];
 	}
-		
+
 
 	for (int j = 0; !mazefile.eof(); j++)
 	{
@@ -91,41 +91,65 @@ void Maze::initObjModels() {
 	std::vector<DataOBJ> cubeObjects = readObj("Models/cube.obj");
 	std::vector<DataOBJ> planeObjects = readObj("Models/plate.obj", glm::vec3(0.0, 1.0, 0.0));
 
+	std::vector<GLfloat> offsetsWalls;
+	std::vector<GLfloat> offsetsCeiling;
+	std::vector<GLfloat> offsetsFloors;
+
+	int wallInstances = 0;
+	int ceilingInstances = 0;
+	int floorInstances = 0;
+
 	for (int i = 0; i < this->mazeDimension; i++)
 	{
 		for (int j = 0; j < this->mazeDimension; j++)
 		{
 			if (this->mazeIndexData[i][j] == (int)TileType::WALL) {
-				this->walls.push_back(new GameObject(material, this->wallTexture, cubeObjects, glm::vec3(i * 2.f, 0.0f, j * 2.f)));
+				offsetsWalls.emplace_back(i * 2.f);
+				offsetsWalls.emplace_back(0.0f);
+				offsetsWalls.emplace_back(j * 2.f);
+
+				wallInstances++;
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
-				this->camera = new Camera(glm::vec3(i * 2.f, 0.1f, j * 2.f));
-				this->floors.push_back(new GameObject(material, this->floorTexture, planeObjects, glm::vec3(i * 2.f, -1.0f, j * 2.f)));
+				this->camera = new Camera(glm::vec3(i * 2.f, 1.0f, j * 2.f));
+				offsetsFloors.emplace_back(i * 2.f);
+				offsetsFloors.emplace_back(-1.0f);
+				offsetsFloors.emplace_back(j * 2.f);
+
+				offsetsCeiling.emplace_back(i * 2.f);
+				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(j * 2.f);
+
+				floorInstances++;
+				ceilingInstances++;
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE) {
-				this->floors.push_back(new GameObject(material, this->floorTexture, planeObjects, glm::vec3(i * 2.f, -1.0f, j * 2.f)));
-				this->ceilings.push_back(new GameObject(material, this->ceilingTexture, planeObjects, glm::vec3(i * 2.f, 1.0f, j * 2.f)));
+				offsetsFloors.emplace_back(i * 2.f);
+				offsetsFloors.emplace_back(-1.0f);
+				offsetsFloors.emplace_back(j * 2.f);
+
+				offsetsCeiling.emplace_back(i * 2.f);
+				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(j * 2.f);
+
+				floorInstances++;
+				ceilingInstances++;
 			}
 		}
 	}
+	TransformationOBJ transformation = TransformationOBJ();
+	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
+	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
+	this->ceilings = new GameObject(material, this->ceilingTexture, planeObjects, transformation, offsetsCeiling, ceilingInstances);
 }
 
 void Maze::drawMaze() {
 	this->shaderProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
-
-	for (auto& element : this->walls) {
-		element->draw(this->shaderProgram);
-	}
-
-	for (auto& element : this->floors) {
-		element->draw(this->shaderProgram);
-	}
-
-	for (auto& element : this->ceilings) {
-		element->draw(this->shaderProgram);
-	}
+	this->walls->draw(this->shaderProgram);
+	this->floors->draw(this->shaderProgram);
+	this->ceilings->draw(this->shaderProgram);
 }
 
 Maze::~Maze() {
@@ -136,17 +160,11 @@ Maze::~Maze() {
 		delete[] this->mazeIndexData;
 	}
 
-	for (auto p : this->walls)
-	{
-		delete p;
-	}
-	this->walls.clear();
+	delete this->walls;
 
-	for (auto p : this->floors)
-	{
-		delete p;
-	}
-	this->floors.clear();
+	delete this->ceilings;
+
+	delete this->ceilings;
 
 	delete this->camera;
 
