@@ -17,6 +17,7 @@ public:
 	const std::string& getColor() const;
 
 private:
+	void setForNewText();
 
 	int32_t x, y;
 	std::string text;

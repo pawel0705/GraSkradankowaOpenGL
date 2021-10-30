@@ -7,6 +7,9 @@
 #include <queue>
 #include <fstream>
 #include <unordered_map>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
 // additional dependencies
 #include "glad/glad.h"

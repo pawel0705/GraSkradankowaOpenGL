@@ -4,6 +4,34 @@
 Text::Text(int32_t x, int32_t y, std::string text, const Font& font, const glm::vec3& color)
 	: x(x), y(y), text(std::move(text)), fontPtr(&font), color(color)
 {
+	setForNewText();
+}
+
+void Text::render(const ShaderProgram& shader)
+{
+	for (auto i = 0; i < text.size(); ++i)
+	{
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, fontPtr->atlasTextureID);
+		shader.setVec3f("textColor", color);
+		VAOs[i].bind();
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+	}
+	glBindTexture(GL_TEXTURE_2D, 0);
+	VAOs.back().unbind();
+}
+
+void Text::setText(std::string newText)
+{
+	text = std::move(newText);
+	setForNewText();
+}
+
+void Text::setForNewText()
+{
+	VBOs.clear();
+	VAOs.clear();
+
 	VAOs.reserve(this->text.size());
 	VBOs.reserve(this->text.size());
 
@@ -48,20 +76,4 @@ Text::Text(int32_t x, int32_t y, std::string text, const Font& font, const glm::
 		xPos += character.advance.x;
 		yPos += character.advance.y;
 	}
-
-}
-
-void Text::render(const ShaderProgram& shader)
-{
-	std::cout << fontPtr->atlasTextureID << std::endl;
-	for (auto i = 0; i < text.size(); ++i)
-	{
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, fontPtr->atlasTextureID);
-		shader.setVec3f("textColor", color);
-		VAOs[i].bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
-	VAOs.back().unbind();
 }

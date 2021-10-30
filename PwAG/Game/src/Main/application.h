@@ -30,6 +30,8 @@ public:
 	void render();
 
 private:
+	void updateFPSText();
+
 	Window window;
 
 	EventManager eventManager;
@@ -39,8 +41,33 @@ private:
 	Maze* maze;
 
 	Font tmpDefaultFont;
-	Text testText;
 	ShaderProgram textShader;
+
+	std::chrono::steady_clock::time_point frameStart;
+	std::chrono::steady_clock::time_point frameEnd;
+
+	std::chrono::steady_clock::time_point inputStart;
+	std::chrono::steady_clock::time_point inputEnd;
+	std::chrono::steady_clock::time_point updateStart;
+	std::chrono::steady_clock::time_point updateEnd;
+	std::chrono::steady_clock::time_point renderStart;
+	std::chrono::steady_clock::time_point renderEnd;
+
+	std::chrono::steady_clock::time_point lastMeasure;
+	double fpsMeasureCooldown = 500; //in miliseconds
+	bool updateFPSThisFrame = false;
+
+	Text fpsLabel;
+	Text fpsValueText;
+
+	Text inputTimeLabel;
+	Text inputValueText;
+
+	Text updateTimeLabel;
+	Text updateValueText;
+
+	Text renderTimeLabel;
+	Text renderValueText;
 
 	bool mainLoopCondition = true;
 };
