@@ -2,7 +2,7 @@
 #include "application.h"
 
 Application::Application()
-	: tmpDefaultFont(std::move(Font("res/fonts/Segan.ttf", 18))), 
+	: tmpDefaultFont(std::move(Font("res/fonts/Segan.ttf", 18))),
 	fpsLabel(0, 880, "FPS:", tmpDefaultFont), fpsValueText(65, 880, "0", tmpDefaultFont),
 	inputTimeLabel(0, 860, "Input:", tmpDefaultFont), inputValueText(65, 860, "0", tmpDefaultFont),
 	updateTimeLabel(0, 840, "Update:", tmpDefaultFont), updateValueText(65, 840, "0", tmpDefaultFont),
@@ -36,7 +36,7 @@ void Application::run()
 	while (!glfwWindowShouldClose(window.getGLFWWindow()))
 	{
 		frameStart = std::chrono::steady_clock::now();
-		
+
 		if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastMeasure).count() >= fpsMeasureCooldown)
 		{
 			updateFPSThisFrame = true;
@@ -71,6 +71,16 @@ void Application::processInput()
 		}
 	}
 
+	// wireframe mode on/off
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyQ)]) {
+		this->wireframeMode = true;
+		this->wireframeModeOn();
+	}
+	else if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyE)]) {
+		this->wireframeMode = false;
+		this->wireframeModeOff();
+	}
+
 	inputEnd = std::chrono::steady_clock::now();
 }
 
@@ -88,8 +98,19 @@ void Application::render()
 	window.clearToColor(80, 80, 80);
 
 	// TODO na razie od razu gra, póŸniej jakaœ maszyna stanów do menu itp
+
+	if (this->wireframeMode) {
+		this->wireframeModeOn(); // wireframe mode on
+	}
+
+	// RENDER GAME OBJECTS
 	this->maze->drawMaze();
 
+	if (this->wireframeMode) {
+		this->wireframeModeOff(); // nie chcemy aby text by³ renderowany w wireframe mode, wiêc przed jego renderem ustawiamy na off
+	}
+
+	// RENDER TEXT
 	textShader.useShader();
 	auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));
 	textShader.setMat4("MVP", projection);
@@ -103,7 +124,7 @@ void Application::render()
 	updateValueText.render(textShader);
 	renderTimeLabel.render(textShader);
 	renderValueText.render(textShader);
-	
+
 	window.swapBuffers();
 
 	renderEnd = std::chrono::steady_clock::now();
@@ -111,8 +132,6 @@ void Application::render()
 
 void Application::updateFPSText()
 {
-	
-
 	auto frameDuration = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart).count();
 	int32_t fps = (1.0 / frameDuration) * 1000000.0;
 	fpsValueText.setText(std::to_string(fps));
@@ -122,7 +141,7 @@ void Application::updateFPSText()
 	streamForInput << std::fixed << std::setprecision(4);
 	streamForInput << inputDuration;
 	inputValueText.setText(streamForInput.str() + "ms");
-	
+
 	double updateDuration = std::chrono::duration_cast<std::chrono::microseconds>(updateEnd - updateStart).count() / 1000.0;
 	std::stringstream streamForUpdate;
 	streamForUpdate << std::fixed << std::setprecision(4);
@@ -137,4 +156,12 @@ void Application::updateFPSText()
 
 	lastMeasure = std::chrono::steady_clock::now();
 	updateFPSThisFrame = false;
+}
+
+void Application::wireframeModeOn() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+void Application::wireframeModeOff() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

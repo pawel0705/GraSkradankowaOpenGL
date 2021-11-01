@@ -31,6 +31,8 @@ public:
 
 private:
 	void updateFPSText();
+	void wireframeModeOn();
+	void wireframeModeOff();
 
 	Window window;
 
@@ -70,5 +72,7 @@ private:
 	Text renderValueText;
 
 	bool mainLoopCondition = true;
+
+	bool wireframeMode = false;
 };
 
