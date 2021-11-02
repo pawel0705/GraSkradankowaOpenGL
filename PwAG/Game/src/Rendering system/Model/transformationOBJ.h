@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 struct TransformationOBJ
 {
 	glm::vec3 objectPosition = glm::vec3(1.f);

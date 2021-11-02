@@ -2,7 +2,7 @@
 #include "application.h"
 
 Application::Application()
-	: tmpDefaultFont(std::move(Font("res/fonts/Segan.ttf", 18))),
+	: tmpDefaultFont(std::move(Font("res/Fonts/Segan.ttf", 18))),
 	fpsLabel(0, 880, "FPS:", tmpDefaultFont), fpsValueText(65, 880, "0", tmpDefaultFont),
 	inputTimeLabel(0, 860, "Input:", tmpDefaultFont), inputValueText(65, 860, "0", tmpDefaultFont),
 	updateTimeLabel(0, 840, "Update:", tmpDefaultFont), updateValueText(65, 840, "0", tmpDefaultFont),
@@ -133,7 +133,7 @@ void Application::render()
 void Application::updateFPSText()
 {
 	auto frameDuration = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart).count();
-	int32_t fps = (1.0 / frameDuration) * 1000000.0;
+	int32_t fps = static_cast<int32_t>((1.0 / frameDuration) * 1000000.0);
 	fpsValueText.setText(std::to_string(fps));
 
 	double inputDuration = std::chrono::duration_cast<std::chrono::microseconds>(inputEnd - inputStart).count() / 1000.0;

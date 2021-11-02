@@ -1,10 +1,8 @@
 #pragma once
-#include "pch.h"
-#include "src/Rendering system/Shader/shaderProgram.h"
-#include "texture.h"
-#include "material.h"
-#include "mesh.h"
-#include "transformationOBJ.h"
+#include "../Rendering system/Texture/texture.h"
+#include "../Rendering system/Model/Material/material.h"
+#include "../Rendering system/Model/mesh.h"
+#include "../Rendering system/Model/transformationOBJ.h"
 
 class GameObject
 {

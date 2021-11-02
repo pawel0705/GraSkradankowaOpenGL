@@ -1,6 +1,5 @@
 #pragma once
 #include "dataOBJ.h"
-#include "src/Rendering system/Shader/shaderProgram.h"
 
 // data set for vertices, indices, textures
 class Mesh

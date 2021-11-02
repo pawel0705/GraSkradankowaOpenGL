@@ -1,6 +1,6 @@
 #pragma once
 #include "../Window/window.h"
-#include "../../maze.h"
+#include "../Game Objects/maze.h"
 #include "../Rendering system/Text/text.h"
 
 #pragma region GLFW event callbacks

@@ -39,22 +39,22 @@
     <ClCompile Include="src\Rendering system\Shader\shader.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="maze.cpp">
+    <ClCompile Include="src\Game Objects\maze.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameObject.cpp">
+    <ClCompile Include="src\Game Objects\gameObject.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="camera.cpp">
+    <ClCompile Include="src\Rendering system\Camera\camera.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="mesh.cpp">
+    <ClCompile Include="src\Rendering system\Model\mesh.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="texture.cpp">
+    <ClCompile Include="src\Rendering system\Texture\texture.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="material.cpp">
+    <ClCompile Include="src\Rendering system\Model\Material\material.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering system\Text\font.cpp">
@@ -70,6 +70,12 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\Model\transformationOBJ.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,28 +113,28 @@
     <ClInclude Include="src\Rendering system\Shader\shader.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="maze.h">
+    <ClInclude Include="src\Game Objects\maze.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameObject.h">
+    <ClInclude Include="src\Game Objects\gameObject.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="camera.h">
+    <ClInclude Include="src\Rendering system\Camera\camera.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="dataOBJ.h">
+    <ClInclude Include="src\Rendering system\Model\dataOBJ.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="objReader.h">
+    <ClInclude Include="src\Rendering system\Model\objReader.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="mesh.h">
+    <ClInclude Include="src\Rendering system\Model\mesh.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="texture.h">
+    <ClInclude Include="src\Rendering system\Texture\texture.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="material.h">
+    <ClInclude Include="src\Rendering system\Model\Material\material.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering system\Text\font.h">
@@ -156,10 +162,10 @@
   <ItemGroup>
     <None Include="Shaders\text.vert" />
     <None Include="Shaders\text.frag" />
-    <ClInclude Include="tileType.h">
+    <ClInclude Include="src\Game Objects\tileType.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="transformationOBJ.h">
+    <ClInclude Include="src\Rendering system\Model\transformationOBJ.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "maze.h"
-#include "objReader.h"
+#include "../Rendering system/Model/objReader.h"
 #include "tileType.h"
 
 
@@ -67,8 +67,8 @@ void Maze::initMatrixMVP() {
 
 void Maze::initMazeShaders() {
 
-	this->fragmentShader = Shader::createShaderFromFile("frag.fs", Shader::Type::eFragment);
-	this->vertexShader = Shader::createShaderFromFile("vert.vs", Shader::Type::eVertex);
+	this->fragmentShader = Shader::createShaderFromFile("Shaders/frag.fs", Shader::Type::eFragment);
+	this->vertexShader = Shader::createShaderFromFile("Shaders/vert.vs", Shader::Type::eVertex);
 
 	this->shaderProgram = new ShaderProgram();
 	this->shaderProgram->attachShader(this->fragmentShader);
@@ -81,15 +81,15 @@ void Maze::initMazeMaterials() {
 }
 
 void Maze::initMazeTextures() {
-	this->wallTexture = new Texture("Textures/wall.bmp");
-	this->floorTexture = new Texture("Textures/floor.bmp");
-	this->ceilingTexture = new Texture("Textures/ceiling.bmp");
+	this->wallTexture = new Texture("res/Textures/wall.bmp");
+	this->floorTexture = new Texture("res/Textures/floor.bmp");
+	this->ceilingTexture = new Texture("res/Textures/ceiling.bmp");
 }
 
 void Maze::initObjModels() {
 
-	std::vector<DataOBJ> cubeObjects = readObj("Models/cube.obj");
-	std::vector<DataOBJ> planeObjects = readObj("Models/plate.obj", glm::vec3(0.0, 1.0, 0.0));
+	std::vector<DataOBJ> cubeObjects = readObj("res/Models/cube.obj");
+	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj", glm::vec3(0.0, 1.0, 0.0));
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;

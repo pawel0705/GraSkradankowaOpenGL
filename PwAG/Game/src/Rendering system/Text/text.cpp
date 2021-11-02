@@ -27,6 +27,21 @@ void Text::setText(std::string newText)
 	setForNewText();
 }
 
+const std::string& Text::getText() const
+{
+	return text;
+}
+
+void Text::setColor(const glm::vec3& newColor)
+{
+	color = newColor;
+}
+
+const glm::vec3& Text::getColor() const
+{
+	return color;
+}
+
 void Text::setForNewText()
 {
 	VBOs.clear();
@@ -35,15 +50,15 @@ void Text::setForNewText()
 	VAOs.reserve(this->text.size());
 	VBOs.reserve(this->text.size());
 
-	float xPos = x;
-	float yPos = y;
+	float xPos = static_cast<float>(x);
+	float yPos = static_cast<float>(y);
 
 	for (const auto charInText : this->text)
 	{
 		const Font::Character& character = fontPtr->characters.at(charInText);
 
-		float width = character.size.x;
-		float height = character.size.y;
+		float width = static_cast<float>(character.size.x);
+		float height = static_cast<float>(character.size.y);
 
 		float x1 = xPos + character.bearing.x;
 		float y1 = yPos + character.bearing.y;

@@ -1,8 +1,5 @@
 #pragma once
 
-#include <iostream>
-#include <fstream>
-
 struct BitMapFile
 {
 	int sizeX;

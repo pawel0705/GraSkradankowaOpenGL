@@ -1,6 +1,5 @@
 #pragma once
 #include "windowMode.h"
-#include "../Event system/eventManager.h"
 
 class Window
 {

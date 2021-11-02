@@ -10,6 +10,9 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <string>
+#include <stdio.h>
+#include <vector>
 
 // additional dependencies
 #include "glad/glad.h"
@@ -33,5 +36,11 @@
 #include "../Rendering system/ABE Objects/vao.h"
 #include "../Rendering system/ABE Objects/vbo.h"
 #include "../Rendering system/ABE Objects/ebo.h"
+
+#include "../Event system/mouse.h"
+#include "../Event system/keyboard.h"
+#include "../Event system/eventType.h"
+#include "../Event system/eventManager.h"
+
 
 #endif

@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "gameObject.h"
-#include "src/Rendering system/Shader/shaderProgram.h"
 
 GameObject::GameObject() {
 

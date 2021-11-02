@@ -1,7 +1,5 @@
 #pragma once
 
-#include "src/Rendering system/Shader/shaderProgram.h"
-
 // TODO kamera do edycji => pod gracza z pierwszej osoby
 class Camera
 {

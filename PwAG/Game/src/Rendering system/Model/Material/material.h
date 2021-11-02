@@ -1,5 +1,5 @@
 #pragma once
-#include "src/Rendering system/Shader/shaderProgram.h"
+
 class Material
 {
 public:

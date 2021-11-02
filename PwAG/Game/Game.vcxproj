@@ -61,7 +61,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -79,7 +79,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -94,13 +94,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
+    <ClCompile Include="src\Rendering system\Camera\camera.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp" />
+    <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp" />
+    <ClCompile Include="src\Rendering system\Model\transformationOBJ.cpp" />
     <ClCompile Include="src\Rendering system\Text\font.cpp" />
-    <ClCompile Include="gameObject.cpp" />
-    <ClCompile Include="material.cpp" />
-    <ClCompile Include="maze.cpp" />
-    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="src\Game Objects\gameObject.cpp" />
+    <ClCompile Include="src\Rendering system\Model\Material\material.cpp" />
+    <ClCompile Include="src\Game Objects\maze.cpp" />
+    <ClCompile Include="src\Rendering system\Model\mesh.cpp" />
     <ClCompile Include="src\Rendering system\Shader\shaderProgram.cpp" />
     <ClCompile Include="src\Rendering system\Shader\shader.cpp" />
     <ClCompile Include="src\Event system\eventManager.cpp" />
@@ -118,20 +120,20 @@
     </ClCompile>
     <ClCompile Include="src\Window\window.cpp" />
     <ClCompile Include="src\Rendering system\Text\text.cpp" />
-    <ClCompile Include="texture.cpp" />
+    <ClCompile Include="src\Rendering system\Texture\texture.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\vao.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\vbo.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="dataOBJ.h" />
+    <ClInclude Include="src\Rendering system\Camera\camera.h" />
+    <ClInclude Include="src\Rendering system\Model\dataOBJ.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\ebo.h" />
     <ClInclude Include="src\Rendering system\Text\font.h" />
-    <ClInclude Include="gameObject.h" />
-    <ClInclude Include="material.h" />
-    <ClInclude Include="maze.h" />
-    <ClInclude Include="mesh.h" />
-    <ClInclude Include="objReader.h" />
+    <ClInclude Include="src\Game Objects\gameObject.h" />
+    <ClInclude Include="src\Rendering system\Model\Material\material.h" />
+    <ClInclude Include="src\Game Objects\maze.h" />
+    <ClInclude Include="src\Rendering system\Model\mesh.h" />
+    <ClInclude Include="src\Rendering system\Model\objReader.h" />
     <ClInclude Include="src\Rendering system\Shader\shaderProgram.h" />
     <ClInclude Include="src\Rendering system\Shader\shader.h" />
     <ClInclude Include="src\Event system\keyboard.h" />
@@ -146,11 +148,11 @@
     <ClInclude Include="src\Window\window.h" />
     <ClInclude Include="src\Window\windowMode.h" />
     <ClInclude Include="src\Rendering system\Text\text.h" />
-    <ClInclude Include="texture.h" />
+    <ClInclude Include="src\Rendering system\Texture\texture.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vao.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\vbo.h" />
-    <ClInclude Include="tileType.h" />
-    <ClInclude Include="transformationOBJ.h" />
+    <ClInclude Include="src\Game Objects\tileType.h" />
+    <ClInclude Include="src\Rendering system\Model\transformationOBJ.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\text.frag" />

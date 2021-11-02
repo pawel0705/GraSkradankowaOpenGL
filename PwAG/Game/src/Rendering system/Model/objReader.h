@@ -1,11 +1,4 @@
 #pragma once
-
-#include<iostream>
-#include<string>
-#include<fstream>
-#include<vector>
-#include<sstream>
-
 #include "dataOBJ.h"
 
 std::vector<DataOBJ> readObj(const std::string& objPathName, glm::vec3 color = glm::vec3(1.0, 0.0, 0.0)) {

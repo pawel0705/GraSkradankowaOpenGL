@@ -14,7 +14,7 @@ public:
 	const std::string& getText() const;
 
 	void setColor(const glm::vec3& newColor);
-	const std::string& getColor() const;
+	const glm::vec3& getColor() const;
 
 private:
 	void setForNewText();

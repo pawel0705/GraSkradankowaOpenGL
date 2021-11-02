@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 struct DataOBJ
 {
 	glm::vec3 vertex;

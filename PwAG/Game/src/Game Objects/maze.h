@@ -1,14 +1,6 @@
 #pragma once
-
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include <stdio.h>
-#include <vector>
 #include "gameObject.h"
-#include "camera.h"
-#include "src/Rendering system/Shader/shaderProgram.h"
+#include "../Rendering system/Camera/camera.h"
 
 class Maze
 {
