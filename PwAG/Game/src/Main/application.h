@@ -30,9 +30,17 @@ public:
 	void render();
 
 private:
+	void updateMVCMeasurementTexts();
+
 	void updateFPSText();
+	void updateInputText();
+	void updateUpdateText();
+	void updateRenderText();
+
 	void wireframeModeOn();
 	void wireframeModeOff();
+
+	void calculateDeltaTime();
 
 	Window window;
 
@@ -45,18 +53,16 @@ private:
 	Font tmpDefaultFont;
 	ShaderProgram textShader;
 
-	std::chrono::steady_clock::time_point frameStart;
-	std::chrono::steady_clock::time_point frameEnd;
+	double deltaTime;
 
-	std::chrono::steady_clock::time_point inputStart;
-	std::chrono::steady_clock::time_point inputEnd;
-	std::chrono::steady_clock::time_point updateStart;
-	std::chrono::steady_clock::time_point updateEnd;
-	std::chrono::steady_clock::time_point renderStart;
-	std::chrono::steady_clock::time_point renderEnd;
+	uint32_t fpsCap = 240;
+	double fpsCapCooldown; //in seconds
+	double fpsCapCooldownLeft;
+	double frameDuration = 0.0f;
+	Timer timer;
 
-	std::chrono::steady_clock::time_point lastMeasure;
-	double fpsMeasureCooldown = 500; //in miliseconds
+	double fpsMeasureCooldown = 0.5; //in seconds
+	double fpsMeasureCooldownLeft = 0.0f;
 	bool updateFPSThisFrame = false;
 
 	Text fpsLabel;

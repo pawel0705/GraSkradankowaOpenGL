@@ -42,5 +42,7 @@
 #include "../Event system/eventType.h"
 #include "../Event system/eventManager.h"
 
+#include "../Utilities/timer.h"
+
 
 #endif

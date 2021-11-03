@@ -14,6 +14,9 @@ Application::Application()
 	eventManager.registerMouse(mouse);
 
 	window.attachEventManager(eventManager);
+
+	fpsCapCooldown = 1.0 / fpsCap;
+	fpsCapCooldownLeft = 0.0f;
 }
 
 Application::~Application()
@@ -32,12 +35,14 @@ void Application::run()
 	textShader.attachShader(textFrag);
 	textShader.linkShaderProgram();
 
-	lastMeasure = std::chrono::steady_clock::now();
-	while (!glfwWindowShouldClose(window.getGLFWWindow()))
+	timer.startTimer("deltaTime");
+	timer.startTimer("fps");
+	timer.startTimer("previousMeasure");
+	while (mainLoopCondition)
 	{
-		frameStart = std::chrono::steady_clock::now();
+		calculateDeltaTime();
 
-		if (std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - lastMeasure).count() >= fpsMeasureCooldown)
+		if (timer.getCurrentDurationInSeconds("previousMeasure") >= fpsMeasureCooldown)
 		{
 			updateFPSThisFrame = true;
 		}
@@ -47,18 +52,17 @@ void Application::run()
 		update();
 		render();
 
-		frameEnd = std::chrono::steady_clock::now();
-
 		if (updateFPSThisFrame)
 		{
 			updateFPSText();
 		}
+
 	}
 }
 
 void Application::processInput()
 {
-	inputStart = std::chrono::steady_clock::now();
+	timer.startTimer("input");
 
 	eventManager.checkForEvents();
 	while (!eventManager.isEventQueueEmpty())
@@ -81,81 +85,88 @@ void Application::processInput()
 		this->wireframeModeOff();
 	}
 
-	inputEnd = std::chrono::steady_clock::now();
+	timer.stopTimer("input");
 }
 
 void Application::update()
 {
-	updateStart = std::chrono::steady_clock::now();
+	timer.startTimer("update");
 
-	updateEnd = std::chrono::steady_clock::now();
+	timer.stopTimer("update");
 }
 
 void Application::render()
 {
-	renderStart = std::chrono::steady_clock::now();
+	fpsCapCooldownLeft -= deltaTime;
+	if (fpsCapCooldownLeft <= 0.0f)
+	{
+		frameDuration = timer.getCurrentDurationInSeconds("fps");
+		fpsCapCooldownLeft = fpsCapCooldown;
+		
+		timer.startTimer("fps");
+		timer.startTimer("render");
 
-	window.clearToColor(80, 80, 80);
+		window.clearToColor(80, 80, 80);
 
-	// TODO na razie od razu gra, póŸniej jakaœ maszyna stanów do menu itp
+		// TODO na razie od razu gra, póŸniej jakaœ maszyna stanów do menu itp
 
-	if (this->wireframeMode) {
-		this->wireframeModeOn(); // wireframe mode on
+		if (this->wireframeMode) {
+			this->wireframeModeOn(); // wireframe mode on
+		}
+
+		// RENDER GAME OBJECTS
+		this->maze->drawMaze();
+
+		if (this->wireframeMode) {
+			this->wireframeModeOff(); // nie chcemy aby text by³ renderowany w wireframe mode, wiêc przed jego renderem ustawiamy na off
+		}
+
+		// RENDER TEXT
+		textShader.useShader();
+		auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));
+		textShader.setMat4("MVP", projection);
+
+		fpsLabel.render(textShader);
+		fpsValueText.render(textShader);
+
+		inputTimeLabel.render(textShader);
+		inputValueText.render(textShader);
+		updateTimeLabel.render(textShader);
+		updateValueText.render(textShader);
+		renderTimeLabel.render(textShader);
+		renderValueText.render(textShader);
+
+		window.swapBuffers();
+
+		timer.stopTimer("render");
 	}
-
-	// RENDER GAME OBJECTS
-	this->maze->drawMaze();
-
-	if (this->wireframeMode) {
-		this->wireframeModeOff(); // nie chcemy aby text by³ renderowany w wireframe mode, wiêc przed jego renderem ustawiamy na off
-	}
-
-	// RENDER TEXT
-	textShader.useShader();
-	auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));
-	textShader.setMat4("MVP", projection);
-
-	fpsLabel.render(textShader);
-	fpsValueText.render(textShader);
-
-	inputTimeLabel.render(textShader);
-	inputValueText.render(textShader);
-	updateTimeLabel.render(textShader);
-	updateValueText.render(textShader);
-	renderTimeLabel.render(textShader);
-	renderValueText.render(textShader);
-
-	window.swapBuffers();
-
-	renderEnd = std::chrono::steady_clock::now();
 }
 
 void Application::updateFPSText()
 {
-	auto frameDuration = std::chrono::duration_cast<std::chrono::microseconds>(frameEnd - frameStart).count();
-	int32_t fps = static_cast<int32_t>((1.0 / frameDuration) * 1000000.0);
-	fpsValueText.setText(std::to_string(fps));
+	int32_t fps = static_cast<int32_t>(1.0 / frameDuration);
+	fpsValueText.setText(std::move(std::to_string(fps)));
 
-	double inputDuration = std::chrono::duration_cast<std::chrono::microseconds>(inputEnd - inputStart).count() / 1000.0;
+	double inputDuration = timer.getMeasuredDurationInMiliseconds("input");
 	std::stringstream streamForInput;
 	streamForInput << std::fixed << std::setprecision(4);
 	streamForInput << inputDuration;
 	inputValueText.setText(streamForInput.str() + "ms");
 
-	double updateDuration = std::chrono::duration_cast<std::chrono::microseconds>(updateEnd - updateStart).count() / 1000.0;
+	double updateDuration = timer.getMeasuredDurationInMiliseconds("update");
 	std::stringstream streamForUpdate;
 	streamForUpdate << std::fixed << std::setprecision(4);
 	streamForUpdate << updateDuration;
 	updateValueText.setText(streamForUpdate.str() + "ms");
 
-	double renderDuration = std::chrono::duration_cast<std::chrono::microseconds>(renderEnd - renderStart).count() / 1000.0;
+	double renderDuration = timer.getMeasuredDurationInMiliseconds("render");
 	std::stringstream streamForRender;
 	streamForRender << std::fixed << std::setprecision(4);
 	streamForRender << renderDuration;
 	renderValueText.setText(streamForRender.str() + "ms");
 
-	lastMeasure = std::chrono::steady_clock::now();
 	updateFPSThisFrame = false;
+	timer.startTimer("previousMeasure");
 }
 
 void Application::wireframeModeOn() {
@@ -164,4 +175,12 @@ void Application::wireframeModeOn() {
 
 void Application::wireframeModeOff() {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void Application::calculateDeltaTime()
+{
+	deltaTime = timer.getCurrentDurationInSeconds("deltaTime");
+	timer.startTimer("deltaTime");
+
+	//std::cout << deltaTime << std::endl;
 }
