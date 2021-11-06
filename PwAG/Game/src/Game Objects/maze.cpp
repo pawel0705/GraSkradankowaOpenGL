@@ -89,7 +89,8 @@ void Maze::initMazeTextures() {
 void Maze::initObjModels() {
 
 	std::vector<DataOBJ> cubeObjects = readObj("res/Models/cube.obj");
-	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj", glm::vec3(0.0, 1.0, 0.0));
+	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj");
+	std::vector<DataOBJ> planeUpObjects = readObj("res/Models/plateUp.obj");
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;
@@ -117,7 +118,7 @@ void Maze::initObjModels() {
 				offsetsFloors.emplace_back(j * 2.f);
 
 				offsetsCeiling.emplace_back(i * 2.f);
-				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(0.0f);
 				offsetsCeiling.emplace_back(j * 2.f);
 
 				floorInstances++;
@@ -129,7 +130,7 @@ void Maze::initObjModels() {
 				offsetsFloors.emplace_back(j * 2.f);
 
 				offsetsCeiling.emplace_back(i * 2.f);
-				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(0.0f);
 				offsetsCeiling.emplace_back(j * 2.f);
 
 				floorInstances++;
@@ -140,16 +141,22 @@ void Maze::initObjModels() {
 	TransformationOBJ transformation = TransformationOBJ();
 	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
-	this->ceilings = new GameObject(material, this->ceilingTexture, planeObjects, transformation, offsetsCeiling, ceilingInstances);
+	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
 }
 
 void Maze::drawMaze() {
 	this->shaderProgram->useShader();
+	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
+}
+
+void Maze::updateMaze()
+{
+
 }
 
 Maze::~Maze() {

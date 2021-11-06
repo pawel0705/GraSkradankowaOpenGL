@@ -17,7 +17,10 @@ public:
 	void initMazeTextures();
 	void initObjModels();
 
+	Camera* camera; // tymczasowo globalnie, jakiœ podzia³ na stany trzeba zrobiæ Game, menu itp...
+
 	void drawMaze();
+	void updateMaze();
 
 	virtual ~Maze();
 
@@ -33,8 +36,6 @@ private:
 
 	Shader vertexShader;
 	Shader fragmentShader;
-
-	Camera* camera;
 
 	Material* material;
 

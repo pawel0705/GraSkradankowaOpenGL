@@ -174,5 +174,7 @@
     <ClInclude Include="src\Rendering system\Model\transformationOBJ.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <None Include="Shaders\frag.fs" />
+    <None Include="Shaders\vert.vs" />
   </ItemGroup>
 </Project>

@@ -85,12 +85,40 @@ void Application::processInput()
 		this->wireframeModeOff();
 	}
 
+	// camera
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyW)]) {
+		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 0, 0, 0);
+	}
+
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyS)]) {
+		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 1, 0, 0);
+	}
+
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyA)]) {
+		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 3, 0, 0);
+	}
+
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyD)]) {
+		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 2, 0, 0);
+	}
+
+	// tymczasowo, trzeba zrobiæ obs³ugê obracania myszk¹
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyZ)]) {
+		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), -1, 10, 0);
+	}
+
+	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyX)]) {
+		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), -1, -10, 0);
+	}
+
 	timer.stopTimer("input");
 }
 
 void Application::update()
 {
 	timer.startTimer("update");
+
+//	this->maze->updateMaze();
 
 	timer.stopTimer("update");
 }

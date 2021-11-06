@@ -8,8 +8,8 @@ public:
 	Camera(glm::vec3 position = glm::vec3(.0f));
 
 	void updateEulerAngels();
-
 	void setCameraUniforms(ShaderProgram* shaderProgram);
+	void updateInput(const float& deltaTime, const int direction, const float& x, const float& y);
 
 	float getCameraZoom() const;
 
@@ -28,5 +28,9 @@ private:
 
 	float speed;
 	float zoom;
+	float sensitivity;
+
+	void UpdateKeyboard(const float& deltaTime, const int direction);
+	void UpdateMouse(const float& deltaTime, const float& x, const float& y);
 };
 
