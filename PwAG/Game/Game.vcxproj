@@ -157,10 +157,8 @@
     <ClInclude Include="src\Utilities\timer.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\frag.fs" />
     <None Include="Shaders\text.frag" />
     <None Include="Shaders\text.vert" />
-    <None Include="Shaders\vert.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

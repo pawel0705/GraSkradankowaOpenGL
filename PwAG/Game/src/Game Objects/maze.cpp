@@ -23,12 +23,14 @@ void Maze::initMaze() {
 	std::string singleline;
 
 	std::getline(mazefile, singleline);
-	this->mazeDimension = atoi(singleline.c_str());
-	this->mazeIndexData = new int* [this->mazeDimension];
+	this->mazeDimensionX = atoi(singleline.c_str());
+	std::getline(mazefile, singleline);
+	this->mazeDimensionY = atoi(singleline.c_str());
+	this->mazeIndexData = new int* [this->mazeDimensionX];
 
-	for (int i = 0; i < this->mazeDimension; i++)
+	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
-		this->mazeIndexData[i] = new int[this->mazeDimension];
+		this->mazeIndexData[i] = new int[this->mazeDimensionY];
 	}
 
 
@@ -37,7 +39,7 @@ void Maze::initMaze() {
 		std::getline(mazefile, singleline);
 
 		std::stringstream maze_line(singleline);
-		for (int i = 0; i < this->mazeDimension; i++)
+		for (int i = 0; i < this->mazeDimensionY; i++)
 		{
 			maze_line >> this->mazeIndexData[i][j];
 		}
@@ -67,8 +69,8 @@ void Maze::initMatrixMVP() {
 
 void Maze::initMazeShaders() {
 
-	this->fragmentShader = Shader::createShaderFromFile("Shaders/frag.fs", Shader::Type::eFragment);
-	this->vertexShader = Shader::createShaderFromFile("Shaders/vert.vs", Shader::Type::eVertex);
+	this->fragmentShader = Shader::createShaderFromFile("Shaders/map.frag", Shader::Type::eFragment);
+	this->vertexShader = Shader::createShaderFromFile("Shaders/map.vert", Shader::Type::eVertex);
 
 	this->shaderProgram = new ShaderProgram();
 	this->shaderProgram->attachShader(this->fragmentShader);
@@ -77,7 +79,7 @@ void Maze::initMazeShaders() {
 }
 
 void Maze::initMazeMaterials() {
-	this->material = new Material(glm::vec3(0.95));
+	this->material = new Material(glm::vec3(0.25));
 }
 
 void Maze::initMazeTextures() {
@@ -88,7 +90,7 @@ void Maze::initMazeTextures() {
 
 void Maze::initObjModels() {
 
-	std::vector<DataOBJ> cubeObjects = readObj("res/Models/cube.obj");
+	std::vector<DataOBJ> cubeObjects = readObj("res/Models/wall.obj");
 	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj");
 	std::vector<DataOBJ> planeUpObjects = readObj("res/Models/plateUp.obj");
 
@@ -100,9 +102,9 @@ void Maze::initObjModels() {
 	int ceilingInstances = 0;
 	int floorInstances = 0;
 
-	for (int i = 0; i < this->mazeDimension; i++)
+	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
-		for (int j = 0; j < this->mazeDimension; j++)
+		for (int j = 0; j < this->mazeDimensionY; j++)
 		{
 			if (this->mazeIndexData[i][j] == (int)TileType::WALL) {
 				offsetsWalls.emplace_back(i * 2.f);
@@ -112,13 +114,13 @@ void Maze::initObjModels() {
 				wallInstances++;
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
-				this->camera = new Camera(glm::vec3(i * 2.f, 1.0f, j * 2.f));
+				this->camera = new Camera(glm::vec3(i * 2.f, 0.0f, j * 2.f));
 				offsetsFloors.emplace_back(i * 2.f);
-				offsetsFloors.emplace_back(-1.0f);
+				offsetsFloors.emplace_back(-2.0f);
 				offsetsFloors.emplace_back(j * 2.f);
 
 				offsetsCeiling.emplace_back(i * 2.f);
-				offsetsCeiling.emplace_back(0.0f);
+				offsetsCeiling.emplace_back(1.0f);
 				offsetsCeiling.emplace_back(j * 2.f);
 
 				floorInstances++;
@@ -126,11 +128,11 @@ void Maze::initObjModels() {
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE) {
 				offsetsFloors.emplace_back(i * 2.f);
-				offsetsFloors.emplace_back(-1.0f);
+				offsetsFloors.emplace_back(-2.0f);
 				offsetsFloors.emplace_back(j * 2.f);
 
 				offsetsCeiling.emplace_back(i * 2.f);
-				offsetsCeiling.emplace_back(0.0f);
+				offsetsCeiling.emplace_back(1.0f);
 				offsetsCeiling.emplace_back(j * 2.f);
 
 				floorInstances++;
@@ -161,7 +163,7 @@ void Maze::updateMaze()
 
 Maze::~Maze() {
 	if (this->mazeIndexData != nullptr) {
-		for (int i = 0; i < this->mazeDimension; i++) {
+		for (int i = 0; i < this->mazeDimensionX; i++) {
 			delete[] this->mazeIndexData[i];
 		}
 		delete[] this->mazeIndexData;

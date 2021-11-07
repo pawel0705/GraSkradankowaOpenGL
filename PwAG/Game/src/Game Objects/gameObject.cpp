@@ -53,6 +53,9 @@ void GameObject::initGameObject() {
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
 	glVertexAttribDivisor(3, 1);
 
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
+	glEnableVertexAttribArray(4);
+
 	glBindVertexArray(0);
 }
 

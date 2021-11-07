@@ -4,6 +4,7 @@ struct BitMapFile
 {
 	int sizeX;
 	int sizeY;
+	int nrChannels;
 	unsigned char* data;
 };
 

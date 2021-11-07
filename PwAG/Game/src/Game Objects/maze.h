@@ -25,7 +25,8 @@ public:
 	virtual ~Maze();
 
 private:
-	int mazeDimension;
+	int mazeDimensionX;
+	int mazeDimensionY;
 	int** mazeIndexData;
 
 	GameObject* walls;
