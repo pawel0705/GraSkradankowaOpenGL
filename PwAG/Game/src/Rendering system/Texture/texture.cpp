@@ -2,13 +2,26 @@
 #include "texture.h"
 #include <cassert>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "../SourceDep/stb_image.h"
+
 Texture::Texture() {
 
 }
 
 Texture::Texture(const std::string& textureFilePath)
 {
-	this->bmp = this->readBmpImage(textureFilePath);
+	int x;
+	int y;
+	int nrChannels;
+	unsigned char* data = stbi_load(textureFilePath.c_str(), &x, &y, &nrChannels, 0);
+
+	this->bmp = new BitMapFile();
+
+	this->bmp->data = data;
+	this->bmp->sizeX = x;
+	this->bmp->sizeY = y;
+	this->bmp->nrChannels = nrChannels;
 
 	if (this->bmp == nullptr) {
 		std::cout << "Failed loading texture: " + textureFilePath << std::endl;
@@ -93,13 +106,9 @@ int Texture::getTextureHeight() const {
 }
 
 Texture::~Texture() {
-	if (this->bmp != nullptr) {
-		if (this->bmp->data != nullptr) {
-			delete this->bmp->data;
-		}
+	stbi_image_free(this->bmp->data);
 
-		delete this->bmp;
-	}
+	delete this->bmp;
 
 	glDeleteTextures(1, &this->texture);
 }
