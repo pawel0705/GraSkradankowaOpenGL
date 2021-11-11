@@ -10,7 +10,7 @@ Material::Material(glm::vec3 ambientLight) {
 }
 
 void Material::setMaterialShaderUniforms(ShaderProgram& shaderProgram) {
-	shaderProgram.setInt("diffuse", 0);
+	shaderProgram.setFloat("diffuse", 0.0f);
 
 	shaderProgram.setVec3f("ambientLight", this->ambientLight);
 }

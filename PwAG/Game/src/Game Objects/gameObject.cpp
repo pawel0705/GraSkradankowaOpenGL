@@ -44,17 +44,17 @@ void GameObject::initGameObject() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, uv));
 	glEnableVertexAttribArray(2);
 
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
+	glEnableVertexAttribArray(3);
+
 	GLuint offsetBuffer;
 	glGenBuffers(1, &offsetBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, offsetBuffer);
 	glBufferData(GL_ARRAY_BUFFER, this->instances * 3 * sizeof(GLfloat), &this->offsets[0], GL_STATIC_DRAW);
-	glEnableVertexAttribArray(3);
-
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
-	glVertexAttribDivisor(3, 1);
-
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
 	glEnableVertexAttribArray(4);
+
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
+	glVertexAttribDivisor(4, 1);
 
 	glBindVertexArray(0);
 }

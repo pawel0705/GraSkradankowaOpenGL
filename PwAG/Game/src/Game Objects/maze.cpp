@@ -89,7 +89,6 @@ void Maze::initMazeTextures() {
 }
 
 void Maze::initObjModels() {
-
 	std::vector<DataOBJ> cubeObjects = readObj("res/Models/wall.obj");
 	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj");
 	std::vector<DataOBJ> planeUpObjects = readObj("res/Models/plateUp.obj");
@@ -115,6 +114,8 @@ void Maze::initObjModels() {
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
 				this->camera = new Camera(glm::vec3(i * 2.f, 0.0f, j * 2.f));
+				std::cout << i << std::endl;
+				std::cout << j << std::endl;
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
 				offsetsFloors.emplace_back(j * 2.f);

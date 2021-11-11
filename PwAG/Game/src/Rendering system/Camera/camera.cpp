@@ -36,6 +36,10 @@ void Camera::updateEulerAngels() {
 
 void Camera::setCameraUniforms(ShaderProgram* shaderProgram) {
 	shaderProgram->setMat4("ViewMatrix", glm::lookAt(this->transformation.cameraPosition, this->transformation.cameraPosition + this->transformation.cameraFront, this->transformation.cameraUpDown));
+
+	shaderProgram->setVec3f("cameraPos", this->transformation.cameraPosition);
+
+	shaderProgram->setVec3f("lightPosition", this->transformation.cameraPosition);
 }
 
 void Camera::updateInput(const float& deltaTime, const int direction, const float& x, const float& y)
