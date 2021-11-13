@@ -178,7 +178,7 @@ void Maze::initObjModels() {
 	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
 }
 
-void Maze::drawMaze() {
+void Maze::drawMaze(float deltaTime) {
 	this->shaderProgram->useShader();
 	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
@@ -189,7 +189,7 @@ void Maze::drawMaze() {
 	this->torches->draw(this->shaderProgram);
 }
 
-void Maze::updateMaze()
+void Maze::updateMaze(float deltaTime)
 {
 
 }

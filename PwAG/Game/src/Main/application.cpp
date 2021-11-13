@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "application.h"
+#include "./../../gameState.h"
 
 Application::Application()
 	: tmpDefaultFont(std::move(Font("res/Fonts/Segan.ttf", 18))),
@@ -26,8 +27,6 @@ Application::~Application()
 
 void Application::run()
 {
-	this->maze = new Maze();
-
 	Shader textVert = Shader::createShaderFromFile("Shaders/text.vert", Shader::Type::eVertex);
 	Shader textFrag = Shader::createShaderFromFile("Shaders/text.frag", Shader::Type::eFragment);
 
@@ -38,8 +37,15 @@ void Application::run()
 	timer.startTimer("deltaTime");
 	timer.startTimer("fps");
 	timer.startTimer("previousMeasure");
+
+	// tutaj na razie od razu gra, nim siê zrobi menu g³ówne
+	// by przejœæ do innego stanu np. z menu 
+    this->gameReference->m_stateMachine.addNewState(StateReference(new GameState(this->gameReference))); 
+
 	while (mainLoopCondition)
 	{
+		this->gameReference->m_stateMachine.changingState();
+
 		calculateDeltaTime();
 
 		if (timer.getCurrentDurationInSeconds("previousMeasure") >= fpsMeasureCooldown)
@@ -85,42 +91,27 @@ void Application::processInput()
 		this->wireframeModeOff();
 	}
 
-	// camera
-	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyW)]) {
-		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 0, 0, 0);
+	// na razie przesy³¹m 'render' bo dzia³a lepiej
+	if (this->loopedRender) {
+		this->gameReference->m_stateMachine.getCurrentState()->processInput(timer.getMeasuredDurationInMiliseconds("render"), this->keyboard, this->mouse);
 	}
-
-	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyS)]) {
-		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 1, 0, 0);
-	}
-
-	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyA)]) {
-		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 3, 0, 0);
-	}
-
-	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyD)]) {
-		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), 2, 0, 0);
-	}
-
-	// tymczasowo, trzeba zrobiæ obs³ugê obracania myszk¹
-	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyZ)]) {
-		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), -1, 10, 0);
-	}
-
-	if (this->keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyX)]) {
-		this->maze->camera->updateInput(timer.getMeasuredDurationInMiliseconds("render"), -1, -10, 0);
-	}
-
+	
 	timer.stopTimer("input");
+
+	this->loopedInput = true;
 }
 
 void Application::update()
 {
 	timer.startTimer("update");
 
-//	this->maze->updateMaze();
+	if (this->loopedUpdate) {
+		this->gameReference->m_stateMachine.getCurrentState()->update(timer.getMeasuredDurationInMiliseconds("update"));
+	}
 
 	timer.stopTimer("update");
+
+	this->loopedUpdate = true;
 }
 
 void Application::render()
@@ -136,14 +127,13 @@ void Application::render()
 
 		window.clearToColor(80, 80, 80);
 
-		// TODO na razie od razu gra, póŸniej jakaœ maszyna stanów do menu itp
-
 		if (this->wireframeMode) {
 			this->wireframeModeOn(); // wireframe mode on
 		}
 
-		// RENDER GAME OBJECTS
-		this->maze->drawMaze();
+		if (this->loopedRender) {
+			this->gameReference->m_stateMachine.getCurrentState()->render(timer.getMeasuredDurationInMiliseconds("render"));
+		}
 
 		if (this->wireframeMode) {
 			this->wireframeModeOff(); // nie chcemy aby text by³ renderowany w wireframe mode, wiêc przed jego renderem ustawiamy na off
@@ -167,6 +157,8 @@ void Application::render()
 		window.swapBuffers();
 
 		timer.stopTimer("render");
+
+		this->loopedRender = true;
 	}
 }
 

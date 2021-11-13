@@ -17,10 +17,10 @@ public:
 	void initMazeTextures();
 	void initObjModels();
 
-	Camera* camera; // tymczasowo globalnie, jakiœ podzia³ na stany trzeba zrobiæ Game, menu itp...
+	Camera* camera;
 
-	void drawMaze();
-	void updateMaze();
+	void drawMaze(float deltaTime);
+	void updateMaze(float deltaTime);
 
 	virtual ~Maze();
 

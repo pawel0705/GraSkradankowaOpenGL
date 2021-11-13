@@ -94,6 +94,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="gameState.cpp" />
     <ClCompile Include="src\Rendering system\Camera\camera.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp" />
     <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp" />
@@ -124,8 +125,12 @@
     <ClCompile Include="src\Rendering system\ABE Objects\vao.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\vbo.cpp" />
     <ClCompile Include="src\Utilities\timer.cpp" />
+    <ClCompile Include="stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gameAssets.h" />
+    <ClInclude Include="gameState.h" />
+    <ClInclude Include="programState.h" />
     <ClInclude Include="src\Rendering system\Camera\camera.h" />
     <ClInclude Include="src\Rendering system\Model\dataOBJ.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\ebo.h" />
@@ -155,6 +160,7 @@
     <ClInclude Include="src\Game Objects\tileType.h" />
     <ClInclude Include="src\Rendering system\Model\transformationOBJ.h" />
     <ClInclude Include="src\Utilities\timer.h" />
+    <ClInclude Include="stateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\text.frag" />

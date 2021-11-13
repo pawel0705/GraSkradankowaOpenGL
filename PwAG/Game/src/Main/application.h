@@ -1,7 +1,8 @@
 #pragma once
 #include "../Window/window.h"
-#include "../Game Objects/maze.h"
 #include "../Rendering system/Text/text.h"
+#include "../../stateMachine.h"
+#include "../../gameAssets.h"
 
 #pragma region GLFW event callbacks
 void framebuffer_size_callback(GLFWwindow* window, const int width, const int height);
@@ -48,10 +49,10 @@ private:
 	Keyboard keyboard;
 	Mouse mouse;
 
-	Maze* maze;
-
 	Font tmpDefaultFont;
 	ShaderProgram textShader;
+
+	GameReference gameReference = std::make_shared<GameAssets>(); //state machine here
 
 	double deltaTime;
 
@@ -80,5 +81,11 @@ private:
 	bool mainLoopCondition = true;
 
 	bool wireframeMode = false;
+
+	// czy dana metoda chocia¿ raz do koñca przelecia³a (bez sprawdzenia wywala wyj¹tek, bo s³owniki np. name['render'] start/stop trzymaj¹ce czas s¹ puste przed koñcem pierwszej pêtli)
+	// jak bêdzie czas to do poprawy aby co ka¿dy loop nie sprawdza³o flagi
+	bool loopedInput = false;
+	bool loopedRender = false;
+	bool loopedUpdate = false;
 };
 
