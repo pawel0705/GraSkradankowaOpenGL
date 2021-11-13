@@ -32,6 +32,7 @@ private:
 	GameObject* walls;
 	GameObject* floors;
 	GameObject* ceilings;
+	GameObject* torches;
 
 	ShaderProgram* shaderProgram;
 
@@ -43,5 +44,6 @@ private:
 	Texture* wallTexture;
 	Texture* floorTexture;
 	Texture* ceilingTexture;
+	Texture* torchTexture;
 };
 

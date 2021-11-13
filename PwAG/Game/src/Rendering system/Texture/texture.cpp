@@ -9,7 +9,7 @@ Texture::Texture() {
 
 }
 
-Texture::Texture(const std::string& textureFilePath)
+Texture::Texture(const std::string& textureFilePath, TextureType textureType)
 {
 	int x;
 	int y;
@@ -23,6 +23,8 @@ Texture::Texture(const std::string& textureFilePath)
 	this->bmp->sizeY = y;
 	this->bmp->nrChannels = nrChannels;
 
+	this->textureType = textureType;
+
 	if (this->bmp == nullptr) {
 		std::cout << "Failed loading texture: " + textureFilePath << std::endl;
 	}
@@ -33,14 +35,26 @@ Texture::Texture(const std::string& textureFilePath)
 void Texture::initializeTexture() {
 	glGenTextures(1, &this->texture);
 	glBindTexture(GL_TEXTURE_2D, this->texture);
-	
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp->data);
+	if (this->textureType == TextureType::BMP) 
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp->data);
+	}
+	else if (this->textureType == TextureType::PNG) 
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp->data);
+	}
+	else 
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp->data);
+	}
+
 	glGenerateMipmap(GL_TEXTURE_2D);
 }
 

@@ -1,2 +1,3 @@
+Wall, floor, ceiling:
 https://opengameart.org/content/tileable-dirt-textures
 https://opengameart.org/content/tileable-bricks-ground-textures-set-1

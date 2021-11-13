@@ -20,6 +20,6 @@ void main() {
 
   v_Color = v_color;
   v_TextCoord = v_textcoord;  
-  v_Normal = mat3(ModelMatrix) * (v_normal + offset);
-  v_Position = vec3(v_position + offset);
+  v_Normal = mat3(ModelMatrix * inverse(ViewMatrix)) * (v_normal + offset);
+  v_Position =  vec3(v_position + offset);
 }

@@ -83,23 +83,27 @@ void Maze::initMazeMaterials() {
 }
 
 void Maze::initMazeTextures() {
-	this->wallTexture = new Texture("res/Textures/wall.bmp");
-	this->floorTexture = new Texture("res/Textures/floor.bmp");
-	this->ceilingTexture = new Texture("res/Textures/ceiling.bmp");
+	this->wallTexture = new Texture("res/Textures/wall.bmp", TextureType::BMP);
+	this->floorTexture = new Texture("res/Textures/floor.bmp", TextureType::BMP);
+	this->ceilingTexture = new Texture("res/Textures/ceiling.bmp", TextureType::BMP);
+	this->torchTexture = new Texture("res/Textures/wood.png", TextureType::PNG);
 }
 
 void Maze::initObjModels() {
 	std::vector<DataOBJ> cubeObjects = readObj("res/Models/wall.obj");
 	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj");
 	std::vector<DataOBJ> planeUpObjects = readObj("res/Models/plateUp.obj");
+	std::vector<DataOBJ> torchObjects = readObj("res/Models/torch.obj");
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;
 	std::vector<GLfloat> offsetsFloors;
+	std::vector<GLfloat> offsetsTorches;
 
 	int wallInstances = 0;
 	int ceilingInstances = 0;
 	int floorInstances = 0;
+	int torchInstances = 0;
 
 	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
@@ -114,8 +118,7 @@ void Maze::initObjModels() {
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
 				this->camera = new Camera(glm::vec3(i * 2.f, 0.0f, j * 2.f));
-				std::cout << i << std::endl;
-				std::cout << j << std::endl;
+
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
 				offsetsFloors.emplace_back(j * 2.f);
@@ -145,6 +148,34 @@ void Maze::initObjModels() {
 	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
 	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
+
+
+	// randomize torhes
+	for (int i = 0; i < floorInstances; i++) {
+		int randomValue = rand() % 8;
+
+		// some chance to spawn torch
+		if (randomValue == 0) {
+			int j = 3 * i;
+			float x = offsetsFloors[j];
+			float y = offsetsFloors[j + 2];
+
+			int from = -8;
+			int to = 8;
+
+			float offsetX = (from + rand() % (to - from + 1)) / 10.0f;
+			offsetsTorches.emplace_back(x + offsetX);
+			offsetsTorches.emplace_back(-2.0f);
+
+			float offsetY = (from + rand() % (to - from + 1)) / 10.0f;
+			offsetsTorches.emplace_back(y + offsetY);
+
+			torchInstances++;
+		}
+	}
+
+
+	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
 }
 
 void Maze::drawMaze() {
@@ -155,6 +186,7 @@ void Maze::drawMaze() {
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
+	this->torches->draw(this->shaderProgram);
 }
 
 void Maze::updateMaze()
@@ -176,6 +208,8 @@ Maze::~Maze() {
 
 	delete this->ceilings;
 
+	delete this->torches;
+
 	delete this->camera;
 
 	delete this->shaderProgram;
@@ -183,4 +217,6 @@ Maze::~Maze() {
 	delete this->material;
 
 	delete this->wallTexture;
+
+	delete this->torchTexture;
 }

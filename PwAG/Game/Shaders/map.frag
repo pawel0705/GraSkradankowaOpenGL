@@ -17,14 +17,15 @@ void main()
 		// diffuse light
 		vec3 posToLightDirectionVector = normalize(lightPosition - v_Position);
 		vec3 diffuseColor = vec3(1.0f, 1.0f, 1.0f);
-		float diffuseLight = clamp(dot(posToLightDirectionVector, normalize(v_Normal)), 0, 1);
+		//float diffuseLight = clamp(dot(posToLightDirectionVector, normalize(v_Normal)), 0, 1);
+		float diffuseLight = max(dot(normalize(v_Normal), posToLightDirectionVector), 0.0f);
 		vec3 diffuseFinal = diffuseColor * diffuseLight;
 	
 		// specular light
 		vec3 lightToPosDirectionVector = normalize(v_Position - lightPosition);
 		vec3 reflectDirVec = normalize(reflect(lightToPosDirectionVector, normalize(v_Normal)));
 		vec3 posToViewDirVec = normalize(cameraPos - v_Position);
-		float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 35);
+		float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 105);
 		vec3 specularFinal = vec3(1.0f, 1.0f, 1.0f) * specularConstant * texture(diffuse, v_TextCoord).rgb;
 	
 		// ambient light
@@ -33,7 +34,7 @@ void main()
 		// attentuation
 		float distance = length(lightPosition - v_Position);
 		// constant linear quadric
-		float attentuation = 1.0f / (1.0f + 0.02f * distance + 0.0075f * (distance * distance));
+		float attentuation = 1.0f / (1.0f + 0.02f * distance + 0.025f * (distance * distance));
 	
 
 		diffuseFinal *= attentuation;

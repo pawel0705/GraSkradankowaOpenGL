@@ -1,5 +1,10 @@
 #pragma once
 
+enum TextureType {
+	BMP = 0,
+	PNG = 1,
+};
+
 struct BitMapFile
 {
 	int sizeX;
@@ -12,7 +17,7 @@ class Texture
 {
 public:
 	Texture();
-	Texture(const std::string& textureFilePath);
+	Texture(const std::string& textureFilePath, TextureType textureType);
 
 	void bindTexture(unsigned int unit);
 	void unbindTexture();
@@ -25,6 +30,8 @@ public:
 private:
 	GLuint texture;
 	BitMapFile* bmp;
+
+	TextureType textureType;
 
 	BitMapFile* readBmpImage(const std::string &filePath);
 
