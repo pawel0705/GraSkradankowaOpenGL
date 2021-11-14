@@ -13,6 +13,8 @@ GameState::~GameState()
 void GameState::initialization()
 {
 	this->maze = new Maze();
+	glfwSetInputMode(this->gameReference->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	this->cursorDisabled = true;
 }
 
 void GameState::processInput(float deltaTime, Keyboard keyboard, Mouse mouse)
@@ -34,14 +36,29 @@ void GameState::processInput(float deltaTime, Keyboard keyboard, Mouse mouse)
 		this->maze->camera->updateInput(deltaTime, 2, 0, 0);
 	}
 
-	// tymczasowo, trzeba zrobiæ obs³ugê obracania myszk¹
-	if (keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyZ)]) {
-		this->maze->camera->updateInput(deltaTime, -1, 10, 0);
+	if (keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyEscape)]) {
+		if (this->cursorDisabled) {
+			glfwSetInputMode(this->gameReference->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			this->cursorDisabled = false;
+		} else {
+			glfwSetInputMode(this->gameReference->window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			this->cursorDisabled = true;
+		}
 	}
 
-	if (keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyX)]) {
-		this->maze->camera->updateInput(deltaTime, -1, -10, 0);
+	if (this->lastMousePosX != mouse.posX) {
+		int moveX = mouse.posX - this->lastMousePosX;
+		this->maze->camera->updateInput(deltaTime, -1, moveX, 0);
+		this->lastMousePosX = mouse.posX;
 	}
+
+	/*
+	if (this->lastMousePosY != mouse.posY) {
+		int moveY = mouse.posY - this->lastMousePosY;
+		this->maze->camera->updateInput(deltaTime, -1, 0, -moveY);
+		this->lastMousePosY = mouse.posY;
+	}
+	*/
 }
 
 void GameState::update(float deltaTime)

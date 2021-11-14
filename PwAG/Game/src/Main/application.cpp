@@ -41,6 +41,7 @@ void Application::run()
 	// tutaj na razie od razu gra, nim siê zrobi menu g³ówne
 	// by przejœæ do innego stanu np. z menu 
     this->gameReference->m_stateMachine.addNewState(StateReference(new GameState(this->gameReference))); 
+	this->gameReference->window = this->window.getGLFWWindow();
 
 	while (mainLoopCondition)
 	{

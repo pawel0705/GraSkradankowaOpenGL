@@ -11,6 +11,11 @@ private:
 	Maze* maze;
 	GameReference gameReference;
 
+	int lastMousePosX;
+	int lastMousePosY;
+
+	bool cursorDisabled;
+
 public:
 	GameState(GameReference gameReference);
 	~GameState();

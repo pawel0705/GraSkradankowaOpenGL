@@ -4,8 +4,7 @@
 
 struct GameAssets
 {
-	// todo window (?)
-
+	GLFWwindow* window;
 	StateMachine m_stateMachine; //state machine
 };
 
