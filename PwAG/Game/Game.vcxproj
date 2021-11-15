@@ -94,7 +94,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="gameOverState.cpp" />
     <ClCompile Include="gameState.cpp" />
+    <ClCompile Include="menuState.cpp" />
     <ClCompile Include="src\Rendering system\Camera\camera.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp" />
     <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp" />
@@ -129,7 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gameAssets.h" />
+    <ClInclude Include="gameOverState.h" />
     <ClInclude Include="gameState.h" />
+    <ClInclude Include="menuState.h" />
     <ClInclude Include="programState.h" />
     <ClInclude Include="src\Rendering system\Camera\camera.h" />
     <ClInclude Include="src\Rendering system\Model\dataOBJ.h" />
