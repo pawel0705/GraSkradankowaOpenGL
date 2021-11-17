@@ -33,11 +33,18 @@ private:
 	GameObject* floors;
 	GameObject* ceilings;
 	GameObject* torches;
+	GameObject* grass1;
+	GameObject* grass2;
+	GameObject* grass3;
 
 	ShaderProgram* shaderProgram;
+	ShaderProgram* shaderGrassProgram;
 
 	Shader vertexShader;
 	Shader fragmentShader;
+
+	Shader vertexShaderGrass;
+	Shader fragmentShaderGrass;
 
 	Material* material;
 
@@ -45,5 +52,8 @@ private:
 	Texture* floorTexture;
 	Texture* ceilingTexture;
 	Texture* torchTexture;
+	Texture* grass_1Texture;
+	Texture* grass_2Texture;
+	Texture* grass_3Texture;
 };
 

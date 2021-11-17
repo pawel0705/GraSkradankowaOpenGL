@@ -65,6 +65,10 @@ void Maze::initMatrixMVP() {
 	this->shaderProgram->useShader();
 	this->shaderProgram->setMat4("ProjectionMatrix", projectionMatrix);
 	this->camera->setCameraUniforms(this->shaderProgram);
+
+	this->shaderGrassProgram->useShader();
+	this->shaderGrassProgram->setMat4("ProjectionMatrix", projectionMatrix);
+	this->camera->setCameraUniforms(this->shaderGrassProgram);
 }
 
 void Maze::initMazeShaders() {
@@ -76,6 +80,14 @@ void Maze::initMazeShaders() {
 	this->shaderProgram->attachShader(this->fragmentShader);
 	this->shaderProgram->attachShader(this->vertexShader);
 	this->shaderProgram->linkShaderProgram();
+
+	this->fragmentShaderGrass = Shader::createShaderFromFile("Shaders/mapGrass.frag", Shader::Type::eFragment);
+	this->vertexShaderGrass = Shader::createShaderFromFile("Shaders/map.vert", Shader::Type::eVertex);
+
+	this->shaderGrassProgram = new ShaderProgram();
+	this->shaderGrassProgram->attachShader(this->fragmentShaderGrass);
+	this->shaderGrassProgram->attachShader(this->vertexShaderGrass);
+	this->shaderGrassProgram->linkShaderProgram();
 }
 
 void Maze::initMazeMaterials() {
@@ -87,6 +99,9 @@ void Maze::initMazeTextures() {
 	this->floorTexture = new Texture("res/Textures/floor.bmp", TextureType::BMP);
 	this->ceilingTexture = new Texture("res/Textures/ceiling.bmp", TextureType::BMP);
 	this->torchTexture = new Texture("res/Textures/wood.png", TextureType::PNG);
+	this->grass_1Texture = new Texture("res/Textures/grass1.png", TextureType::PNG);
+	this->grass_2Texture = new Texture("res/Textures/grass2.png", TextureType::PNG);
+	this->grass_3Texture = new Texture("res/Textures/grass3.png", TextureType::PNG);
 }
 
 void Maze::initObjModels() {
@@ -94,16 +109,23 @@ void Maze::initObjModels() {
 	std::vector<DataOBJ> planeObjects = readObj("res/Models/plate.obj");
 	std::vector<DataOBJ> planeUpObjects = readObj("res/Models/plateUp.obj");
 	std::vector<DataOBJ> torchObjects = readObj("res/Models/torch.obj");
+	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;
 	std::vector<GLfloat> offsetsFloors;
 	std::vector<GLfloat> offsetsTorches;
+	std::vector<GLfloat> offsetsGrass1;
+	std::vector<GLfloat> offsetsGrass2;
+	std::vector<GLfloat> offsetsGrass3;
 
 	int wallInstances = 0;
 	int ceilingInstances = 0;
 	int floorInstances = 0;
 	int torchInstances = 0;
+	int grass1Instances = 0;
+	int grass2Instances = 0;
+	int grass3Instances = 0;
 
 	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
@@ -174,8 +196,49 @@ void Maze::initObjModels() {
 		}
 	}
 
-
 	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
+
+	// randomize grass
+	for (int i = 0; i < floorInstances; i++) {
+
+		int j = 3 * i;
+		float x = offsetsFloors[j];
+		float y = offsetsFloors[j + 2];
+
+		int from = -8;
+		int to = 8;
+
+		float offsetX = (from + rand() % (to - from + 1)) / 10.0f;
+		float offsetY = (from + rand() % (to - from + 1)) / 10.0f;
+
+		int randomValue = rand() % 3;
+
+		if (randomValue == 0) {
+			offsetsGrass1.emplace_back(x + offsetX);
+			offsetsGrass1.emplace_back(-2.0f);
+			offsetsGrass1.emplace_back(y + offsetY);
+
+			grass1Instances++;
+		}
+		else if (randomValue == 1) {
+			offsetsGrass2.emplace_back(x + offsetX);
+			offsetsGrass2.emplace_back(-2.0f);
+			offsetsGrass2.emplace_back(y + offsetY);
+
+			grass2Instances++;
+		}
+		else {
+			offsetsGrass3.emplace_back(x + offsetX);
+			offsetsGrass3.emplace_back(-2.0f);
+			offsetsGrass3.emplace_back(y + offsetY);
+
+			grass3Instances++;
+		}
+	}
+
+	this->grass1 = new GameObject(material, this->grass_1Texture, grass_Objects, transformation, offsetsGrass1, grass1Instances);
+	this->grass2 = new GameObject(material, this->grass_2Texture, grass_Objects, transformation, offsetsGrass2, grass2Instances);
+	this->grass3 = new GameObject(material, this->grass_3Texture, grass_Objects, transformation, offsetsGrass3, grass3Instances);
 }
 
 void Maze::drawMaze(float deltaTime) {
@@ -187,6 +250,12 @@ void Maze::drawMaze(float deltaTime) {
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
 	this->torches->draw(this->shaderProgram);
+
+	this->shaderGrassProgram->useShader();
+	this->camera->setCameraUniforms(this->shaderGrassProgram);
+	this->grass1->draw(this->shaderGrassProgram);
+	this->grass2->draw(this->shaderGrassProgram);
+	this->grass3->draw(this->shaderGrassProgram);
 }
 
 void Maze::updateMaze(float deltaTime)
@@ -210,9 +279,17 @@ Maze::~Maze() {
 
 	delete this->torches;
 
+	delete this->grass1;
+
+	delete this->grass2;
+
+	delete this->grass3;
+
 	delete this->camera;
 
 	delete this->shaderProgram;
+
+	delete this->shaderGrassProgram;
 
 	delete this->material;
 
