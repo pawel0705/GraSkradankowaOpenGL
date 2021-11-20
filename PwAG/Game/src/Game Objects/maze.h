@@ -37,14 +37,20 @@ private:
 	GameObject* grass2;
 	GameObject* grass3;
 
+	std::vector<GameObject*> respawnPickup;
+
 	ShaderProgram* shaderProgram;
 	ShaderProgram* shaderGrassProgram;
+	ShaderProgram* shaderPickupProgram;
 
 	Shader vertexShader;
 	Shader fragmentShader;
 
 	Shader vertexShaderGrass;
 	Shader fragmentShaderGrass;
+
+	Shader vertexShaderPickup;
+	Shader fragmentShaderPickup;
 
 	Material* material;
 
@@ -55,5 +61,7 @@ private:
 	Texture* grass_1Texture;
 	Texture* grass_2Texture;
 	Texture* grass_3Texture;
+	Texture* spawnActiveTexture;
+	Texture* spawnInactiveTexture;
 };
 

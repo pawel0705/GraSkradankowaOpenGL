@@ -24,6 +24,7 @@ public:
 	void setScale(const glm::vec3 scale);
 
 	glm::vec3 getPosition();
+	glm::vec3 getRotation();
 
 	~GameObject();
 

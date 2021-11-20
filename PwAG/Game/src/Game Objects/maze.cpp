@@ -69,6 +69,10 @@ void Maze::initMatrixMVP() {
 	this->shaderGrassProgram->useShader();
 	this->shaderGrassProgram->setMat4("ProjectionMatrix", projectionMatrix);
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
+
+	this->shaderPickupProgram->useShader();
+	this->shaderPickupProgram->setMat4("ProjectionMatrix", projectionMatrix);
+	this->camera->setCameraUniforms(this->shaderPickupProgram);
 }
 
 void Maze::initMazeShaders() {
@@ -88,6 +92,14 @@ void Maze::initMazeShaders() {
 	this->shaderGrassProgram->attachShader(this->fragmentShaderGrass);
 	this->shaderGrassProgram->attachShader(this->vertexShaderGrass);
 	this->shaderGrassProgram->linkShaderProgram();
+
+	this->fragmentShaderPickup = Shader::createShaderFromFile("Shaders/mapPickup.frag", Shader::Type::eFragment);
+	this->vertexShaderPickup = Shader::createShaderFromFile("Shaders/map.vert", Shader::Type::eVertex);
+
+	this->shaderPickupProgram = new ShaderProgram();
+	this->shaderPickupProgram->attachShader(this->fragmentShaderPickup);
+	this->shaderPickupProgram->attachShader(this->vertexShaderPickup);
+	this->shaderPickupProgram->linkShaderProgram();
 }
 
 void Maze::initMazeMaterials() {
@@ -102,6 +114,8 @@ void Maze::initMazeTextures() {
 	this->grass_1Texture = new Texture("res/Textures/grass1.png", TextureType::PNG);
 	this->grass_2Texture = new Texture("res/Textures/grass2.png", TextureType::PNG);
 	this->grass_3Texture = new Texture("res/Textures/grass3.png", TextureType::PNG);
+	this->spawnActiveTexture = new Texture("res/Textures/spawnActive.png", TextureType::PNG);
+	this->spawnInactiveTexture = new Texture("res/Textures/spawnInactive.png", TextureType::PNG);
 }
 
 void Maze::initObjModels() {
@@ -110,6 +124,7 @@ void Maze::initObjModels() {
 	std::vector<DataOBJ> planeUpObjects = readObj("res/Models/plateUp.obj");
 	std::vector<DataOBJ> torchObjects = readObj("res/Models/torch.obj");
 	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
+	std::vector<DataOBJ> spawn_Objects = readObj("res/Models/respawnPickup.obj");
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;
@@ -126,6 +141,8 @@ void Maze::initObjModels() {
 	int grass1Instances = 0;
 	int grass2Instances = 0;
 	int grass3Instances = 0;
+
+	TransformationOBJ transformation = TransformationOBJ();
 
 	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
@@ -151,6 +168,14 @@ void Maze::initObjModels() {
 
 				floorInstances++;
 				ceilingInstances++;
+
+				std::vector<GLfloat> offsetRespawn;
+
+				offsetRespawn.emplace_back(i * 2.f);
+				offsetRespawn.emplace_back(0.0f);
+				offsetRespawn.emplace_back(j * 2.f);
+
+				this->respawnPickup.push_back(new GameObject(material, this->spawnActiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE) {
 				offsetsFloors.emplace_back(i * 2.f);
@@ -164,9 +189,29 @@ void Maze::initObjModels() {
 				floorInstances++;
 				ceilingInstances++;
 			}
+			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_RESPAWN) {
+				offsetsFloors.emplace_back(i * 2.f);
+				offsetsFloors.emplace_back(-2.0f);
+				offsetsFloors.emplace_back(j * 2.f);
+
+				offsetsCeiling.emplace_back(i * 2.f);
+				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(j * 2.f);
+
+				floorInstances++;
+				ceilingInstances++;
+
+				std::vector<GLfloat> offsetRespawn;
+
+				offsetRespawn.emplace_back(i * 2.f);
+				offsetRespawn.emplace_back(0.0f);
+				offsetRespawn.emplace_back(j * 2.f);
+
+				this->respawnPickup.push_back(new GameObject(material, this->spawnInactiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
+			}
 		}
 	}
-	TransformationOBJ transformation = TransformationOBJ();
+
 	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
 	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
@@ -174,7 +219,7 @@ void Maze::initObjModels() {
 
 	// randomize torhes
 	for (int i = 0; i < floorInstances; i++) {
-		int randomValue = rand() % 8;
+		int randomValue = rand() % 10;
 
 		// some chance to spawn torch
 		if (randomValue == 0) {
@@ -256,6 +301,17 @@ void Maze::drawMaze(float deltaTime) {
 	this->grass1->draw(this->shaderGrassProgram);
 	this->grass2->draw(this->shaderGrassProgram);
 	this->grass3->draw(this->shaderGrassProgram);
+
+
+	this->shaderPickupProgram->useShader();
+	this->camera->setCameraUniforms(this->shaderPickupProgram);
+//	glEnable(GL_BLEND);
+	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	for (auto p : this->respawnPickup)
+	{
+		p->draw(this->shaderPickupProgram);
+	}
+//	glDisable(GL_BLEND);
 }
 
 void Maze::updateMaze(float deltaTime)
@@ -270,6 +326,12 @@ Maze::~Maze() {
 		}
 		delete[] this->mazeIndexData;
 	}
+
+	for (auto p : this->respawnPickup)
+	{
+		delete p;
+	}
+	this->respawnPickup.clear();
 
 	delete this->walls;
 
@@ -291,9 +353,15 @@ Maze::~Maze() {
 
 	delete this->shaderGrassProgram;
 
+	delete this->shaderPickupProgram;
+
 	delete this->material;
 
 	delete this->wallTexture;
 
 	delete this->torchTexture;
+
+	delete this->spawnInactiveTexture;
+
+	delete this->spawnActiveTexture;
 }

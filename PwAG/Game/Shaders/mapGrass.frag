@@ -42,5 +42,5 @@ void main()
 		if (texture(diffuse, v_TextCoord).a < 0.1)
 			discard;
 	
-		gl_FragColor = texture(diffuse, v_TextCoord) * (vec4(ambientFinal, 1.0f) + vec4(diffuseFinal, 1.0f) + vec4(specularFinal, 1.f));
+		gl_FragColor = texture(diffuse, v_TextCoord) * ((vec4(ambientFinal, 1.0f) + vec4(diffuseFinal, 1.0f) + vec4(specularFinal, 1.f)));
 }

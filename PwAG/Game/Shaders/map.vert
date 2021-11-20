@@ -11,8 +11,8 @@ out vec3 v_Position;
 
 layout(location = 0) in vec3 v_position;
 layout(location = 1) in vec3 v_color;
-layout(location = 2) in vec2 v_textcoord;
-layout(location = 3) in vec3 v_normal;
+layout(location = 2) in vec3 v_normal;
+layout(location = 3) in vec2 v_textcoord;
 layout(location = 4) in vec3 offset;
 
 void main() {

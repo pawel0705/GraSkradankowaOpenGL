@@ -41,10 +41,10 @@ void GameObject::initGameObject() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, color));
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, uv));
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
 	glEnableVertexAttribArray(2);
 
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, uv));
 	glEnableVertexAttribArray(3);
 
 	GLuint offsetBuffer;
@@ -106,6 +106,10 @@ void GameObject::setScale(const glm::vec3 scale)
 
 glm::vec3 GameObject::getPosition() {
 	return this->transformation.objectPosition;
+}
+
+glm::vec3 GameObject::getRotation() {
+	return this->transformation.objectRotation;
 }
 
 GameObject::~GameObject()
