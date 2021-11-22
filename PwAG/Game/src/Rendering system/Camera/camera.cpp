@@ -14,9 +14,9 @@ Camera::Camera(glm::vec3 position) {
 	this->transformation.cameraPitch = 0;
 	this->transformation.cameraYaw = -90;
 
-	this->speed = 0.0025f;
+	this->speed = 2.5f;
 	this->zoom = 45.0f;
-	this->sensitivity = 0.01f;
+	this->sensitivity = 50.f;
 
 	this->updateEulerAngels();
 }
@@ -50,6 +50,7 @@ void Camera::updateInput(const float& deltaTime, const int direction, const floa
 
 void Camera::UpdateKeyboard(const float& deltaTime, const int direction)
 {
+	
 	if (direction == 0) // up 
 	{
 		this->transformation.cameraPosition += this->transformation.cameraFront * speed * deltaTime;

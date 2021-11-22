@@ -31,17 +31,13 @@ public:
 	void render();
 
 private:
-	void updateMVCMeasurementTexts();
-
 	void updateFPSText();
-	void updateInputText();
-	void updateUpdateText();
-	void updateRenderText();
 
 	void wireframeModeOn();
 	void wireframeModeOff();
 
 	void calculateDeltaTime();
+	void calculateRenderDeltaTime();
 
 	Window window;
 
@@ -54,7 +50,8 @@ private:
 
 	GameReference gameReference = std::make_shared<GameAssets>(); //state machine here
 
-	double deltaTime;
+	double deltaTime = 0.0f;
+	double renderDeltaTime = 0.0f;
 
 	uint32_t fpsCap = 240;
 	double fpsCapCooldown; //in seconds

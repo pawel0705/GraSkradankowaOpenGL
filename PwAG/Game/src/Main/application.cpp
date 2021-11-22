@@ -94,7 +94,7 @@ void Application::processInput()
 
 	// na razie przesy³¹m 'render' bo dzia³a lepiej
 	if (this->loopedRender) {
-		this->gameReference->m_stateMachine.getCurrentState()->processInput(timer.getMeasuredDurationInMiliseconds("render"), this->keyboard, this->mouse);
+		this->gameReference->m_stateMachine.getCurrentState()->processInput(deltaTime, this->keyboard, this->mouse);
 	}
 	
 	timer.stopTimer("input");
@@ -107,7 +107,7 @@ void Application::update()
 	timer.startTimer("update");
 
 	if (this->loopedUpdate) {
-		this->gameReference->m_stateMachine.getCurrentState()->update(timer.getMeasuredDurationInMiliseconds("update"));
+		this->gameReference->m_stateMachine.getCurrentState()->update(deltaTime);
 	}
 
 	timer.stopTimer("update");
@@ -121,9 +121,10 @@ void Application::render()
 	if (fpsCapCooldownLeft <= 0.0f)
 	{
 		frameDuration = timer.getCurrentDurationInSeconds("fps");
+		timer.startTimer("fps");
+
 		fpsCapCooldownLeft = fpsCapCooldown;
 		
-		timer.startTimer("fps");
 		timer.startTimer("render");
 
 		window.clearToColor(80, 80, 80);
@@ -133,7 +134,7 @@ void Application::render()
 		}
 
 		if (this->loopedRender) {
-			this->gameReference->m_stateMachine.getCurrentState()->render(timer.getMeasuredDurationInMiliseconds("render"));
+			this->gameReference->m_stateMachine.getCurrentState()->render(renderDeltaTime);
 		}
 
 		if (this->wireframeMode) {
@@ -202,6 +203,9 @@ void Application::calculateDeltaTime()
 {
 	deltaTime = timer.getCurrentDurationInSeconds("deltaTime");
 	timer.startTimer("deltaTime");
+}
 
-	//std::cout << deltaTime << std::endl;
+void Application::calculateRenderDeltaTime()
+{
+	renderDeltaTime = frameDuration;
 }
