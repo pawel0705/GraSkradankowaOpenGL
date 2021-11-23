@@ -94,9 +94,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Rendering system\Lighting\attenuation.cpp" />
     <ClCompile Include="gameOverState.cpp" />
     <ClCompile Include="gameState.cpp" />
+    <ClCompile Include="src\Rendering system\Lighting\light.cpp" />
     <ClCompile Include="menuState.cpp" />
+    <ClCompile Include="src\Rendering system\Lighting\spot.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\point.cpp" />
     <ClCompile Include="src\Rendering system\Camera\camera.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp" />
@@ -131,10 +134,13 @@
     <ClCompile Include="stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Rendering system\Lighting\attenuation.h" />
     <ClInclude Include="gameAssets.h" />
     <ClInclude Include="gameOverState.h" />
     <ClInclude Include="gameState.h" />
+    <ClInclude Include="src\Rendering system\Lighting\light.h" />
     <ClInclude Include="menuState.h" />
+    <ClInclude Include="src\Rendering system\Lighting\spot.h" />
     <ClInclude Include="src\Rendering system\Lighting\point.h" />
     <ClInclude Include="programState.h" />
     <ClInclude Include="src\Rendering system\Camera\camera.h" />
