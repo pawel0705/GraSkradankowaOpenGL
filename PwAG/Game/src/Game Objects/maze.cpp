@@ -52,6 +52,8 @@ void Maze::initMaze() {
 	this->initObjModels();
 	this->initMazeShaders();
 	this->initMatrixMVP();
+
+	pointLights.push_back(Light::Point  { {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f} });
 }
 
 void Maze::initMatrixMVP() {
@@ -291,6 +293,22 @@ void Maze::drawMaze(float deltaTime) {
 	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
+	this->shaderProgram->setInt("pointLightsCount", pointLights.size());
+	this->shaderProgram->setInt("spotLightsCount", 0);
+	char lightIndex[4];
+	for(int i = 0; i < pointLights.size();++i)
+	{
+		sprintf_s(lightIndex, 4, "[%d]", i);
+		this->shaderProgram->setVec3f("pointLights" + std::string(lightIndex) + ".position", pointLights[0].getPosition());
+
+		this->shaderProgram->setVec3f("pointLights" + std::string(lightIndex) + ".ambient", pointLights[0].getAmbient());
+		this->shaderProgram->setVec3f("pointLights" + std::string(lightIndex) + ".diffuse", pointLights[0].getDiffuse());
+		this->shaderProgram->setVec3f("pointLights" + std::string(lightIndex) + ".specular", pointLights[0].getSpecular());
+
+		this->shaderProgram->setFloat("pointLights" + std::string(lightIndex) + ".constant", pointLights[0].getAttenuation().constant);
+		this->shaderProgram->setFloat("pointLights" + std::string(lightIndex) + ".linear", pointLights[0].getAttenuation().linear);
+		this->shaderProgram->setFloat("pointLights" + std::string(lightIndex) + ".quadratic", pointLights[0].getAttenuation().quadratic);
+	}
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);

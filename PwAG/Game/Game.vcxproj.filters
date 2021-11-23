@@ -210,5 +210,9 @@
     <ClInclude Include="src\Rendering system\Model\transformationOBJ.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <None Include="Shaders\map.frag" />
+    <None Include="Shaders\map.vert" />
+    <None Include="Shaders\mapGrass.frag" />
+    <None Include="Shaders\mapPickup.frag" />
   </ItemGroup>
 </Project>

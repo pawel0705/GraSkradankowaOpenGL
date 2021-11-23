@@ -23,6 +23,18 @@ namespace Light
 		{
 			return color;
 		}
+		const glm::vec3& getAmbient()
+		{
+			return ambient;
+		}
+		const glm::vec3& getSpecular()
+		{
+			return specular;
+		}
+		const glm::vec3& getDiffuse()
+		{
+			return diffuse;
+		}
 		const Attenuation& getAttenuation() const
 		{
 			return attenuation;
@@ -39,6 +51,10 @@ namespace Light
 		void setColor(const glm::vec3& color)
 		{
 			this->color = color;
+
+			this->ambient = color * 0.05f;
+			this->specular = color * 1.0f;
+			this->diffuse = color * 0.8f;
 		}
 		void setAttenuation(const Attenuation& attenuation)
 		{
@@ -59,7 +75,11 @@ namespace Light
 		#pragma endregion
 	private:
 		glm::vec3 position;
+		
 		glm::vec3 color;
+		glm::vec3 ambient;
+		glm::vec3 specular;
+		glm::vec3 diffuse;
 
 		Attenuation attenuation;
 		float range = 50;

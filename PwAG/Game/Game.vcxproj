@@ -169,6 +169,10 @@
     <ClInclude Include="stateMachine.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\map.frag" />
+    <None Include="Shaders\map.vert" />
+    <None Include="Shaders\mapGrass.frag" />
+    <None Include="Shaders\mapPickup.frag" />
     <None Include="Shaders\text.frag" />
     <None Include="Shaders\text.vert" />
   </ItemGroup>
