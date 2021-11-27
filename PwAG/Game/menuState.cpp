@@ -15,7 +15,7 @@ void MenuState::initialization()
 
 }
 
-void MenuState::processInput(float deltaTime, Keyboard keyboard, Mouse mouse)
+void MenuState::processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse)
 {
 	
 }
