@@ -126,14 +126,6 @@ void Maze::initObjModels() {
 	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
 	std::vector<DataOBJ> spawn_Objects = readObj("res/Models/respawnPickup.obj");
 
-	std::vector<GLfloat> offsetsWalls;
-	std::vector<GLfloat> offsetsCeiling;
-	std::vector<GLfloat> offsetsFloors;
-	std::vector<GLfloat> offsetsTorches;
-	std::vector<GLfloat> offsetsGrass1;
-	std::vector<GLfloat> offsetsGrass2;
-	std::vector<GLfloat> offsetsGrass3;
-
 	int wallInstances = 0;
 	int ceilingInstances = 0;
 	int floorInstances = 0;
@@ -316,7 +308,27 @@ void Maze::drawMaze(float deltaTime) {
 
 void Maze::updateMaze(float deltaTime)
 {
+	
+}
 
+bool Maze::willBeCollisionWithWall(float deltaTime) {
+	glm::vec3 playerPosition = this->camera->getFutureCameraPosition();
+	bool isCollision = false;
+
+	for (int i = 0; i < this->offsetsWalls.size(); i += 3) {
+		float x = this->offsetsWalls[i];
+		float z = this->offsetsWalls[i + 2];
+
+		if (x - 0.5f < playerPosition.x &&
+			x + 2.5f > playerPosition.x &&
+			z - 0.5f < playerPosition.z &&
+			z + 2.5f > playerPosition.z) {
+
+			isCollision = true;
+		}
+	}
+
+	return isCollision;
 }
 
 Maze::~Maze() {

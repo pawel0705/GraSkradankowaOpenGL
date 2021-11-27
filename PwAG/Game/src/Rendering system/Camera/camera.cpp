@@ -7,6 +7,7 @@ Camera::Camera() {
 
 Camera::Camera(glm::vec3 position) {
 	this->transformation.cameraPosition = position;
+	this->futureCameraPosition = position;
 
 	this->transformation.cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 	this->transformation.cameraToWorldUp = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -48,23 +49,39 @@ void Camera::updateInput(const float& deltaTime, const int direction, const floa
 	this->UpdateKeyboard(deltaTime, direction);
 }
 
+void Camera::setCameraPosition(glm::vec3 position)
+{
+	this->transformation.cameraPosition = position;
+}
+
+
+void Camera::updateCameraPosition()
+{
+	this->transformation.cameraPosition = this->futureCameraPosition;
+}
+
+void Camera::revertCameraPosition()
+{
+	this->futureCameraPosition = this->transformation.cameraPosition;
+}
+
 void Camera::UpdateKeyboard(const float& deltaTime, const int direction)
 {
 	if (direction == 0) // up 
 	{
-		this->transformation.cameraPosition += this->transformation.cameraFront * speed * deltaTime;
+		this->futureCameraPosition += this->transformation.cameraFront * speed * deltaTime;
 	}
 	else if (direction == 1) // down
 	{
-		this->transformation.cameraPosition -= this->transformation.cameraFront * speed * deltaTime;
+		this->futureCameraPosition -= this->transformation.cameraFront * speed * deltaTime;
 	}
 	else if (direction == 2) // left
 	{
-		this->transformation.cameraPosition += this->transformation.cameraRightLeft * speed * deltaTime;
+		this->futureCameraPosition += this->transformation.cameraRightLeft * speed * deltaTime;
 	}
-	else if (direction == 3) // right
+	else if (direction == 3 ) // right
 	{
-		this->transformation.cameraPosition -= this->transformation.cameraRightLeft * speed * deltaTime;
+		this->futureCameraPosition -= this->transformation.cameraRightLeft * speed * deltaTime;
 	}
 }
 
@@ -88,6 +105,16 @@ void Camera::UpdateMouse(const float& deltaTime, const float& x, const float& y)
 
 float Camera::getCameraZoom() const {
 	return this->zoom;
+}
+
+glm::vec3 Camera::getCameraPosition() const
+{
+	return this->transformation.cameraPosition;
+}
+
+glm::vec3 Camera::getFutureCameraPosition() const
+{
+	return this->futureCameraPosition;
 }
 
 Camera::~Camera() {

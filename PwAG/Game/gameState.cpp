@@ -36,6 +36,14 @@ void GameState::processInput(float deltaTime, Keyboard keyboard, Mouse mouse)
 		this->maze->camera->updateInput(deltaTime, 2, 0, 0);
 	}
 
+
+	if (this->maze->willBeCollisionWithWall(deltaTime)) {
+		this->maze->camera->revertCameraPosition();
+	}
+	else {
+		this->maze->camera->updateCameraPosition();
+	}
+
 	if (keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyEscape)]) {
 		if (this->cursorDisabled) {
 			glfwSetInputMode(this->gameReference->window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);

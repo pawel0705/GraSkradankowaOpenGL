@@ -22,6 +22,8 @@ public:
 	void drawMaze(float deltaTime);
 	void updateMaze(float deltaTime);
 
+	bool willBeCollisionWithWall(float deltaTime);
+
 	virtual ~Maze();
 
 private:
@@ -63,5 +65,13 @@ private:
 	Texture* grass_3Texture;
 	Texture* spawnActiveTexture;
 	Texture* spawnInactiveTexture;
+
+	std::vector<GLfloat> offsetsWalls;
+	std::vector<GLfloat> offsetsCeiling;
+	std::vector<GLfloat> offsetsFloors;
+	std::vector<GLfloat> offsetsTorches;
+	std::vector<GLfloat> offsetsGrass1;
+	std::vector<GLfloat> offsetsGrass2;
+	std::vector<GLfloat> offsetsGrass3;
 };
 

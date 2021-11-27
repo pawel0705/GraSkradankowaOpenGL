@@ -10,8 +10,14 @@ public:
 	void updateEulerAngels();
 	void setCameraUniforms(ShaderProgram* shaderProgram);
 	void updateInput(const float& deltaTime, const int direction, const float& x, const float& y);
+	void setCameraPosition(glm::vec3 position);
+	
+	void updateCameraPosition();
+	void revertCameraPosition();
 
 	float getCameraZoom() const;
+	glm::vec3 getCameraPosition() const;
+	glm::vec3 getFutureCameraPosition() const;
 
 	virtual ~Camera();
 
@@ -25,6 +31,8 @@ private:
 		float cameraPitch;
 		float cameraYaw;
 	} transformation;
+
+	glm::vec3 futureCameraPosition; // przechowuje koordynaty kamery, które bêd¹ podmienione je¿eli nie zajdzie na nich kolizja ze œcian¹
 
 	float speed;
 	float zoom;
