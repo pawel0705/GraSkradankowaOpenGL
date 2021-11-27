@@ -37,56 +37,71 @@ struct SpotLight
 	vec3 specular;
 };
 
-#define MAX_POINT_LIGHT_COUNT 32
+#define MAX_POINT_LIGHT_COUNT 16
 
 uniform PointLight pointLights[MAX_POINT_LIGHT_COUNT];
+uniform int pointLightsCount;
 
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDor);
-vec3 calculateSpotLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDor);
+#define MAX_POINT_LIGHT_COUNT 16
+
+uniform SpotLight spotLights[MAX_POINT_LIGHT_COUNT];
+uniform int spotLightsCount;
+
+vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
 	if (gl_FrontFacing) {
-		// diffuse light
-		vec3 posToLightDirectionVector = normalize(lightPosition - v_Position);
-		vec3 diffuseColor = vec3(1.0f, 1.0f, 1.0f);
-		//float diffuseLight = clamp(dot(posToLightDirectionVector, normalize(v_Normal)), 0, 1);
-		float diffuseLight = max(dot(normalize(v_Normal), posToLightDirectionVector), 0.0f);
-		vec3 diffuseFinal = diffuseColor * diffuseLight;
-	
-		// specular light
-		vec3 lightToPosDirectionVector = normalize(v_Position - lightPosition);
-		vec3 reflectDirVec = normalize(reflect(lightToPosDirectionVector, normalize(v_Normal)));
-		vec3 posToViewDirVec = normalize(cameraPos - v_Position);
-		float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 105);
-		vec3 specularFinal = vec3(1.0f, 1.0f, 1.0f) * specularConstant * texture(diffuse, v_TextCoord).rgb;
-	
-		// ambient light
-		vec3 ambientFinal = vec3(ambientLight);
-	
-		// attentuation
-		float distance = length(lightPosition - v_Position);
-		// constant linear quadric
-		float attentuation = 1.0f / (1.0f + 0.02f * distance + 0.025f * (distance * distance));
-	
+		
+		vec3 norm = normalize(v_Normal);
+		vec3 viewDir = normalize(cameraPos - v_Position);
 
-		diffuseFinal *= attentuation;
-		ambientFinal *= attentuation;
-		specularFinal *= attentuation;
-	
-		gl_FragColor = texture(diffuse, v_TextCoord) * (vec4(ambientFinal, 1.0f) + vec4(diffuseFinal, 1.0f) + vec4(specularFinal, 1.f));
+		vec3 result = vec3(0, 0, 0);
+		for(int i = 0; i < pointLightsCount; ++i)
+		{
+			result += calculatePointLight(pointLights[i], norm, v_Position, viewDir);
+		}
+		
+		for(int i = 0; i < spotLightsCount; ++i)
+		{
+			result += calculateSpotLight(spotLights[i], norm, v_Position, viewDir);
+		}
+
+		gl_FragColor = vec4(result, 1.0);
 	}
 }
 
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDor)
+vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-	vec3 lightDir = normalize(light.position - fragPos);
+	// diffuse light
+	vec3 posToLightDirectionVector = normalize(lightPosition - fragPos);
+	//float diffuseLight = clamp(dot(posToLightDirectionVector, normalize(v_Normal)), 0, 1);
+	float diffuseLight = max(dot(normal, posToLightDirectionVector), 0.0f);
+	vec3 diffuseFinal = light.diffuse * diffuseLight;
+	
+	// specular light
+	vec3 lightToPosDirectionVector = normalize(fragPos - lightPosition);
+	vec3 reflectDirVec = normalize(reflect(lightToPosDirectionVector, normal));
+	vec3 posToViewDirVec = normalize(cameraPos - fragPos);
+	float specularConstant = pow(max(dot(viewDir, reflectDirVec), 0.0), 105);
+	vec3 specularFinal = light.diffuse * specularConstant * texture(diffuse, v_TextCoord).rgb;
+	
+	// ambient light
+	vec3 ambientFinal = light.ambient;
+	
+	// attentuation
+	float distance = length(lightPosition - v_Position);
+	// constant linear quadric
+	float attentuation = 1.0f / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	
+	diffuseFinal *= attentuation;
+	ambientFinal *= attentuation;
+	specularFinal *= attentuation;
 
-	float diffuse = max(dot(normal, lightDir), 0.0);
-
-	return vec3(1.0, 1.0, 1.0);
+	return texture(diffuse, v_TextCoord) * ambientFinal * 10;
 }
-vec3 calculateSpotLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDor)
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
 	return vec3(1.0, 1.0, 1.0);
 }

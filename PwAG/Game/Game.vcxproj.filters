@@ -96,6 +96,15 @@
     <ClCompile Include="src\Rendering system\Lighting\point.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering system\Lighting\spot.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\Lighting\light.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\Lighting\attenuation.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PCH\pch.h">
@@ -200,6 +209,15 @@
     <ClInclude Include="src\Rendering system\Lighting\point.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering system\Lighting\spot.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering system\Lighting\light.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering system\Lighting\attenuation.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\text.vert" />
@@ -210,5 +228,9 @@
     <ClInclude Include="src\Rendering system\Model\transformationOBJ.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <None Include="Shaders\map.frag" />
+    <None Include="Shaders\map.vert" />
+    <None Include="Shaders\mapGrass.frag" />
+    <None Include="Shaders\mapPickup.frag" />
   </ItemGroup>
 </Project>

@@ -4,6 +4,7 @@
 #include "src/Game Objects/maze.h"
 #include "./stateMachine.h"
 #include "gameAssets.h"
+#include "src/Rendering system/Lighting/point.h"
 
 class GameState : public ProgramState
 {
