@@ -9,6 +9,8 @@ out vec2 v_TextCoord;
 out vec3 v_Normal;
 out vec3 v_Position;
 
+out vec3 v_Offset;
+
 layout(location = 0) in vec3 v_position;
 layout(location = 1) in vec3 v_color;
 layout(location = 2) in vec3 v_normal;
@@ -22,4 +24,6 @@ void main() {
   v_TextCoord = v_textcoord;  
   v_Normal = mat3(transpose(inverse(ModelMatrix))) * normalize((v_normal + offset));
   v_Position =  vec3(ModelMatrix * vec4(v_position + offset, 1.0));
+
+  v_Offset = offset;
 }

@@ -118,6 +118,10 @@ void Maze::initMazeTextures() {
 	this->grass_3Texture = new Texture("res/Textures/grass3.png", TextureType::PNG);
 	this->spawnActiveTexture = new Texture("res/Textures/spawnActive.png", TextureType::PNG);
 	this->spawnInactiveTexture = new Texture("res/Textures/spawnInactive.png", TextureType::PNG);
+
+	this->normalMapCeiling = new Texture("res/Textures/ceiling_nrm.png", TextureType::NORMAL_MAP);
+	this->normalMapWall = new Texture("res/Textures/wall_nrm.png", TextureType::NORMAL_MAP);
+	this->normalMapFloor = new Texture("res/Textures/floor_rnm.png", TextureType::NORMAL_MAP);
 }
 
 void Maze::initObjModels() {
@@ -210,6 +214,9 @@ void Maze::initObjModels() {
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
 	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
 
+	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
+	this->walls->setNormalMapTexture(this->normalMapWall);
+	//this->floors->setNormalMapTexture(this->normalMapFloor);
 
 	// randomize torhes
 	for (int i = 0; i < floorInstances; i++) {
@@ -233,7 +240,7 @@ void Maze::initObjModels() {
 
 			torchInstances++;
 
-			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.0f, y + offsetY };
+			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX + 1, -1.0f, y + offsetY + 1 };
 			this->pointLights.push_back(Light::Point(torchPos, {0.5f, 0.5f, 0.5f}));
 		}
 	}

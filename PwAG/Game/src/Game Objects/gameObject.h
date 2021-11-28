@@ -23,6 +23,8 @@ public:
 	void setRotation(const glm::vec3 rotation);
 	void setScale(const glm::vec3 scale);
 
+	void setNormalMapTexture(Texture* normalMapTexture);
+
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
 
@@ -32,6 +34,8 @@ private:
 	TransformationOBJ transformation;
 
 	Texture* texture;
+	Texture* normalMapTexture;
+
 	Material* material;
 	Mesh* mesh;
 

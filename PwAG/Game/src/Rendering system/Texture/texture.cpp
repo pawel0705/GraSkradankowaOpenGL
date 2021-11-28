@@ -42,7 +42,11 @@ void Texture::initializeTexture() {
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	if (this->textureType == TextureType::BMP) 
+	if (this->textureType == TextureType::NORMAL_MAP) 
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp->data);
+	}
+	else if (this->textureType == TextureType::BMP)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp->data);
 	}

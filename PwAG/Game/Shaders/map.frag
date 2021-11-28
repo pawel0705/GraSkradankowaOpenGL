@@ -1,6 +1,7 @@
 #version 430 
 
 uniform sampler2D diffuse;
+uniform sampler2D normalMap;
 
 //uniform vec3 ambientLight;
 uniform vec3 cameraPos;
@@ -9,6 +10,8 @@ in vec3 v_Color;
 in vec2 v_TextCoord;
 in vec3 v_Normal;
 in vec3 v_Position;
+
+in vec3 v_Offset;
 
 struct PointLight
 {
@@ -76,6 +79,9 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	vec3 posToLightDirectionVector  = normalize(light.position - fragPos);
 
 	// diffuse light
+	normal = normal + texture(normalMap, v_TextCoord).rgb;
+	normal = normalize(normal * 2.0 - 1.0);
+
 	float diffuseLight = max(dot(normal, posToLightDirectionVector ), 0.0);
 
 	// specular light
