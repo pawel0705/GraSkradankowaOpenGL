@@ -94,7 +94,7 @@ void Application::processInput()
 
 	// na razie przesy³¹m 'render' bo dzia³a lepiej
 	if (this->loopedRender) {
-		this->gameReference->m_stateMachine.getCurrentState()->processInput(timer.getMeasuredDurationInMiliseconds("render"), this->keyboard, this->mouse);
+		this->gameReference->m_stateMachine.getCurrentState()->processInput(deltaTime, this->keyboard, this->mouse);
 	}
 	
 	timer.stopTimer("input");
@@ -107,7 +107,7 @@ void Application::update()
 	timer.startTimer("update");
 
 	if (this->loopedUpdate) {
-		this->gameReference->m_stateMachine.getCurrentState()->update(timer.getMeasuredDurationInMiliseconds("update"));
+		this->gameReference->m_stateMachine.getCurrentState()->update(deltaTime);
 	}
 
 	timer.stopTimer("update");
@@ -121,9 +121,10 @@ void Application::render()
 	if (fpsCapCooldownLeft <= 0.0f)
 	{
 		frameDuration = timer.getCurrentDurationInSeconds("fps");
+		timer.startTimer("fps");
+
 		fpsCapCooldownLeft = fpsCapCooldown;
 		
-		timer.startTimer("fps");
 		timer.startTimer("render");
 
 		window.clearToColor(80, 80, 80);
@@ -133,7 +134,7 @@ void Application::render()
 		}
 
 		if (this->loopedRender) {
-			this->gameReference->m_stateMachine.getCurrentState()->render(timer.getMeasuredDurationInMiliseconds("render"));
+			this->gameReference->m_stateMachine.getCurrentState()->render(renderDeltaTime);
 		}
 
 		if (this->wireframeMode) {
@@ -141,6 +142,7 @@ void Application::render()
 		}
 
 		// RENDER TEXT
+	#ifndef DIST
 		textShader.useShader();
 		auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));
 		textShader.setMat4("MVP", projection);
@@ -154,6 +156,7 @@ void Application::render()
 		updateValueText.render(textShader);
 		renderTimeLabel.render(textShader);
 		renderValueText.render(textShader);
+	#endif
 
 		window.swapBuffers();
 
@@ -165,6 +168,7 @@ void Application::render()
 
 void Application::updateFPSText()
 {
+#ifndef DIST
 	int32_t fps = static_cast<int32_t>(1.0 / frameDuration);
 	fpsValueText.setText(std::move(std::to_string(fps)));
 
@@ -188,6 +192,7 @@ void Application::updateFPSText()
 
 	updateFPSThisFrame = false;
 	timer.startTimer("previousMeasure");
+#endif
 }
 
 void Application::wireframeModeOn() {
@@ -202,6 +207,9 @@ void Application::calculateDeltaTime()
 {
 	deltaTime = timer.getCurrentDurationInSeconds("deltaTime");
 	timer.startTimer("deltaTime");
+}
 
-	//std::cout << deltaTime << std::endl;
+void Application::calculateRenderDeltaTime()
+{
+	renderDeltaTime = frameDuration;
 }

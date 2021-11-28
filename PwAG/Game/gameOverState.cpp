@@ -15,7 +15,7 @@ void GameOverState::initialization()
 
 }
 
-void GameOverState::processInput(float deltaTime, Keyboard keyboard, Mouse mouse)
+void GameOverState::processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse)
 {
 
 }

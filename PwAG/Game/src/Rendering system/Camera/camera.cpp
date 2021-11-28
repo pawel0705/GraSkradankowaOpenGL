@@ -15,9 +15,9 @@ Camera::Camera(glm::vec3 position) {
 	this->transformation.cameraPitch = 0;
 	this->transformation.cameraYaw = -90;
 
-	this->speed = 0.0025f;
+	this->speed = 2.5f;
 	this->zoom = 45.0f;
-	this->sensitivity = 0.01f;
+	this->sensitivity = .05f;
 
 	this->updateEulerAngels();
 }
@@ -39,8 +39,7 @@ void Camera::setCameraUniforms(ShaderProgram* shaderProgram) {
 	shaderProgram->setMat4("ViewMatrix", glm::lookAt(this->transformation.cameraPosition, this->transformation.cameraPosition + this->transformation.cameraFront, this->transformation.cameraUpDown));
 
 	shaderProgram->setVec3f("cameraPos", this->transformation.cameraPosition);
-
-	shaderProgram->setVec3f("lightPosition", this->transformation.cameraPosition);
+	//shaderProgram->setVec3f("lightPosition", this->transformation.cameraPosition);
 }
 
 void Camera::updateInput(const float& deltaTime, const int direction, const float& x, const float& y)
@@ -67,6 +66,7 @@ void Camera::revertCameraPosition()
 
 void Camera::UpdateKeyboard(const float& deltaTime, const int direction)
 {
+	
 	if (direction == 0) // up 
 	{
 		this->futureCameraPosition += this->transformation.cameraFront * speed * deltaTime;
@@ -87,8 +87,9 @@ void Camera::UpdateKeyboard(const float& deltaTime, const int direction)
 
 void Camera::UpdateMouse(const float& deltaTime, const float& x, const float& y)
 {
-	this->transformation.cameraYaw += x * this->sensitivity * deltaTime;
-	this->transformation.cameraPitch += y * this->sensitivity * deltaTime;
+	//bez deltaTime, bo inaczej jest dwa razy brany pod uwagê
+	this->transformation.cameraYaw += x * this->sensitivity;
+	this->transformation.cameraPitch += y * this->sensitivity;
 
 	if (this->transformation.cameraYaw > 360 || this->transformation.cameraYaw < -360) {
 		this->transformation.cameraYaw = 0;

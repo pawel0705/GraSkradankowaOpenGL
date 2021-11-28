@@ -14,7 +14,7 @@ public:
 	~GameOverState();
 
 	void initialization() override;
-	void processInput(float deltaTime, Keyboard keyboard, Mouse mouse) override;
+	void processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse) override;
 	void update(float deltaTime) override;
 	void render(float deltaTime) override;
 };

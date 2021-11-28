@@ -2,8 +2,7 @@
 
 uniform sampler2D diffuse;
 
-uniform vec3 ambientLight;
-uniform vec3 lightPosition;
+//uniform vec3 ambientLight;
 uniform vec3 cameraPos;
 
 in vec3 v_Color;
@@ -11,36 +10,95 @@ in vec2 v_TextCoord;
 in vec3 v_Normal;
 in vec3 v_Position;
 
+struct PointLight
+{
+	vec3 position;
+
+	float constant;
+	float linear;
+	float quadratic;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+struct SpotLight
+{
+	vec3 position;
+
+	float constant;
+	float linear;
+	float quadratic;
+
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+};
+
+#define MAX_POINT_LIGHT_COUNT 64
+
+uniform PointLight pointLights[MAX_POINT_LIGHT_COUNT];
+uniform int pointLightsCount;
+
+#define MAX_SPOT_LIGHT_COUNT 16
+
+uniform SpotLight spotLights[MAX_POINT_LIGHT_COUNT];
+uniform int spotLightsCount;
+
+vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+
 void main()
 {
 	if (gl_FrontFacing) {
-		// diffuse light
-		vec3 posToLightDirectionVector = normalize(lightPosition - v_Position);
-		vec3 diffuseColor = vec3(1.0f, 1.0f, 1.0f);
-		//float diffuseLight = clamp(dot(posToLightDirectionVector, normalize(v_Normal)), 0, 1);
-		float diffuseLight = max(dot(normalize(v_Normal), posToLightDirectionVector), 0.0f);
-		vec3 diffuseFinal = diffuseColor * diffuseLight;
-	
-		// specular light
-		vec3 lightToPosDirectionVector = normalize(v_Position - lightPosition);
-		vec3 reflectDirVec = normalize(reflect(lightToPosDirectionVector, normalize(v_Normal)));
-		vec3 posToViewDirVec = normalize(cameraPos - v_Position);
-		float specularConstant = pow(max(dot(posToViewDirVec, reflectDirVec), 0), 105);
-		vec3 specularFinal = vec3(1.0f, 1.0f, 1.0f) * specularConstant * texture(diffuse, v_TextCoord).rgb;
-	
-		// ambient light
-		vec3 ambientFinal = vec3(ambientLight);
-	
-		// attentuation
-		float distance = length(lightPosition - v_Position);
-		// constant linear quadric
-		float attentuation = 1.0f / (1.0f + 0.02f * distance + 0.025f * (distance * distance));
-	
+		
+		vec3 norm = normalize(v_Normal);
+		vec3 viewDir = normalize(cameraPos - v_Position);
 
-		diffuseFinal *= attentuation;
-		ambientFinal *= attentuation;
-		specularFinal *= attentuation;
-	
-		gl_FragColor = texture(diffuse, v_TextCoord) * (vec4(ambientFinal, 1.0f) + vec4(diffuseFinal, 1.0f) + vec4(specularFinal, 1.f));
+		vec3 result = vec3(0, 0, 0);
+		for(int i = 0; i < pointLightsCount; ++i)
+		{
+			result += calculatePointLight(pointLights[i], norm, v_Position, viewDir);
+		}
+		
+		//for(int i = 0; i < spotLightsCount; ++i)
+		//{
+		//	result += calculateSpotLight(spotLights[i], norm, v_Position, viewDir);
+		//}
+
+		gl_FragColor = vec4(result, 1.0);
 	}
+}
+
+vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+	vec3 posToLightDirectionVector  = normalize(light.position - fragPos);
+
+	// diffuse light
+	float diffuseLight = max(dot(normal, posToLightDirectionVector ), 0.0);
+
+	// specular light
+	vec3 reflectDirVec = reflect(-posToLightDirectionVector , normal);
+	float specularConstant = pow(max(dot(viewDir, reflectDirVec), 0.0), 105);
+
+	// attentuation
+	float distance = length(light.position - v_Position);
+	float attentuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
+	
+	vec3 textured = texture(diffuse, v_TextCoord).rgb;
+	
+	vec3 ambientFinal = light.ambient * textured;
+	vec3 diffuseFinal = light.diffuse * diffuseLight * textured;
+	vec3 specularFinal = light.specular * specularConstant * textured;
+
+	ambientFinal *= attentuation;
+	diffuseFinal *= attentuation;
+	specularFinal *= attentuation;
+
+	return ambientFinal + diffuseFinal + specularFinal;
+}
+vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
+{
+	return vec3(1.0, 1.0, 1.0);
 }

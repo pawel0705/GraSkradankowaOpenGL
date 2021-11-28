@@ -17,7 +17,7 @@ void GameState::initialization()
 	this->cursorDisabled = true;
 }
 
-void GameState::processInput(float deltaTime, Keyboard keyboard, Mouse mouse)
+void GameState::processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse)
 {
 	// camera
 	if (keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyW)]) {

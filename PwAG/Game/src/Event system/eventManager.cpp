@@ -16,21 +16,22 @@ void EventManager::windowCloseCallback(bool shouldCloseWindow)
 
 void EventManager::keyCallback(int key, int scancode, int action, int mods)
 {
+	
 	if (this->keyboard)
 	{
-		if (action == GLFW_PRESS)
+		Keyboard::Key _key = Keyboard::convertToKey(key);
+		if(_key > Keyboard::Key::eKeyNone && _key < Keyboard::Key::eKeyLast)
 		{
-			this->eventQueue.emplace(EventType::eKeyPressed);
-
-			Keyboard::Key _key = Keyboard::convertToKey(key);
-			this->keyboard->keyState[static_cast<int>(_key)] = true;
-		}
-		else if (action == GLFW_RELEASE)
-		{
-			this->eventQueue.emplace(EventType::eKeyReleased);
-
-			Keyboard::Key _key = Keyboard::convertToKey(key);
-			this->keyboard->keyState[static_cast<int>(_key)] = false;
+			if(action == GLFW_PRESS)
+			{
+				this->eventQueue.emplace(EventType::eKeyPressed);
+				this->keyboard->keyState[static_cast<int>(_key)] = true;
+			}
+			else if(action == GLFW_RELEASE)
+			{
+				this->eventQueue.emplace(EventType::eKeyReleased);
+				this->keyboard->keyState[static_cast<int>(_key)] = false;
+			}
 		}
 	}
 }

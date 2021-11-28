@@ -1,6 +1,7 @@
 #pragma once
 #include "gameObject.h"
 #include "../Rendering system/Camera/camera.h"
+#include "../Rendering system/Lighting/point.h"
 
 class Maze
 {
@@ -40,6 +41,7 @@ private:
 	GameObject* grass3;
 
 	std::vector<GameObject*> respawnPickup;
+	std::vector<Light::Point> pointLights;
 
 	ShaderProgram* shaderProgram;
 	ShaderProgram* shaderGrassProgram;
