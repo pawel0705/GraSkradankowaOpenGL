@@ -68,6 +68,10 @@ private:
 	Texture* spawnActiveTexture;
 	Texture* spawnInactiveTexture;
 
+	Texture* normalMapWall;
+	Texture* normalMapCeiling;
+	Texture* normalMapFloor;
+
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;
 	std::vector<GLfloat> offsetsFloors;

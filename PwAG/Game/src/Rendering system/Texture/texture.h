@@ -3,6 +3,7 @@
 enum TextureType {
 	BMP = 0,
 	PNG = 1,
+	NORMAL_MAP = 2
 };
 
 struct BitMapFile

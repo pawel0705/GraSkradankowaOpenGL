@@ -61,10 +61,15 @@ void GameObject::initGameObject() {
 
 void GameObject::draw(ShaderProgram* shaderProgram) {
 	shaderProgram->useShader();
-
+	
 	this->texture->bindTexture(0);
 
+	if (this->normalMapTexture != nullptr) {
+		this->normalMapTexture->bindTexture(1);
+	}
+
 	this->material->setMaterialShaderUniforms(*shaderProgram);
+
 
 	this->mesh->setMatrixModel(
 		this->transformation.objectPosition,
@@ -104,6 +109,11 @@ void GameObject::setScale(const glm::vec3 scale)
 	this->transformation.objectScale = scale;
 }
 
+void GameObject::setNormalMapTexture(Texture* normalMapTexture)
+{
+	this->normalMapTexture = normalMapTexture;
+}
+
 glm::vec3 GameObject::getPosition() {
 	return this->transformation.objectPosition;
 }
@@ -117,4 +127,8 @@ GameObject::~GameObject()
 	delete this->material;
 	delete this->texture;
 	delete this->mesh;
+
+	if (this->normalMapTexture != nullptr) {
+		delete this->normalMapTexture;
+	}
 }
