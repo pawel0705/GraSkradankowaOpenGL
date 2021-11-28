@@ -45,11 +45,11 @@ namespace Light
 			attenuation.setAttenuationByRange(range);
 		}
 	#pragma endregion
-		#pragma endregion
+	#pragma endregion
 	private:
 		glm::vec3 position;
 
 		Attenuation attenuation;
-		float range = 50;
+		float range = 30;
 	};
 }

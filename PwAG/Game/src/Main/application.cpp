@@ -142,6 +142,7 @@ void Application::render()
 		}
 
 		// RENDER TEXT
+	#ifndef DIST
 		textShader.useShader();
 		auto projection = glm::ortho(0.0f, static_cast<float>(Config::g_defaultWidth), 0.0f, static_cast<float>(Config::g_defaultHeight));
 		textShader.setMat4("MVP", projection);
@@ -155,6 +156,7 @@ void Application::render()
 		updateValueText.render(textShader);
 		renderTimeLabel.render(textShader);
 		renderValueText.render(textShader);
+	#endif
 
 		window.swapBuffers();
 
@@ -166,6 +168,7 @@ void Application::render()
 
 void Application::updateFPSText()
 {
+#ifndef DIST
 	int32_t fps = static_cast<int32_t>(1.0 / frameDuration);
 	fpsValueText.setText(std::move(std::to_string(fps)));
 
@@ -189,6 +192,7 @@ void Application::updateFPSText()
 
 	updateFPSThisFrame = false;
 	timer.startTimer("previousMeasure");
+#endif
 }
 
 void Application::wireframeModeOn() {

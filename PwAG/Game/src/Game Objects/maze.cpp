@@ -53,7 +53,7 @@ void Maze::initMaze() {
 	this->initMazeShaders();
 	this->initMatrixMVP();
 
-	pointLights.push_back(Light::Point  { {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f} });
+	//pointLights.push_back(Light::Point { {30.0f, 0.0f, 52.0f}, {1.0f, 1.0f, 1.0f} });
 }
 
 void Maze::initMatrixMVP() {
@@ -240,6 +240,9 @@ void Maze::initObjModels() {
 			offsetsTorches.emplace_back(y + offsetY);
 
 			torchInstances++;
+
+			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.0f, y + offsetY };
+			this->pointLights.push_back(Light::Point(torchPos, {0.5f, 0.5f, 0.5f}));
 		}
 	}
 
