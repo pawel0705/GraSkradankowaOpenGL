@@ -50,6 +50,6 @@ namespace Light
 		glm::vec3 position;
 
 		Attenuation attenuation;
-		float range = 30;
+		float range = 50;
 	};
 }

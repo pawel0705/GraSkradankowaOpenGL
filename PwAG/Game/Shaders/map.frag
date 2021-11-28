@@ -23,18 +23,18 @@ struct PointLight
 	vec3 specular;
 };
 
-struct SpotLight
-{
-	vec3 position;
-
-	float constant;
-	float linear;
-	float quadratic;
-
-	vec3 ambient;
-	vec3 diffuse;
-	vec3 specular;
-};
+//struct SpotLight
+//{
+//	vec3 position;
+//
+//	float constant;
+//	float linear;
+//	float quadratic;
+//
+//	vec3 ambient;
+//	vec3 diffuse;
+//	vec3 specular;
+//};
 
 #define MAX_POINT_LIGHT_COUNT 64
 
@@ -43,11 +43,11 @@ uniform int pointLightsCount;
 
 #define MAX_SPOT_LIGHT_COUNT 16
 
-uniform SpotLight spotLights[MAX_POINT_LIGHT_COUNT];
-uniform int spotLightsCount;
+//uniform SpotLight spotLights[MAX_POINT_LIGHT_COUNT];
+//uniform int spotLightsCount;
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
+//vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
@@ -97,8 +97,4 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	specularFinal *= attentuation;
 
 	return ambientFinal + diffuseFinal + specularFinal;
-}
-vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
-{
-	return vec3(1.0, 1.0, 1.0);
 }

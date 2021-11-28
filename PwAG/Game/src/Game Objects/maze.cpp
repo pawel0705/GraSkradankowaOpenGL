@@ -288,23 +288,8 @@ void Maze::drawMaze(float deltaTime) {
 	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
-	this->shaderProgram->setInt("pointLightsCount", static_cast<int>(pointLights.size()));
-	this->shaderProgram->setInt("spotLightsCount", 0);
-	char lightIndex[20];
-	for(int i = 0; i < pointLights.size();++i)
-	{
-		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
-		std::string index { lightIndex };
-		this->shaderProgram->setVec3f(index + "position", pointLights[i].getPosition());
+	setLightUniforms(this->shaderProgram);
 
-		this->shaderProgram->setVec3f(index + "ambient", pointLights[i].getAmbient());
-		this->shaderProgram->setVec3f(index + "diffuse", pointLights[i].getDiffuse());
-		this->shaderProgram->setVec3f(index + "specular", pointLights[i].getSpecular());
-
-		this->shaderProgram->setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
-		this->shaderProgram->setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
-		this->shaderProgram->setFloat(index + "quadratic", pointLights[i].getAttenuation().getQuadratic());
-	}
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
@@ -312,6 +297,7 @@ void Maze::drawMaze(float deltaTime) {
 
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
+	setLightUniforms(this->shaderGrassProgram);
 	this->grass1->draw(this->shaderGrassProgram);
 	this->grass2->draw(this->shaderGrassProgram);
 	this->grass3->draw(this->shaderGrassProgram);
@@ -319,6 +305,7 @@ void Maze::drawMaze(float deltaTime) {
 
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
+	setLightUniforms(this->shaderPickupProgram);
 //	glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (auto p : this->respawnPickup)
@@ -398,4 +385,24 @@ Maze::~Maze() {
 	delete this->spawnInactiveTexture;
 
 	delete this->spawnActiveTexture;
+}
+
+void Maze::setLightUniforms(ShaderProgram*& shader)
+{
+	shader->setInt("pointLightsCount", static_cast<int>(pointLights.size()));
+	char lightIndex[20];
+	for(int i = 0; i < pointLights.size(); ++i)
+	{
+		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
+		std::string index { lightIndex };
+		shader->setVec3f(index + "position", pointLights[i].getPosition());
+
+		shader->setVec3f(index + "ambient", pointLights[i].getAmbient());
+		shader->setVec3f(index + "diffuse", pointLights[i].getDiffuse());
+		shader->setVec3f(index + "specular", pointLights[i].getSpecular());
+
+		shader->setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
+		shader->setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
+		shader->setFloat(index + "quadratic", pointLights[i].getAttenuation().getQuadratic());
+	}
 }

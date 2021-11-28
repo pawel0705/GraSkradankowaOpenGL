@@ -28,6 +28,8 @@ public:
 	virtual ~Maze();
 
 private:
+	void setLightUniforms(ShaderProgram*& shader);
+
 	int mazeDimensionX;
 	int mazeDimensionY;
 	int** mazeIndexData;
