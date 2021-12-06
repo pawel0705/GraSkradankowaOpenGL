@@ -135,6 +135,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Utilities\resourceManager.cpp" />
+    <ClCompile Include="src\Rendering system\Particle system\particleEmitter.cpp" />
+    <ClCompile Include="src\Rendering system\Particle system\particle.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\attenuation.cpp" />
     <ClCompile Include="gameOverState.cpp" />
     <ClCompile Include="gameState.cpp" />
@@ -178,6 +181,9 @@
     <ClCompile Include="stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Utilities\resourceManager.h" />
+    <ClInclude Include="src\Rendering system\Particle system\particleEmitter.h" />
+    <ClInclude Include="src\Rendering system\Particle system\particle.h" />
     <ClInclude Include="src\Rendering system\Lighting\attenuation.h" />
     <ClInclude Include="gameAssets.h" />
     <ClInclude Include="gameOverState.h" />
@@ -223,6 +229,9 @@
     <None Include="Shaders\map.vert" />
     <None Include="Shaders\mapGrass.frag" />
     <None Include="Shaders\mapPickup.frag" />
+    <None Include="Shaders\particle.frag" />
+    <None Include="Shaders\particle.geom" />
+    <None Include="Shaders\particle.vert" />
     <None Include="Shaders\text.frag" />
     <None Include="Shaders\text.vert" />
   </ItemGroup>

@@ -6,10 +6,11 @@ public:
 	enum class Type
 	{
 		eVertex,
-		eFragment
+		eFragment,
+		eGeometry
 	};
 
-	Shader();
+	Shader() = default;
 	Shader(const Shader&) = delete;
 	Shader(Shader&&) noexcept;
 	~Shader();

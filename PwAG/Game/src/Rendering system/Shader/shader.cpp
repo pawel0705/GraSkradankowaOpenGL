@@ -1,10 +1,6 @@
 ﻿#include "pch.h"
 #include "shader.h"
 
-Shader::Shader() {
-
-}
-
 Shader::Shader(Type type)
 	: type(type)
 {
@@ -16,10 +12,14 @@ Shader::Shader(Type type)
 	case Shader::Type::eFragment:
 		shaderID = glCreateShader(GL_FRAGMENT_SHADER);
 		break;
+	case Shader::Type::eGeometry:
+		shaderID = glCreateShader(GL_GEOMETRY_SHADER);
+		break;
 	}
 }
 
 Shader::Shader(Shader&& other) noexcept
+	: type(other.type)
 {
 	this->shaderID = other.shaderID;
 	other.shaderID = 0;
@@ -37,6 +37,8 @@ Shader& Shader::operator=(Shader&& other) noexcept
 {
 	if (this != &other)
 	{
+		this->type = other.type;
+
 		this->shaderID = other.shaderID;
 		other.shaderID = 0;
 	}

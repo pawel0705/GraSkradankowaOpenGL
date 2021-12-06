@@ -75,6 +75,10 @@ void Maze::initMatrixMVP() {
 	this->shaderPickupProgram->useShader();
 	this->shaderPickupProgram->setMat4("ProjectionMatrix", projectionMatrix);
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
+
+	this->shaderParticles.useShader();
+	this->shaderParticles.setMat4("ProjectionMatrix", projectionMatrix);
+	this->camera->setCameraUniforms(&this->shaderParticles);
 }
 
 void Maze::initMazeShaders() {
@@ -102,6 +106,15 @@ void Maze::initMazeShaders() {
 	this->shaderPickupProgram->attachShader(this->fragmentShaderPickup);
 	this->shaderPickupProgram->attachShader(this->vertexShaderPickup);
 	this->shaderPickupProgram->linkShaderProgram();
+
+	Shader particlesVert = Shader::createShaderFromFile("Shaders/particle.vert", Shader::Type::eVertex);
+	Shader particlesGeom = Shader::createShaderFromFile("Shaders/particle.geom", Shader::Type::eGeometry);
+	Shader particlesFrag = Shader::createShaderFromFile("Shaders/particle.frag", Shader::Type::eFragment);
+
+	shaderParticles.attachShader(particlesVert);
+	shaderParticles.attachShader(particlesGeom);
+	shaderParticles.attachShader(particlesFrag);
+	shaderParticles.linkShaderProgram();
 }
 
 void Maze::initMazeMaterials() {
@@ -122,6 +135,8 @@ void Maze::initMazeTextures() {
 	this->normalMapCeiling = new Texture("res/Textures/ceiling_nrm.png", TextureType::NORMAL_MAP);
 	this->normalMapWall = new Texture("res/Textures/wall_nrm.png", TextureType::NORMAL_MAP);
 	this->normalMapFloor = new Texture("res/Textures/floor_rnm.png", TextureType::NORMAL_MAP);
+
+	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", TextureType::PNG);
 }
 
 void Maze::initObjModels() {
@@ -240,13 +255,13 @@ void Maze::initObjModels() {
 
 			torchInstances++;
 
-			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX + 1, -1.0f, y + offsetY + 1 };
+			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.05f, y + offsetY };
 			this->pointLights.push_back(Light::Point(torchPos, {0.5f, 0.5f, 0.5f}));
+			this->torchesParticleEmitters.emplace_back(torchPos);
 		}
 	}
 
 	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
-
 	// randomize grass
 	for (int i = 0; i < floorInstances; i++) {
 
@@ -301,7 +316,7 @@ void Maze::drawMaze(float deltaTime) {
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
 	this->torches->draw(this->shaderProgram);
-
+	
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
 	setLightUniforms(this->shaderGrassProgram);
@@ -313,18 +328,27 @@ void Maze::drawMaze(float deltaTime) {
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
 	setLightUniforms(this->shaderPickupProgram);
-//	glEnable(GL_BLEND);
-	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	for (auto p : this->respawnPickup)
 	{
 		p->draw(this->shaderPickupProgram);
 	}
-//	glDisable(GL_BLEND);
+	
+	shaderParticles.useShader();
+	this->camera->setCameraUniforms(&shaderParticles);
+	for(auto& emitter : torchesParticleEmitters)
+	{
+		emitter.render(shaderParticles);
+	}
+	
 }
 
 void Maze::updateMaze(float deltaTime)
 {
-	
+	for(auto& emitter : torchesParticleEmitters)
+	{
+		emitter.update(deltaTime);
+	}
 }
 
 bool Maze::willBeCollisionWithWall(float deltaTime) {

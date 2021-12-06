@@ -13,6 +13,7 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
+#include <map>
 
 // additional dependencies
 #include "glad/glad.h"
@@ -47,6 +48,6 @@
 #include "../Event system/eventManager.h"
 
 #include "../Utilities/timer.h"
-
+#include "../Utilities/resourceManager.h"
 
 #endif

@@ -1,15 +1,44 @@
 #pragma once
+
+//non-copyable
 class VBO
 {
 public:
+#pragma region Constructors, destructor, assign operators
 	VBO()
 	{
 		glGenBuffers(1, &id);
 	}
+
+	VBO(const VBO&) = delete;
+	VBO(VBO&& other) noexcept
+	{
+		auto tmp = id;
+		id = other.id;
+		other.id = tmp;
+	}
+
+	VBO& operator=(const VBO&) = delete;
+	VBO& operator=(VBO&& other) noexcept
+	{
+		if(this != &other)
+		{
+			auto tmp = id;
+			id = other.id;
+			other.id = tmp;
+		}
+
+		return *this;
+	}
+
 	~VBO()
 	{
-		glDeleteBuffers(1, &id);
+		if(id != 0)
+		{
+			glDeleteBuffers(1, &id);
+		}
 	}
+#pragma endregion
 
 	void bind()
 	{
@@ -35,6 +64,6 @@ public:
 	}
 
 private:
-	GLuint id;
+	GLuint id = 0;
 };
 
