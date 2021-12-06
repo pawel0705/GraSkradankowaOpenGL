@@ -19,14 +19,19 @@ class Texture
 public:
 	Texture();
 	Texture(const std::string& textureFilePath, TextureType textureType);
+	Texture(const Texture&) = delete;
+	Texture(Texture&&) noexcept;
+	virtual ~Texture();
+	
+	Texture& operator=(const Texture&) = delete;
+	Texture& operator=(Texture&&) noexcept;
 
-	void bindTexture(unsigned int unit);
-	void unbindTexture();
+	void bindTexture(unsigned int unit) const;
+	void unbindTexture() const;
 
 	int getTextureWidth() const;
 	int getTextureHeight() const;
 
-	virtual ~Texture();
 
 private:
 	GLuint texture;

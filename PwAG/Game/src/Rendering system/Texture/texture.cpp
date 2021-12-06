@@ -32,6 +32,45 @@ Texture::Texture(const std::string& textureFilePath, TextureType textureType)
 	this->initializeTexture();
 }
 
+Texture::Texture(Texture&& other) noexcept
+	: textureType(other.textureType)
+{
+	auto tmp = texture;
+	texture = other.texture;
+	other.texture = tmp;
+
+	bmp = other.bmp;
+	other.bmp = nullptr;
+}
+
+Texture::~Texture()
+{
+	if(bmp != nullptr)
+	{
+		stbi_image_free(this->bmp->data);
+		delete this->bmp;
+	}
+
+	glDeleteTextures(1, &this->texture);
+}
+
+Texture& Texture::operator=(Texture&& other) noexcept
+{
+	if(this != &other)
+	{
+		auto tmp = texture;
+		texture = other.texture;
+		other.texture = tmp;
+
+		bmp = other.bmp;
+		other.bmp = nullptr;
+
+		textureType = other.textureType;
+	}
+
+	return *this;
+}
+
 void Texture::initializeTexture() {
 	glGenTextures(1, &this->texture);
 	glBindTexture(GL_TEXTURE_2D, this->texture);
@@ -104,14 +143,14 @@ BitMapFile* Texture::readBmpImage(const std::string& filePath)
 	return bmp;
 }
 
-void Texture::bindTexture(unsigned int unit) {
+void Texture::bindTexture(unsigned int unit) const{
 	assert(unit >= 0 && unit <= 31);
 
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, this->texture);
 }
 
-void Texture::unbindTexture() {
+void Texture::unbindTexture() const {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
@@ -123,10 +162,3 @@ int Texture::getTextureHeight() const {
 	return this->bmp->sizeY;
 }
 
-Texture::~Texture() {
-	stbi_image_free(this->bmp->data);
-
-	delete this->bmp;
-
-	glDeleteTextures(1, &this->texture);
-}

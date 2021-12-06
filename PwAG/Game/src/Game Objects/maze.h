@@ -2,6 +2,7 @@
 #include "gameObject.h"
 #include "../Rendering system/Camera/camera.h"
 #include "../Rendering system/Lighting/point.h"
+#include "../Rendering system/Particle system/particleEmitter.h"
 
 class Maze
 {
@@ -44,10 +45,13 @@ private:
 
 	std::vector<GameObject*> respawnPickup;
 	std::vector<Light::Point> pointLights;
+	std::vector<ParticleEmitter> torchesParticleEmitters;
 
 	ShaderProgram* shaderProgram;
 	ShaderProgram* shaderGrassProgram;
 	ShaderProgram* shaderPickupProgram;
+
+	ShaderProgram shaderParticles;
 
 	Shader vertexShader;
 	Shader fragmentShader;

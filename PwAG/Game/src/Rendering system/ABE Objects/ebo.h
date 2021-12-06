@@ -3,14 +3,41 @@
 class EBO
 {
 public:
+#pragma region Constructors, destructor, assign operators
 	EBO()
 	{
 		glGenBuffers(1, &id);
 	}
+
+	EBO(const EBO&) = delete;
+	EBO(EBO&& other) noexcept
+	{
+		auto tmp = id;
+		id = other.id;
+		other.id = tmp;
+	}
+
+	EBO& operator=(const EBO&) = delete;
+	EBO& operator=(EBO&& other) noexcept
+	{
+		if(this != &other)
+		{
+			auto tmp = id;
+			id = other.id;
+			other.id = tmp;
+		}
+
+		return *this;
+	}
+
 	~EBO()
 	{
-		glDeleteBuffers(1, &id);
+		if(id != 0)
+		{
+			glDeleteBuffers(1, &id);
+		}
 	}
+#pragma endregion
 
 	void bind()
 	{
@@ -31,6 +58,6 @@ public:
 	}
 
 private:
-	GLuint id;
+	GLuint id = 0;
 };
 
