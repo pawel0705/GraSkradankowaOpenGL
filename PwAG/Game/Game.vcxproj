@@ -135,14 +135,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game Objects\smokeBomb.cpp" />
     <ClCompile Include="src\Utilities\resourceManager.cpp" />
     <ClCompile Include="src\Rendering system\Particle system\particleEmitter.cpp" />
     <ClCompile Include="src\Rendering system\Particle system\particle.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\attenuation.cpp" />
-    <ClCompile Include="gameOverState.cpp" />
-    <ClCompile Include="gameState.cpp" />
+    <ClCompile Include="src\Program structure\gameOverState.cpp" />
+    <ClCompile Include="src\Program structure\gameState.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\light.cpp" />
-    <ClCompile Include="menuState.cpp" />
+    <ClCompile Include="src\Program structure\menuState.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\spot.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\point.cpp" />
     <ClCompile Include="src\Rendering system\Camera\camera.cpp" />
@@ -178,21 +179,22 @@
     <ClCompile Include="src\Rendering system\ABE Objects\vao.cpp" />
     <ClCompile Include="src\Rendering system\ABE Objects\vbo.cpp" />
     <ClCompile Include="src\Utilities\timer.cpp" />
-    <ClCompile Include="stateMachine.cpp" />
+    <ClCompile Include="src\Program structure\stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Game Objects\smokeBomb.h" />
     <ClInclude Include="src\Utilities\resourceManager.h" />
     <ClInclude Include="src\Rendering system\Particle system\particleEmitter.h" />
     <ClInclude Include="src\Rendering system\Particle system\particle.h" />
     <ClInclude Include="src\Rendering system\Lighting\attenuation.h" />
-    <ClInclude Include="gameAssets.h" />
-    <ClInclude Include="gameOverState.h" />
-    <ClInclude Include="gameState.h" />
+    <ClInclude Include="src\Program structure\gameAssets.h" />
+    <ClInclude Include="src\Program structure\gameOverState.h" />
+    <ClInclude Include="src\Program structure\gameState.h" />
     <ClInclude Include="src\Rendering system\Lighting\light.h" />
-    <ClInclude Include="menuState.h" />
+    <ClInclude Include="src\Program structure\menuState.h" />
     <ClInclude Include="src\Rendering system\Lighting\spot.h" />
     <ClInclude Include="src\Rendering system\Lighting\point.h" />
-    <ClInclude Include="programState.h" />
+    <ClInclude Include="src\Program structure\programState.h" />
     <ClInclude Include="src\Rendering system\Camera\camera.h" />
     <ClInclude Include="src\Rendering system\Model\dataOBJ.h" />
     <ClInclude Include="src\Rendering system\ABE Objects\ebo.h" />
@@ -222,7 +224,7 @@
     <ClInclude Include="src\Game Objects\tileType.h" />
     <ClInclude Include="src\Rendering system\Model\transformationOBJ.h" />
     <ClInclude Include="src\Utilities\timer.h" />
-    <ClInclude Include="stateMachine.h" />
+    <ClInclude Include="src\Program structure\stateMachine.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\map.frag" />

@@ -137,6 +137,7 @@ void Maze::initMazeTextures() {
 	this->normalMapFloor = new Texture("res/Textures/floor_rnm.png", TextureType::NORMAL_MAP);
 
 	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", TextureType::PNG);
+	ResourceManager::getInstance().loadTexture("smoke", "res/Textures/smoke.png", TextureType::PNG);
 }
 
 void Maze::initObjModels() {
@@ -257,7 +258,7 @@ void Maze::initObjModels() {
 
 			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.05f, y + offsetY };
 			this->pointLights.push_back(Light::Point(torchPos, {0.5f, 0.5f, 0.5f}));
-			this->torchesParticleEmitters.emplace_back(torchPos);
+			this->torchesParticleEmitters.emplace_back(torchPos, ResourceManager::getInstance().getTexture("fire"));
 		}
 	}
 
@@ -310,7 +311,7 @@ void Maze::drawMaze(float deltaTime) {
 	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
-	setLightUniforms(this->shaderProgram);
+	setLightUniforms(*this->shaderProgram);
 
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
@@ -319,7 +320,8 @@ void Maze::drawMaze(float deltaTime) {
 	
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
-	setLightUniforms(this->shaderGrassProgram);
+	setLightUniforms(*this->shaderGrassProgram);
+
 	this->grass1->draw(this->shaderGrassProgram);
 	this->grass2->draw(this->shaderGrassProgram);
 	this->grass3->draw(this->shaderGrassProgram);
@@ -327,7 +329,7 @@ void Maze::drawMaze(float deltaTime) {
 
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
-	setLightUniforms(this->shaderPickupProgram);
+	setLightUniforms(*this->shaderPickupProgram);
 
 	for (auto p : this->respawnPickup)
 	{
@@ -341,6 +343,10 @@ void Maze::drawMaze(float deltaTime) {
 		emitter.render(shaderParticles);
 	}
 	
+	for(auto& smokeBomb : smokeBombs)
+	{
+		smokeBomb.render(deltaTime, shaderParticles);
+	}
 }
 
 void Maze::updateMaze(float deltaTime)
@@ -348,6 +354,10 @@ void Maze::updateMaze(float deltaTime)
 	for(auto& emitter : torchesParticleEmitters)
 	{
 		emitter.update(deltaTime);
+	}
+	for(auto& smokeBomb : smokeBombs)
+	{
+		smokeBomb.update(deltaTime);
 	}
 }
 
@@ -369,6 +379,21 @@ bool Maze::willBeCollisionWithWall(float deltaTime) {
 	}
 
 	return isCollision;
+}
+
+void Maze::useSmokeBomb()
+{
+	if(smokeBombCooldownLeft > 0.0f)
+	{
+		return;
+	}
+
+	smokeBombCooldownLeft = smokeBombCooldown;
+
+	const auto cameraPos = camera->getCameraPosition();
+	glm::vec3 pos = { cameraPos.x, -1.0f, cameraPos.z };
+	
+	smokeBombs.emplace_back(pos);
 }
 
 Maze::~Maze() {
@@ -418,22 +443,39 @@ Maze::~Maze() {
 	delete this->spawnActiveTexture;
 }
 
-void Maze::setLightUniforms(ShaderProgram*& shader)
+void Maze::setLightUniforms(ShaderProgram& shader)
 {
-	shader->setInt("pointLightsCount", static_cast<int>(pointLights.size()));
+	shader.setInt("pointLightsCount", static_cast<int>(pointLights.size()));
 	char lightIndex[20];
 	for(int i = 0; i < pointLights.size(); ++i)
 	{
 		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
 		std::string index { lightIndex };
-		shader->setVec3f(index + "position", pointLights[i].getPosition());
+		shader.setVec3f(index + "position", pointLights[i].getPosition());
 
-		shader->setVec3f(index + "ambient", pointLights[i].getAmbient());
-		shader->setVec3f(index + "diffuse", pointLights[i].getDiffuse());
-		shader->setVec3f(index + "specular", pointLights[i].getSpecular());
+		shader.setVec3f(index + "ambient", pointLights[i].getAmbient());
+		shader.setVec3f(index + "diffuse", pointLights[i].getDiffuse());
+		shader.setVec3f(index + "specular", pointLights[i].getSpecular());
 
-		shader->setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
-		shader->setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
-		shader->setFloat(index + "quadratic", pointLights[i].getAttenuation().getQuadratic());
+		shader.setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
+		shader.setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
+		shader.setFloat(index + "quadratic", pointLights[i].getAttenuation().getQuadratic());
+	}
+}
+
+void Maze::updateSmokeBombs(float deltaTime)
+{
+	if(smokeBombCooldownLeft > 0.0f)
+	{
+		smokeBombCooldownLeft -= deltaTime;
+	}
+
+	for(auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
+	{
+		iter->update(deltaTime);
+		if(iter->getDurationTime() >= iter->getMaxDurationTime())
+		{
+			iter = smokeBombs.erase(iter);
+		}
 	}
 }

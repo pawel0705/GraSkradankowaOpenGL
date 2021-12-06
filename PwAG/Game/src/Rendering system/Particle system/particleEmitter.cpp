@@ -3,13 +3,13 @@
 
 uint32_t ParticleEmitter::maxParticles = 100;
 
-ParticleEmitter::ParticleEmitter(const glm::vec3& position)
-	: position(position)
+ParticleEmitter::ParticleEmitter(const glm::vec3& position, const Texture& texture)
+	: position(position), texture(&texture)
 {
 }
 
 ParticleEmitter::ParticleEmitter(ParticleEmitter&& other) noexcept
-	: position(other.position), particles(std::move(other.particles)), timePassed(other.timePassed)
+	: position(other.position), particles(std::move(other.particles)), timePassed(other.timePassed), texture(other.texture)
 {
 }
 
@@ -20,6 +20,7 @@ ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter&& other) noexcept
 		position = other.position;
 		particles = std::move(other.particles);
 		timePassed = other.timePassed;
+		texture = other.texture;
 	}
 
 	return *this;
@@ -58,13 +59,12 @@ void ParticleEmitter::update(float deltaTime)
 
 void ParticleEmitter::render(const ShaderProgram& shader)
 {
-	const Texture& texture = ResourceManager::getInstance().getTexture("fire");
-	texture.bindTexture(0);
+	texture->bindTexture(0);
 
 	for(auto& particle : particles)
 	{
 		particle.render(shader);
 	}
 
-	texture.unbindTexture();
+	texture->unbindTexture();
 }

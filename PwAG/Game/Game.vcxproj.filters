@@ -81,16 +81,16 @@
     <ClCompile Include="src\Utilities\timer.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="stateMachine.cpp">
+    <ClCompile Include="src\Program structure\stateMachine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameState.cpp">
+    <ClCompile Include="src\Program structure\gameState.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="menuState.cpp">
+    <ClCompile Include="src\Program structure\menuState.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameOverState.cpp">
+    <ClCompile Include="src\Program structure\gameOverState.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering system\Lighting\point.cpp">
@@ -112,6 +112,9 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Utilities\resourceManager.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Game Objects\smokeBomb.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -197,22 +200,22 @@
     <ClInclude Include="src\Utilities\timer.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="programState.h">
+    <ClInclude Include="src\Program structure\programState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="stateMachine.h">
+    <ClInclude Include="src\Program structure\stateMachine.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameState.h">
+    <ClInclude Include="src\Program structure\gameState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameAssets.h">
+    <ClInclude Include="src\Program structure\gameAssets.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="menuState.h">
+    <ClInclude Include="src\Program structure\menuState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameOverState.h">
+    <ClInclude Include="src\Program structure\gameOverState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering system\Lighting\point.h">
@@ -234,6 +237,9 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\Utilities\resourceManager.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Game Objects\smokeBomb.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

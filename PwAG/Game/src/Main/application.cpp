@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "application.h"
-#include "./../../gameState.h"
+#include "../Program structure/gameState.h"
 
 Application::Application()
 	: tmpDefaultFont(std::move(Font("res/Fonts/Segan.ttf", 18))),
@@ -79,6 +79,11 @@ void Application::processInput()
 		case EventType::eWindowClosed:
 			this->mainLoopCondition = false;
 			break;
+		case EventType::eKeyPressed:
+			if(keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyF)])
+			{
+
+			}
 		}
 	}
 

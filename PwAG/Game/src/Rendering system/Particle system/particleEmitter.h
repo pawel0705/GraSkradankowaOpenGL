@@ -5,7 +5,7 @@
 class ParticleEmitter
 {
 public:
-	ParticleEmitter(const glm::vec3& position);
+	ParticleEmitter(const glm::vec3& position, const Texture& texture);
 	ParticleEmitter(const ParticleEmitter&) = delete;
 	ParticleEmitter(ParticleEmitter&&) noexcept;
 
@@ -17,8 +17,11 @@ public:
 	void render(const ShaderProgram& shader);
 private:
 	glm::vec3 position;
+	const Texture* texture;
+
 	static uint32_t maxParticles;
 	std::vector<Particle> particles;
+
 	const float timeToCreateAnotherParticle = 0.4f;
 	float timePassed = 0.0f;
 };

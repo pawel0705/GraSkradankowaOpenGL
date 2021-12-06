@@ -1,5 +1,6 @@
 #pragma once
 #include "gameObject.h"
+#include "smokeBomb.h"
 #include "../Rendering system/Camera/camera.h"
 #include "../Rendering system/Lighting/point.h"
 #include "../Rendering system/Particle system/particleEmitter.h"
@@ -26,10 +27,13 @@ public:
 
 	bool willBeCollisionWithWall(float deltaTime);
 
+	void useSmokeBomb();
+
 	virtual ~Maze();
 
 private:
-	void setLightUniforms(ShaderProgram*& shader);
+	void setLightUniforms(ShaderProgram& shader);
+	void updateSmokeBombs(float deltaTime);
 
 	int mazeDimensionX;
 	int mazeDimensionY;
@@ -46,6 +50,10 @@ private:
 	std::vector<GameObject*> respawnPickup;
 	std::vector<Light::Point> pointLights;
 	std::vector<ParticleEmitter> torchesParticleEmitters;
+
+	std::vector<SmokeBomb> smokeBombs;
+	const float smokeBombCooldown = 0.5f;
+	float smokeBombCooldownLeft = 0.0f;
 
 	ShaderProgram* shaderProgram;
 	ShaderProgram* shaderGrassProgram;
@@ -85,5 +93,6 @@ private:
 	std::vector<GLfloat> offsetsGrass1;
 	std::vector<GLfloat> offsetsGrass2;
 	std::vector<GLfloat> offsetsGrass3;
+
 };
 

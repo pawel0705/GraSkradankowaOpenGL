@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
+#include <stack>
 
 // additional dependencies
 #include "glad/glad.h"

@@ -1,10 +1,8 @@
 #pragma once
-
 #include "programState.h"
-#include "src/Game Objects/maze.h"
-#include "./stateMachine.h"
+#include "../Game Objects/maze.h"
+#include "stateMachine.h"
 #include "gameAssets.h"
-#include "src/Rendering system/Lighting/point.h"
 
 class GameState : public ProgramState
 {

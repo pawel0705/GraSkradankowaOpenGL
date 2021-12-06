@@ -1,8 +1,8 @@
 #pragma once
 #include "../Window/window.h"
 #include "../Rendering system/Text/text.h"
-#include "../../stateMachine.h"
-#include "../../gameAssets.h"
+#include "../Program structure/stateMachine.h"
+#include "../Program structure/gameAssets.h"
 
 #pragma region GLFW event callbacks
 void framebuffer_size_callback(GLFWwindow* window, const int width, const int height);

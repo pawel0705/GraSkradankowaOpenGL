@@ -36,6 +36,11 @@ void GameState::processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse)
 		this->maze->camera->updateInput(deltaTime, 2, 0, 0);
 	}
 
+	if(keyboard.keyState[static_cast<int>(Keyboard::Key::eKeyF)])
+	{
+		this->maze->useSmokeBomb();
+	}
+
 
 	if (this->maze->willBeCollisionWithWall(deltaTime)) {
 		this->maze->camera->revertCameraPosition();

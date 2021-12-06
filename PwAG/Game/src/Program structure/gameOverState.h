@@ -1,17 +1,16 @@
 #pragma once
-
 #include "programState.h"
-#include "./stateMachine.h"
+#include "stateMachine.h"
 #include "gameAssets.h"
 
-class MenuState : public ProgramState
+class GameOverState : public ProgramState
 {
 private:
 	GameReference gameReference;
 
 public:
-	MenuState(GameReference gameReference);
-	~MenuState();
+	GameOverState(GameReference gameReference);
+	~GameOverState();
 
 	void initialization() override;
 	void processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse) override;
