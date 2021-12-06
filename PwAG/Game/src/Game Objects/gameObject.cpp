@@ -122,6 +122,11 @@ glm::vec3 GameObject::getRotation() {
 	return this->transformation.objectRotation;
 }
 
+std::vector<GLfloat> GameObject::getOffsets()
+{
+	return this->offsets;
+}
+
 GameObject::~GameObject()
 {
 	delete this->material;

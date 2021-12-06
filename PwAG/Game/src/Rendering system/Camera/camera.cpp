@@ -50,6 +50,7 @@ void Camera::updateInput(const float& deltaTime, const int direction, const floa
 void Camera::setCameraPosition(glm::vec3 position)
 {
 	this->transformation.cameraPosition = position;
+	this->futureCameraPosition = position;
 }
 
 

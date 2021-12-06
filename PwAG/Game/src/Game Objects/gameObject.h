@@ -28,6 +28,8 @@ public:
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
 
+	std::vector<GLfloat> getOffsets();
+
 	~GameObject();
 
 private:

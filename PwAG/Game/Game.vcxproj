@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="enemy.cpp" />
     <ClCompile Include="src\Utilities\resourceManager.cpp" />
     <ClCompile Include="src\Rendering system\Particle system\particleEmitter.cpp" />
     <ClCompile Include="src\Rendering system\Particle system\particle.cpp" />
@@ -181,6 +182,7 @@
     <ClCompile Include="stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="enemy.h" />
     <ClInclude Include="src\Utilities\resourceManager.h" />
     <ClInclude Include="src\Rendering system\Particle system\particleEmitter.h" />
     <ClInclude Include="src\Rendering system\Particle system\particle.h" />

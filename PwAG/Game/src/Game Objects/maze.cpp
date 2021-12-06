@@ -136,6 +136,8 @@ void Maze::initMazeTextures() {
 	this->normalMapWall = new Texture("res/Textures/wall_nrm.png", TextureType::NORMAL_MAP);
 	this->normalMapFloor = new Texture("res/Textures/floor_rnm.png", TextureType::NORMAL_MAP);
 
+	this->enemyTexture = new Texture("res/Textures/purple.png", TextureType::BMP);
+
 	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", TextureType::PNG);
 }
 
@@ -146,6 +148,7 @@ void Maze::initObjModels() {
 	std::vector<DataOBJ> torchObjects = readObj("res/Models/torch.obj");
 	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
 	std::vector<DataOBJ> spawn_Objects = readObj("res/Models/respawnPickup.obj");
+	std::vector<DataOBJ> enemyObjects = readObj("res/Models/ghost.obj");
 
 	int wallInstances = 0;
 	int ceilingInstances = 0;
@@ -170,6 +173,8 @@ void Maze::initObjModels() {
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
 				this->camera = new Camera(glm::vec3(i * 2.f, 0.0f, j * 2.f));
+
+				this->startPosition = glm::vec3(i * 2.f, 0.0f, j * 2.f);
 
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
@@ -221,6 +226,29 @@ void Maze::initObjModels() {
 				offsetRespawn.emplace_back(j * 2.f);
 
 				this->respawnPickup.push_back(new GameObject(material, this->spawnInactiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
+			}
+			else if (this->mazeIndexData[i][j] == (int)TileType::ENEMY_SPAWN) {
+				offsetsFloors.emplace_back(i * 2.f);
+				offsetsFloors.emplace_back(-2.0f);
+				offsetsFloors.emplace_back(j * 2.f);
+
+				offsetsCeiling.emplace_back(i * 2.f);
+				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(j * 2.f);
+
+				floorInstances++;
+				ceilingInstances++;
+
+				std::vector<GLfloat> offsetEnemy;
+
+				offsetEnemy.emplace_back(i * 2.f);
+				offsetEnemy.emplace_back(-0.5f);
+				offsetEnemy.emplace_back(j * 2.f);
+
+
+				GameObject* enemyGameObject = new GameObject(material, this->enemyTexture, enemyObjects, transformation, offsetEnemy, 1);
+
+				this->opponents.push_back(new Enemy(enemyGameObject));
 			}
 		}
 	}
@@ -317,6 +345,11 @@ void Maze::drawMaze(float deltaTime) {
 	this->ceilings->draw(this->shaderProgram);
 	this->torches->draw(this->shaderProgram);
 	
+	for (auto p : this->opponents)
+	{
+		p->drawEnemy(this->shaderProgram);
+	}
+
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
 	setLightUniforms(this->shaderGrassProgram);
@@ -348,6 +381,23 @@ void Maze::updateMaze(float deltaTime)
 	for(auto& emitter : torchesParticleEmitters)
 	{
 		emitter.update(deltaTime);
+	}
+
+	// kolicja z przeciwnikiem == rip
+	glm::vec3 playerPosition = this->camera->getCameraPosition();
+	for (auto p : this->opponents)
+	{
+		p->updateEnemy(deltaTime);
+
+		glm::vec3 enemyPosition = p->getEnemyPosition();
+
+		if (enemyPosition.x - 0.5f < playerPosition.x &&
+			enemyPosition.x + 2.5f > playerPosition.x &&
+			enemyPosition.z - 0.5f < playerPosition.z &&
+			enemyPosition.z + 2.5f > playerPosition.z) {
+
+			this->camera->setCameraPosition(this->startPosition);
+		}
 	}
 }
 
@@ -385,6 +435,12 @@ Maze::~Maze() {
 	}
 	this->respawnPickup.clear();
 
+	for (auto p : this->opponents)
+	{
+		delete p;
+	}
+	this->opponents.clear();
+
 	delete this->walls;
 
 	delete this->ceilings;
@@ -416,6 +472,8 @@ Maze::~Maze() {
 	delete this->spawnInactiveTexture;
 
 	delete this->spawnActiveTexture;
+
+	delete this->enemyTexture;
 }
 
 void Maze::setLightUniforms(ShaderProgram*& shader)

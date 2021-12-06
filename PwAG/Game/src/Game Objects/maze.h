@@ -3,6 +3,7 @@
 #include "../Rendering system/Camera/camera.h"
 #include "../Rendering system/Lighting/point.h"
 #include "../Rendering system/Particle system/particleEmitter.h"
+#include "../../enemy.h"
 
 class Maze
 {
@@ -44,6 +45,7 @@ private:
 	GameObject* grass3;
 
 	std::vector<GameObject*> respawnPickup;
+	std::vector<Enemy*> opponents;
 	std::vector<Light::Point> pointLights;
 	std::vector<ParticleEmitter> torchesParticleEmitters;
 
@@ -77,6 +79,8 @@ private:
 	Texture* normalMapWall;
 	Texture* normalMapCeiling;
 	Texture* normalMapFloor;
+
+	Texture* enemyTexture;
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;
