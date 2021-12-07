@@ -4,6 +4,7 @@
 #include "../Rendering system/Lighting/point.h"
 #include "../Rendering system/Particle system/particleEmitter.h"
 #include "../../enemy.h"
+#include "../../respawnPoint.h"
 
 class Maze
 {
@@ -32,6 +33,8 @@ public:
 private:
 	void setLightUniforms(ShaderProgram*& shader);
 
+	void updateEnemy(float deltaTime);
+
 	int mazeDimensionX;
 	int mazeDimensionY;
 	int** mazeIndexData;
@@ -44,7 +47,7 @@ private:
 	GameObject* grass2;
 	GameObject* grass3;
 
-	std::vector<GameObject*> respawnPickup;
+	std::vector<RespawnPoint*> respawnPickup;
 	std::vector<Enemy*> opponents;
 	std::vector<Light::Point> pointLights;
 	std::vector<ParticleEmitter> torchesParticleEmitters;

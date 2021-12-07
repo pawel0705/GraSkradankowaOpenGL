@@ -193,7 +193,10 @@ void Maze::initObjModels() {
 				offsetRespawn.emplace_back(0.0f);
 				offsetRespawn.emplace_back(j * 2.f);
 
-				this->respawnPickup.push_back(new GameObject(material, this->spawnActiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
+				GameObject* respawn = new GameObject(material, this->spawnActiveTexture, spawn_Objects, transformation, offsetRespawn, 1);
+
+				this->respawnPickup.push_back(new RespawnPoint(respawn, true));
+				
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE) {
 				offsetsFloors.emplace_back(i * 2.f);
@@ -225,7 +228,9 @@ void Maze::initObjModels() {
 				offsetRespawn.emplace_back(0.0f);
 				offsetRespawn.emplace_back(j * 2.f);
 
-				this->respawnPickup.push_back(new GameObject(material, this->spawnInactiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
+				GameObject* respawn = new GameObject(material, this->spawnInactiveTexture, spawn_Objects, transformation, offsetRespawn, 1);
+
+				this->respawnPickup.push_back(new RespawnPoint(respawn, false));
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::ENEMY_SPAWN) {
 				offsetsFloors.emplace_back(i * 2.f);
@@ -283,8 +288,8 @@ void Maze::initObjModels() {
 
 			torchInstances++;
 
-			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.05f, y + offsetY };
-			this->pointLights.push_back(Light::Point(torchPos, {0.5f, 0.5f, 0.5f}));
+			glm::vec3 torchPos = transformation.objectPosition + glm::vec3{ x + offsetX, -1.05f, y + offsetY };
+			this->pointLights.push_back(Light::Point(torchPos, { 0.5f, 0.5f, 0.5f }));
 			this->torchesParticleEmitters.emplace_back(torchPos);
 		}
 	}
@@ -344,7 +349,7 @@ void Maze::drawMaze(float deltaTime) {
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
 	this->torches->draw(this->shaderProgram);
-	
+
 	for (auto p : this->opponents)
 	{
 		p->drawEnemy(this->shaderProgram);
@@ -364,39 +369,92 @@ void Maze::drawMaze(float deltaTime) {
 
 	for (auto p : this->respawnPickup)
 	{
-		p->draw(this->shaderPickupProgram);
+		p->drawRespawnPoint(this->shaderPickupProgram);
 	}
-	
+
 	shaderParticles.useShader();
 	this->camera->setCameraUniforms(&shaderParticles);
-	for(auto& emitter : torchesParticleEmitters)
+	for (auto& emitter : torchesParticleEmitters)
 	{
 		emitter.render(shaderParticles);
 	}
-	
+
 }
 
 void Maze::updateMaze(float deltaTime)
 {
-	for(auto& emitter : torchesParticleEmitters)
+	for (auto& emitter : torchesParticleEmitters)
 	{
 		emitter.update(deltaTime);
 	}
 
-	// kolicja z przeciwnikiem == rip
+	this->updateEnemy(deltaTime);
+
+	for (auto p : this->respawnPickup)
+	{
+		p->updateRespawnPoint(deltaTime);
+	}
+}
+
+void Maze::updateEnemy(float deltaTime) {
+	// przeciwnik
 	glm::vec3 playerPosition = this->camera->getCameraPosition();
+	bool collisionWithPlayer = false;
 	for (auto p : this->opponents)
 	{
 		p->updateEnemy(deltaTime);
-
 		glm::vec3 enemyPosition = p->getEnemyPosition();
 
-		if (enemyPosition.x - 0.5f < playerPosition.x &&
-			enemyPosition.x + 2.5f > playerPosition.x &&
-			enemyPosition.z - 0.5f < playerPosition.z &&
-			enemyPosition.z + 2.5f > playerPosition.z) {
+		// kolizja
+		if (enemyPosition.x - 1.0f < playerPosition.x &&
+			enemyPosition.x + 1.0f > playerPosition.x &&
+			enemyPosition.z - 1.0f < playerPosition.z &&
+			enemyPosition.z + 1.0f > playerPosition.z) {
 
 			this->camera->setCameraPosition(this->startPosition);
+			collisionWithPlayer = true;
+		}
+
+		// idŸ za graczem gdy znajdzie siê w zasiêgu
+		bool followPlayer = false;
+		if (enemyPosition.x - 15.0f < playerPosition.x &&
+			enemyPosition.x + 15.0f > playerPosition.x &&
+			enemyPosition.z - 15.0f < playerPosition.z &&
+			enemyPosition.z + 15.0f > playerPosition.z) {
+
+			followPlayer = true;
+		}
+
+		if (followPlayer == true)
+		{
+			float enemyDirectionX = 0.0f;
+			float enemyDirectionZ = 0.0f;
+
+			if (playerPosition.x > enemyPosition.x + 0.35f) {
+				enemyDirectionX = deltaTime * 0.8f;
+			}
+			else if (playerPosition.x < enemyPosition.x - 0.35f)
+			{
+				enemyDirectionX = -deltaTime * 0.8f;
+			}
+
+			if (playerPosition.z > enemyPosition.z + 0.35f) {
+				enemyDirectionZ = deltaTime * 0.8f;
+			}
+			else if (playerPosition.z < enemyPosition.z - 0.35f) {
+				enemyDirectionZ = -deltaTime * 0.8f;
+			}
+
+			glm::vec3 enemyTransforationPos = p->getEnemyPositionWithoutOffset();
+
+			p->setEnemyPosition(glm::vec3(enemyTransforationPos.x + enemyDirectionX, enemyTransforationPos.y, enemyTransforationPos.z + enemyDirectionZ));
+		}
+	}
+
+	if (collisionWithPlayer == true) {
+		for (auto p : this->opponents)
+		{
+			p->resetEnemyPosition();
 		}
 	}
 }
@@ -480,10 +538,10 @@ void Maze::setLightUniforms(ShaderProgram*& shader)
 {
 	shader->setInt("pointLightsCount", static_cast<int>(pointLights.size()));
 	char lightIndex[20];
-	for(int i = 0; i < pointLights.size(); ++i)
+	for (int i = 0; i < pointLights.size(); ++i)
 	{
 		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
-		std::string index { lightIndex };
+		std::string index{ lightIndex };
 		shader->setVec3f(index + "position", pointLights[i].getPosition());
 
 		shader->setVec3f(index + "ambient", pointLights[i].getAmbient());

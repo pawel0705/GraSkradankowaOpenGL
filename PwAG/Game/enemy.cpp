@@ -4,6 +4,7 @@
 Enemy::Enemy(GameObject* enemyModel)
 {
 	this->enemyModel = enemyModel;
+	this->enemyStartPosition = enemyModel->getPosition();
 }
 
 Enemy::~Enemy()
@@ -11,9 +12,6 @@ Enemy::~Enemy()
 	delete this->enemyModel;
 }
 
-void Enemy::Intelligence(glm::vec3 playerPosition)
-{
-}
 
 void Enemy::drawEnemy(ShaderProgram* shaderProgram)
 {
@@ -24,21 +22,35 @@ void Enemy::updateEnemy(float deltaTime)
 {
 	std::vector<GLfloat> offsetEnemy = this->enemyModel->getOffsets();
 
+	glm::vec3 pos = this->enemyModel->getPosition();
+
 	if (offsetEnemy.size() >= 3) {
-			this->enemyModel->setOrigin(glm::vec3(offsetEnemy[0] + 1, offsetEnemy[1] + 1, offsetEnemy[2] + 1));
+			this->enemyModel->setOrigin(glm::vec3(offsetEnemy[0] + pos.x, offsetEnemy[1] + pos.y, offsetEnemy[2] + pos.z));
 			this->enemyModel->setRotation(glm::vec3(0, enemyRotation += deltaTime *25, 0.f));
 	}
+}
 
-
+void Enemy::setEnemyPosition(glm::vec3 position) {
+	this->enemyModel->setPosition(position);
 }
 
 glm::vec3 Enemy::getEnemyPosition() const
 {
 	std::vector<GLfloat> offsetEnemy = this->enemyModel->getOffsets();
 
+	glm::vec3 pos = this->enemyModel->getPosition();
+
 	if (offsetEnemy.size() >= 3) {
-		return glm::vec3(offsetEnemy[0], offsetEnemy[1], offsetEnemy[2]);
+		return glm::vec3(offsetEnemy[0] + pos.x, offsetEnemy[1] + pos.y, offsetEnemy[2] + pos.z);
 	}
 
 	return glm::vec3(-1, -1, -1);
+}
+
+glm::vec3 Enemy::getEnemyPositionWithoutOffset() const {
+	return this->enemyModel->getPosition();
+}
+
+void Enemy::resetEnemyPosition() {
+	this->enemyModel->setPosition(this->enemyStartPosition);
 }
