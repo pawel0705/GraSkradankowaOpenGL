@@ -3,13 +3,13 @@
 
 uint32_t ParticleEmitter::maxParticles = 100;
 
-ParticleEmitter::ParticleEmitter(const glm::vec3& position, const Texture& texture)
-	: position(position), texture(&texture)
+ParticleEmitter::ParticleEmitter(const glm::vec3& position, const Texture& texture, const glm::vec3& scale)
+	: position(position), scale(scale), texture(&texture)
 {
 }
 
 ParticleEmitter::ParticleEmitter(ParticleEmitter&& other) noexcept
-	: position(other.position), particles(std::move(other.particles)), timePassed(other.timePassed), texture(other.texture)
+	: position(other.position), scale(other.scale), particles(std::move(other.particles)), timePassed(other.timePassed), texture(other.texture)
 {
 }
 
@@ -18,6 +18,7 @@ ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter&& other) noexcept
 	if(this != &other)
 	{
 		position = other.position;
+		scale = other.scale;
 		particles = std::move(other.particles);
 		timePassed = other.timePassed;
 		texture = other.texture;
@@ -60,6 +61,10 @@ void ParticleEmitter::update(float deltaTime)
 void ParticleEmitter::render(const ShaderProgram& shader)
 {
 	texture->bindTexture(0);
+	
+	auto scale = glm::mat4(1.0f);
+	scale = glm::scale(scale, this->scale);
+	shader.setMat4("scale", scale);
 
 	for(auto& particle : particles)
 	{

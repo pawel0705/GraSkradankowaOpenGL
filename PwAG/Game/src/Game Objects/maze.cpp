@@ -115,6 +115,16 @@ void Maze::initMazeShaders() {
 	shaderParticles.attachShader(particlesGeom);
 	shaderParticles.attachShader(particlesFrag);
 	shaderParticles.linkShaderProgram();
+
+	shaderProgram->useShader();
+	setLightUniforms(*shaderProgram);
+
+	shaderGrassProgram->useShader();
+	setLightUniforms(*shaderGrassProgram);
+
+	shaderPickupProgram->useShader();
+	setLightUniforms(*shaderPickupProgram);
+
 }
 
 void Maze::initMazeMaterials() {
@@ -258,7 +268,7 @@ void Maze::initObjModels() {
 
 			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.05f, y + offsetY };
 			this->pointLights.push_back(Light::Point(torchPos, {0.5f, 0.5f, 0.5f}));
-			this->torchesParticleEmitters.emplace_back(torchPos, ResourceManager::getInstance().getTexture("fire"));
+			this->torchesParticleEmitters.emplace_back(torchPos, ResourceManager::getInstance().getTexture("fire"), glm::vec3(0.2f, 0.4f, 1.0f));
 		}
 	}
 
@@ -311,7 +321,7 @@ void Maze::drawMaze(float deltaTime) {
 	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
-	setLightUniforms(*this->shaderProgram);
+	//setLightUniforms(*this->shaderProgram);
 
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
@@ -320,7 +330,7 @@ void Maze::drawMaze(float deltaTime) {
 	
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
-	setLightUniforms(*this->shaderGrassProgram);
+	//setLightUniforms(*this->shaderGrassProgram);
 
 	this->grass1->draw(this->shaderGrassProgram);
 	this->grass2->draw(this->shaderGrassProgram);
@@ -329,7 +339,7 @@ void Maze::drawMaze(float deltaTime) {
 
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
-	setLightUniforms(*this->shaderPickupProgram);
+	//setLightUniforms(*this->shaderPickupProgram);
 
 	for (auto p : this->respawnPickup)
 	{
@@ -340,7 +350,10 @@ void Maze::drawMaze(float deltaTime) {
 	this->camera->setCameraUniforms(&shaderParticles);
 	for(auto& emitter : torchesParticleEmitters)
 	{
-		emitter.render(shaderParticles);
+		if(emitter.isActive())
+		{
+			emitter.render(shaderParticles);
+		}
 	}
 	
 	for(auto& smokeBomb : smokeBombs)
@@ -353,7 +366,16 @@ void Maze::updateMaze(float deltaTime)
 {
 	for(auto& emitter : torchesParticleEmitters)
 	{
-		emitter.update(deltaTime);
+		//std::cout << glm::distance(emitter.getPosition(), camera->getCameraPosition()) << std::endl;
+		if(glm::distance(emitter.getPosition(), camera->getCameraPosition()) < 15.0f)
+		{
+			emitter.setActive(true);
+			emitter.update(deltaTime);
+		}
+		else
+		{
+			emitter.setActive(false);
+		}
 	}
 	for(auto& smokeBomb : smokeBombs)
 	{
@@ -391,7 +413,7 @@ void Maze::useSmokeBomb()
 	smokeBombCooldownLeft = smokeBombCooldown;
 
 	const auto cameraPos = camera->getCameraPosition();
-	glm::vec3 pos = { cameraPos.x, -1.0f, cameraPos.z };
+	glm::vec3 pos = { cameraPos.x, 0.0f, cameraPos.z };
 	
 	smokeBombs.emplace_back(pos);
 }
