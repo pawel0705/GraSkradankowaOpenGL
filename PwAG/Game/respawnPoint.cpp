@@ -5,6 +5,7 @@ RespawnPoint::RespawnPoint(GameObject* respawnPointModel, bool isActive)
 {
 	this->respawnPointModel = respawnPointModel;
 	this->isActive = isActive;
+	this->respawnPointPosition = respawnPointModel->getPosition();
 }
 
 RespawnPoint::~RespawnPoint()
@@ -34,6 +35,24 @@ void RespawnPoint::updateRespawnPoint(float deltaTime)
 void RespawnPoint::setRespawnActivation(bool isActive)
 {
 	this->isActive = isActive;
+}
+
+void RespawnPoint::setRespawnPointTexture(Texture* texture)
+{
+	this->respawnPointModel->setTexture(texture);
+}
+
+glm::vec3 RespawnPoint::getRespawnPointPosition() const
+{
+	std::vector<GLfloat> offset = this->respawnPointModel->getOffsets();
+
+	glm::vec3 pos = this->respawnPointModel->getPosition();
+
+	if (offset.size() >= 3) {
+		return glm::vec3(offset[0] + pos.x, offset[1] + pos.y, offset[2] + pos.z);
+	}
+
+	return glm::vec3(-1, -1, -1);
 }
 
 

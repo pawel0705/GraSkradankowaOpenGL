@@ -34,6 +34,7 @@ private:
 	void setLightUniforms(ShaderProgram*& shader);
 
 	void updateEnemy(float deltaTime);
+	void updateRespawnPoint(float deltaTime);
 
 	int mazeDimensionX;
 	int mazeDimensionY;

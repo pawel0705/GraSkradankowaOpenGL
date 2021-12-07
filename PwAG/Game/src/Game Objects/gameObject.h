@@ -25,6 +25,8 @@ public:
 
 	void setNormalMapTexture(Texture* normalMapTexture);
 
+	void setTexture(Texture* texture);
+
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
 

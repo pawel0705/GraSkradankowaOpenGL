@@ -114,6 +114,11 @@ void GameObject::setNormalMapTexture(Texture* normalMapTexture)
 	this->normalMapTexture = normalMapTexture;
 }
 
+void GameObject::setTexture(Texture* texture)
+{
+	this->texture = texture;
+}
+
 glm::vec3 GameObject::getPosition() {
 	return this->transformation.objectPosition;
 }

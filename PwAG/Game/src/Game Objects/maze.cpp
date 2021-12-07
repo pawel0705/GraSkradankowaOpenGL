@@ -390,9 +390,42 @@ void Maze::updateMaze(float deltaTime)
 
 	this->updateEnemy(deltaTime);
 
+	this->updateRespawnPoint(deltaTime);
+
+}
+
+void Maze::updateRespawnPoint(float deltaTime) {
+	glm::vec3 playerPosition = this->camera->getCameraPosition();
+	int respawnIterator = -1;
+	int respawnActive = -1;
 	for (auto p : this->respawnPickup)
 	{
+		respawnIterator++;
 		p->updateRespawnPoint(deltaTime);
+
+		glm::vec3 respawnPointPos = p->getRespawnPointPosition();
+
+		// kolizja
+		if (respawnPointPos.x - 1.5f < playerPosition.x &&
+			respawnPointPos.x + 1.5f > playerPosition.x &&
+			respawnPointPos.z - 1.5f < playerPosition.z &&
+			respawnPointPos.z + 1.5f > playerPosition.z) {
+
+			respawnActive = respawnIterator;
+		}
+	}
+
+	if (respawnActive != -1) {
+		for (auto p : this->respawnPickup)
+		{
+			p->setRespawnActivation(false);
+			p->setRespawnPointTexture(this->spawnInactiveTexture);
+		}
+
+		this->respawnPickup[respawnActive]->setRespawnActivation(true);
+		this->respawnPickup[respawnActive]->setRespawnPointTexture(this->spawnActiveTexture);
+		glm::vec3 newRespawnPos = this->respawnPickup[respawnActive]->getRespawnPointPosition();
+		this->startPosition = glm::vec3(newRespawnPos.x, this->startPosition.y, newRespawnPos.z);
 	}
 }
 
@@ -417,10 +450,10 @@ void Maze::updateEnemy(float deltaTime) {
 
 		// idŸ za graczem gdy znajdzie siê w zasiêgu
 		bool followPlayer = false;
-		if (enemyPosition.x - 15.0f < playerPosition.x &&
-			enemyPosition.x + 15.0f > playerPosition.x &&
-			enemyPosition.z - 15.0f < playerPosition.z &&
-			enemyPosition.z + 15.0f > playerPosition.z) {
+		if (enemyPosition.x - 25.0f < playerPosition.x &&
+			enemyPosition.x + 25.0f > playerPosition.x &&
+			enemyPosition.z - 25.0f < playerPosition.z &&
+			enemyPosition.z + 25.0f > playerPosition.z) {
 
 			followPlayer = true;
 		}

@@ -11,6 +11,10 @@ public:
 
 	void setRespawnActivation(bool isActive);
 
+	void setRespawnPointTexture(Texture* texture);
+
+	glm::vec3 getRespawnPointPosition() const;
+
 private:
 	GameObject* respawnPointModel;
 
