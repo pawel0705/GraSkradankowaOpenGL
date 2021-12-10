@@ -4,7 +4,7 @@
 float SmokeBomb::maxDurationTime = 10.0f;
 
 SmokeBomb::SmokeBomb(const glm::vec3& position)
-	: emitter(position, ResourceManager::getInstance().getTexture("smoke"), glm::vec3(1, 1, 1))
+	: emitter(position, {0.0f, 0.1f, 0.0f}, {0.0f, 0.0f ,0.0f}, ResourceManager::getInstance().getTexture("smoke"), glm::vec2(4.0f, 4.0f))
 {
 }
 

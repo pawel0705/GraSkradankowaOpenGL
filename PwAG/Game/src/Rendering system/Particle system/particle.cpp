@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "particle.h"
 
+#pragma region Lifetime
 float Particle::Lifetime::max = 3.0f;
 
 Particle::Lifetime::Lifetime(float passed)
@@ -37,17 +38,12 @@ Particle::Lifetime& Particle::Lifetime::operator=(Lifetime&& other) noexcept
 
 	return *this;
 }
+#pragma endregion
 
-Particle::Particle(const glm::vec3 position)
-	: position(position)
+Particle::Particle(const glm::vec3& startPosition, const glm::vec3& startVelocity, const glm::vec3& startAcceleration)
+	: position(startPosition), velocity(startVelocity), acceleration(startAcceleration)
 {
 	float vertices[] = { 0.0f, 0.0f, 0.0f };
-						//0.5f, 0.5f, 0.0f,
-						//-0.5f, 0.5f, 0.0f,
-
-						//-0.5f, -0.5f, 0.0f,
-						//0.5f, -0.5f, 0.0f,
-						//0.5f, 0.5f, 0.0f };
 
 	vao.bind();
 	vbo.bind();
@@ -59,7 +55,7 @@ Particle::Particle(const glm::vec3 position)
 }
 
 Particle::Particle(Particle&& other) noexcept
-	: position(other.position), lifetime(other.lifetime), vao(std::move(other.vao)), vbo(std::move(other.vbo))
+	: position(other.position), velocity(other.velocity), acceleration(other.acceleration), accelerationUpdateFunction(std::move(other.accelerationUpdateFunction)), lifetime(std::move(other.lifetime)), vao(std::move(other.vao)), vbo(std::move(other.vbo))
 {
 }
 
@@ -68,6 +64,10 @@ Particle& Particle::operator=(Particle&& other) noexcept
 	if(this != &other)
 	{
 		position = other.position;
+		velocity = other.velocity;
+		acceleration = other.acceleration;
+		accelerationUpdateFunction = std::move(accelerationUpdateFunction);
+
 		lifetime = other.lifetime;
 		vao = std::move(other.vao);
 		vbo = std::move(other.vbo);
@@ -78,8 +78,11 @@ Particle& Particle::operator=(Particle&& other) noexcept
 
 void Particle::update(float deltaTime)
 {
-	position.y += 0.1f * deltaTime;
 	lifetime.passed += deltaTime;
+
+	accelerationUpdateFunction(deltaTime);
+	velocity += acceleration * deltaTime;
+	position += velocity * deltaTime;
 }
 
 void Particle::render(const ShaderProgram& shader)

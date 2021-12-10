@@ -5,7 +5,7 @@
 class ParticleEmitter
 {
 public:
-	ParticleEmitter(const glm::vec3& position, const Texture& texture, const glm::vec3& scale = { 1.0, 1.0, 1.0 });
+	ParticleEmitter(const glm::vec3& position, const glm::vec3& startVelocity, const glm::vec3& startAcceleration, const Texture& texture, const glm::vec2& scale = { 1.0f, 1.0f });
 	ParticleEmitter(const ParticleEmitter&) = delete;
 	ParticleEmitter(ParticleEmitter&&) noexcept;
 
@@ -30,12 +30,23 @@ public:
 	{
 		this->active = isActive;
 	}
+	void setAccelerationUpdateFunction(std::function<void(float deltaTime)> function)
+	{
+		accelerationUpdateFunction = std::move(function);
+	}
 #pragma endregion
 private:
 	bool active = true;
 
 	glm::vec3 position;
-	glm::vec3 scale;
+	glm::vec3 particleStartVelocity;
+	glm::vec3 particleStartAcceleration;
+
+	std::function<void(float deltaTime)> accelerationUpdateFunction =
+		[&](float) mutable -> void
+	{};
+
+	glm::vec2 scale;
 	const Texture* texture;
 
 	static uint32_t maxParticles;

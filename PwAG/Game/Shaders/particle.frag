@@ -9,7 +9,7 @@ void main()
 {
 	vec4 textured = texture(particleTexture, gs_TexCoord);
 	
-	if(textured.a < 0.3)
+	if(textured.a < 0.6)
 		discard;
 	
 	out_Color = textured;
