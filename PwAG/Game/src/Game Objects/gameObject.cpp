@@ -21,6 +21,38 @@ GameObject::GameObject(
 	this->texture = texture;
 
 	if (mesh.size() > 0) {
+		for (int i = 0; i < mesh.size(); i+=3) {
+			// Shortcuts for vertices
+			glm::vec3& v0 = mesh[i + 0].vertex;
+			glm::vec3& v1 = mesh[i + 1].vertex;
+			glm::vec3& v2 = mesh[i + 2].vertex;
+
+			// Shortcuts for UVs
+			glm::vec2& uv0 = mesh[i + 0].uv;
+			glm::vec2& uv1 = mesh[i + 1].uv;
+			glm::vec2& uv2 = mesh[i + 2].uv;
+
+			// Edges of the triangle : position delta
+			glm::vec3 deltaPos1 = v1 - v0;
+			glm::vec3 deltaPos2 = v2 - v0;
+
+			// UV delta
+			glm::vec2 deltaUV1 = uv1 - uv0;
+			glm::vec2 deltaUV2 = uv2 - uv0;
+
+			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
+			glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
+			glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
+
+			mesh[i + 0].tangent = tangent;
+			mesh[i + 1].tangent = tangent;
+			mesh[i + 2].tangent = tangent;
+
+			mesh[i + 0].bittangent = bitangent;
+			mesh[i + 1].bittangent = bitangent;
+			mesh[i + 2].bittangent = bitangent;
+		}
+
 		this->mesh = new Mesh(mesh.data(), mesh.size(), nullptr, 0);
 	}
 
@@ -35,26 +67,33 @@ void GameObject::initGameObject() {
 	glBindBuffer(GL_ARRAY_BUFFER, this->mesh->VBO);
 	glBufferData(GL_ARRAY_BUFFER, this->mesh->verticesSize * sizeof(DataOBJ), this->mesh->vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, vertex));
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, vertex));
 
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, color));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, color));
 
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, normal));
 
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, uv));
 	glEnableVertexAttribArray(3);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, tangent));
+
+	glEnableVertexAttribArray(4);
+	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, bittangent));
+
+	glEnableVertexAttribArray(5);
+	glVertexAttribPointer(5, 2, GL_FLOAT, GL_FALSE, sizeof(DataOBJ), (GLvoid*)offsetof(DataOBJ, uv));
+
 
 	GLuint offsetBuffer;
 	glGenBuffers(1, &offsetBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, offsetBuffer);
 	glBufferData(GL_ARRAY_BUFFER, this->instances * 3 * sizeof(GLfloat), &this->offsets[0], GL_STATIC_DRAW);
-	glEnableVertexAttribArray(4);
+	glEnableVertexAttribArray(6);
 
-	glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
-	glVertexAttribDivisor(4, 1);
+	glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, sizeof(GLfloat) * 3, 0);
+	glVertexAttribDivisor(6, 1);
 
 	glBindVertexArray(0);
 }
@@ -68,16 +107,15 @@ void GameObject::draw(ShaderProgram* shaderProgram) {
 		this->normalMapTexture->bindTexture(1);
 	}
 
-	this->material->setMaterialShaderUniforms(*shaderProgram);
+	this->mesh->setMeshUniform(shaderProgram);
 
+	this->material->setMaterialShaderUniforms(*shaderProgram);
 
 	this->mesh->setMatrixModel(
 		this->transformation.objectPosition,
 		this->transformation.objectOrigin,
 		this->transformation.objectRotation,
 		this->transformation.objectScale);
-
-	this->mesh->setMeshUniform(shaderProgram);
 
 	glBindVertexArray(this->mesh->VAO);
 

@@ -134,7 +134,7 @@ void Maze::initMazeTextures() {
 
 	this->normalMapCeiling = new Texture("res/Textures/ceiling_nrm.png", TextureType::NORMAL_MAP);
 	this->normalMapWall = new Texture("res/Textures/wall_nrm.png", TextureType::NORMAL_MAP);
-	this->normalMapFloor = new Texture("res/Textures/floor_rnm.png", TextureType::NORMAL_MAP);
+	this->normalMapFloor = new Texture("res/Textures/floor_nrm.png", TextureType::NORMAL_MAP);
 
 	this->enemyTexture = new Texture("res/Textures/purple.png", TextureType::BMP);
 
@@ -149,6 +149,7 @@ void Maze::initObjModels() {
 	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
 	std::vector<DataOBJ> spawn_Objects = readObj("res/Models/respawnPickup.obj");
 	std::vector<DataOBJ> enemyObjects = readObj("res/Models/ghost.obj");
+
 
 	int wallInstances = 0;
 	int ceilingInstances = 0;
@@ -172,9 +173,9 @@ void Maze::initObjModels() {
 				wallInstances++;
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
-				this->camera = new Camera(glm::vec3(i * 2.f, 0.0f, j * 2.f));
+				this->camera = new Camera(glm::vec3(i * 2.f, -1.0f, j * 2.f));
 
-				this->startPosition = glm::vec3(i * 2.f, 0.0f, j * 2.f);
+				this->startPosition = glm::vec3(i * 2.f, -1.0f, j * 2.f);
 
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
@@ -258,13 +259,16 @@ void Maze::initObjModels() {
 		}
 	}
 
-	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
-	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
+	this->floors->setNormalMapTexture(this->normalMapFloor);
 
-	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
+	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->walls->setNormalMapTexture(this->normalMapWall);
-	//this->floors->setNormalMapTexture(this->normalMapFloor);
+
+	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
+	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
+	
+
 
 	// randomize torhes
 	for (int i = 0; i < floorInstances; i++) {
@@ -289,12 +293,13 @@ void Maze::initObjModels() {
 			torchInstances++;
 
 			glm::vec3 torchPos = transformation.objectPosition + glm::vec3{ x + offsetX, -1.05f, y + offsetY };
-			this->pointLights.push_back(Light::Point(torchPos, { 0.5f, 0.5f, 0.5f }));
+			this->pointLights.push_back(Light::Point(torchPos, { 0.6f, 0.5f, 0.5f }));
 			this->torchesParticleEmitters.emplace_back(torchPos);
 		}
 	}
 
 	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
+
 	// randomize grass
 	for (int i = 0; i < floorInstances; i++) {
 
@@ -312,21 +317,21 @@ void Maze::initObjModels() {
 
 		if (randomValue == 0) {
 			offsetsGrass1.emplace_back(x + offsetX);
-			offsetsGrass1.emplace_back(-2.0f);
+			offsetsGrass1.emplace_back(-1.7f);
 			offsetsGrass1.emplace_back(y + offsetY);
 
 			grass1Instances++;
 		}
 		else if (randomValue == 1) {
 			offsetsGrass2.emplace_back(x + offsetX);
-			offsetsGrass2.emplace_back(-2.0f);
+			offsetsGrass2.emplace_back(-1.7f);
 			offsetsGrass2.emplace_back(y + offsetY);
 
 			grass2Instances++;
 		}
 		else {
 			offsetsGrass3.emplace_back(x + offsetX);
-			offsetsGrass3.emplace_back(-2.0f);
+			offsetsGrass3.emplace_back(-1.7f);
 			offsetsGrass3.emplace_back(y + offsetY);
 
 			grass3Instances++;
@@ -350,18 +355,12 @@ void Maze::drawMaze(float deltaTime) {
 	this->ceilings->draw(this->shaderProgram);
 	this->torches->draw(this->shaderProgram);
 
-	for (auto p : this->opponents)
-	{
-		p->drawEnemy(this->shaderProgram);
-	}
-
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
 	setLightUniforms(this->shaderGrassProgram);
 	this->grass1->draw(this->shaderGrassProgram);
 	this->grass2->draw(this->shaderGrassProgram);
 	this->grass3->draw(this->shaderGrassProgram);
-
 
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
@@ -371,6 +370,12 @@ void Maze::drawMaze(float deltaTime) {
 	{
 		p->drawRespawnPoint(this->shaderPickupProgram);
 	}
+
+	for (auto p : this->opponents)
+	{
+		p->drawEnemy(this->shaderPickupProgram);
+	}
+
 
 	shaderParticles.useShader();
 	this->camera->setCameraUniforms(&shaderParticles);
@@ -391,7 +396,6 @@ void Maze::updateMaze(float deltaTime)
 	this->updateEnemy(deltaTime);
 
 	this->updateRespawnPoint(deltaTime);
-
 }
 
 void Maze::updateRespawnPoint(float deltaTime) {
@@ -500,10 +504,10 @@ bool Maze::willBeCollisionWithWall(float deltaTime) {
 		float x = this->offsetsWalls[i];
 		float z = this->offsetsWalls[i + 2];
 
-		if (x - 0.5f < playerPosition.x &&
-			x + 2.5f > playerPosition.x &&
-			z - 0.5f < playerPosition.z &&
-			z + 2.5f > playerPosition.z) {
+		if (x - 1.5f < playerPosition.x &&
+			x + 1.5f > playerPosition.x &&
+			z - 1.5f < playerPosition.z &&
+			z + 1.5f > playerPosition.z) {
 
 			isCollision = true;
 		}
