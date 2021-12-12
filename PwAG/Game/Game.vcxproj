@@ -233,6 +233,8 @@
     <ClInclude Include="src\Program structure\stateMachine.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Shaders\depthMap.frag" />
+    <None Include="Shaders\depthMap.vert" />
     <None Include="Shaders\map.frag" />
     <None Include="Shaders\map.vert" />
     <None Include="Shaders\mapGrass.frag" />

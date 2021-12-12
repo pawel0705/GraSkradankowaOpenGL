@@ -8,6 +8,6 @@ Light::Attenuation::Attenuation(float constant, float linear, float quadratic)
 
 void Light::Attenuation::setAttenuationByRange(float range)
 {
-	linear = 50.f * powf(range, -1.104f);
-	quadratic = 1750.f * powf(range, -2.119f);
+	linear = 4.5452f * powf(range, -1.004f);
+	quadratic = 82.445f * powf(range, -2.019f);
 }
