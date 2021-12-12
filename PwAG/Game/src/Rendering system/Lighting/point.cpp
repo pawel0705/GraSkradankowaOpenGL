@@ -35,8 +35,6 @@ void Light::Point::renderDepthMap(const ShaderProgram& shader, const Maze& maze)
 	fbo.bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 
-	
-	maze.renderToDepthMap();
 
 	fbo.unbind();
 }
