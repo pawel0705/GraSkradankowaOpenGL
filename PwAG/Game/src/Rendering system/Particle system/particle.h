@@ -16,7 +16,7 @@ public:
 		float passed;
 	};
 
-	Particle(const glm::vec3 position);
+	Particle(const glm::vec3& startPosition, const glm::vec3& startVelocity, const glm::vec3& startAcceleration);
 	Particle(const Particle&) = delete;
 	Particle(Particle&&) noexcept;
 	Particle& operator=(const Particle&) = delete;
@@ -27,13 +27,14 @@ public:
 	{
 		return position;
 	}
-	const glm::vec2& getInitialSize() const
-	{
-		return initialSize;
-	}
 	const Particle::Lifetime& getLifetime() const
 	{
 		return lifetime;
+	}
+
+	void setAccelerationUpdateFunction(std::function<void(float deltaTime)> function)
+	{
+		accelerationUpdateFunction = std::move(function);
 	}
 #pragma endregion
 
@@ -41,7 +42,12 @@ public:
 	void render(const ShaderProgram& shader);
 private:
 	glm::vec3 position;
-	static glm::vec2 initialSize;
+	glm::vec3 velocity;
+	glm::vec3 acceleration;
+
+	std::function<void(float deltaTime)> accelerationUpdateFunction = 
+		[&](float) mutable -> void
+	{};
 
 	Lifetime lifetime;
 

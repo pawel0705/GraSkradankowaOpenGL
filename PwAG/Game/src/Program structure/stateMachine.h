@@ -1,9 +1,5 @@
 #pragma once
-
-#include "ProgramState.h"
-
-#include <memory>
-#include <stack>
+#include "programState.h"
 
 typedef std::unique_ptr<ProgramState> StateReference;
 

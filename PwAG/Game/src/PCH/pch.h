@@ -14,6 +14,10 @@
 #include <stdio.h>
 #include <vector>
 #include <map>
+#include <stack>
+#include <functional>
+#include <utility>
+#include <array>
 
 // additional dependencies
 #include "glad/glad.h"
@@ -23,24 +27,19 @@
 #include "GLM/include/glm.hpp"
 #include "GLM/include/gtc/matrix_transform.hpp"
 #include "GLM/include/gtc/type_ptr.hpp"
+#include "GLM/include/gtx/norm.hpp"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-
-// podobno (tak ludzie ze stacka pisz¹) to musi byæ definiowane w pliku .cpp lub .c, bo nie da siê skompilowaæ przy próbie u¿ycia funkcji stbi_load lub free
-// da³em to na razie w texture.cpp
-/*
-#define STB_IMAGE_IMPLEMENTATION
-#include "../SourceDep/stb_image.h"
-*/
 
 // this project
 #include "../Main/config.h"
 #include "../Window/windowMode.h"
 #include "../Rendering system/Shader/shaderProgram.h"
-#include "../Rendering system/ABE Objects/vao.h"
-#include "../Rendering system/ABE Objects/vbo.h"
-#include "../Rendering system/ABE Objects/ebo.h"
+#include "../Rendering system/OpenGL Objects/vao.h"
+#include "../Rendering system/OpenGL Objects/vbo.h"
+#include "../Rendering system/OpenGL Objects/ebo.h"
+#include "../Rendering system/OpenGL Objects/fbo.h"
 
 #include "../Event system/mouse.h"
 #include "../Event system/keyboard.h"

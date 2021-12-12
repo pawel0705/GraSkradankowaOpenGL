@@ -63,13 +63,13 @@
     <ClCompile Include="src\Rendering system\Text\text.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\ABE Objects\vao.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\vao.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\ABE Objects\vbo.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\vbo.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\ebo.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp">
@@ -81,16 +81,16 @@
     <ClCompile Include="src\Utilities\timer.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="stateMachine.cpp">
+    <ClCompile Include="src\Program structure\stateMachine.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameState.cpp">
+    <ClCompile Include="src\Program structure\gameState.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="menuState.cpp">
+    <ClCompile Include="src\Program structure\menuState.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="gameOverState.cpp">
+    <ClCompile Include="src\Program structure\gameOverState.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering system\Lighting\point.cpp">
@@ -185,13 +185,13 @@
     <ClInclude Include="src\Rendering system\Text\text.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\ABE Objects\vao.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\vao.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\ABE Objects\vbo.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\vbo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\ABE Objects\ebo.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\ebo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\SourceDep\stb_image.h">
@@ -203,22 +203,22 @@
     <ClInclude Include="src\Utilities\timer.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="programState.h">
+    <ClInclude Include="src\Program structure\programState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="stateMachine.h">
+    <ClInclude Include="src\Program structure\stateMachine.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameState.h">
+    <ClInclude Include="src\Program structure\gameState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameAssets.h">
+    <ClInclude Include="src\Program structure\gameAssets.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="menuState.h">
+    <ClInclude Include="src\Program structure\menuState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="gameOverState.h">
+    <ClInclude Include="src\Program structure\gameOverState.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\Rendering system\Lighting\point.h">

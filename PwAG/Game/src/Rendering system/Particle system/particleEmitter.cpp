@@ -3,13 +3,14 @@
 
 uint32_t ParticleEmitter::maxParticles = 100;
 
-ParticleEmitter::ParticleEmitter(const glm::vec3& position)
-	: position(position)
+ParticleEmitter::ParticleEmitter(const glm::vec3& position, const glm::vec3& startVelocity, const glm::vec3& startAcceleration, const Texture& texture, const glm::vec2& scale)
+	: position(position), particleStartVelocity(startVelocity), particleStartAcceleration(startAcceleration), scale(scale), texture(&texture)
 {
 }
 
 ParticleEmitter::ParticleEmitter(ParticleEmitter&& other) noexcept
-	: position(other.position), particles(std::move(other.particles)), timePassed(other.timePassed)
+	: position(other.position), particleStartVelocity(other.particleStartVelocity), particleStartAcceleration(other.particleStartAcceleration), accelerationUpdateFunction(std::move(other.accelerationUpdateFunction)),
+	scale(other.scale), particles(std::move(other.particles)), timePassed(other.timePassed), texture(other.texture)
 {
 }
 
@@ -18,8 +19,14 @@ ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter&& other) noexcept
 	if(this != &other)
 	{
 		position = other.position;
+		particleStartVelocity = other.particleStartVelocity;
+		particleStartAcceleration = other.particleStartAcceleration;
+		accelerationUpdateFunction = std::move(other.accelerationUpdateFunction);
+
+		scale = other.scale;
 		particles = std::move(other.particles);
 		timePassed = other.timePassed;
+		texture = other.texture;
 	}
 
 	return *this;
@@ -27,21 +34,23 @@ ParticleEmitter& ParticleEmitter::operator=(ParticleEmitter&& other) noexcept
 
 void ParticleEmitter::update(float deltaTime)
 {
-	for(auto iter = particles.begin(); iter != particles.end(); iter++)
+	if(!particles.empty())
 	{
-		auto& particle = *iter;
-		auto& lifetime = particle.getLifetime();
-		if(lifetime.passed >= lifetime.max)
+		particles.erase(std::remove_if(
+			particles.begin(),
+			particles.end(),
+			[](const Particle& particle) -> bool
+			{
+				return particle.getLifetime().passed >= particle.getLifetime().max;
+			}),
+			particles.end()
+		);
+
+		for(auto iter = particles.begin(); iter != particles.end(); iter++)
 		{
-			iter = particles.erase(iter);
-		}
-		else
-		{
-			particle.update(deltaTime);
+			iter->update(deltaTime);
 		}
 	}
-
-	uint32_t particlesToCreateCount = 0;
 	timePassed += deltaTime;
 
 	while(timePassed >= timeToCreateAnotherParticle)
@@ -50,21 +59,33 @@ void ParticleEmitter::update(float deltaTime)
 
 		if(particles.size() < maxParticles)
 		{
-			glm::vec3 posDiff = { (rand() % 10 - 5) / 50.0, 0.0f , (rand() % 10 - 5) / 50.0 };
-			particles.push_back(Particle(this->position + posDiff));
+			glm::vec3 posDiff =
+			{
+				(rand() % 10 - 5) * 0.02,
+				0.0f ,
+				(rand() % 10 - 5) * 0.02
+			};
+			particles.emplace_back(this->position + posDiff, particleStartVelocity, particleStartAcceleration);
+			particles.back().setAccelerationUpdateFunction(accelerationUpdateFunction);
 		}
 	}
 }
 
-void ParticleEmitter::render(const ShaderProgram& shader)
+void ParticleEmitter::render(const ShaderProgram& shader, const glm::vec3& cameraPosition)
 {
-	const Texture& texture = ResourceManager::getInstance().getTexture("fire");
-	texture.bindTexture(0);
+	texture->bindTexture(0);
+	shader.setVec2f("scale", scale);
+
+	std::sort(particles.begin(), particles.end(), 
+			  [&cameraPosition](const Particle& left, const Particle& right) -> bool
+			  {
+				  return glm::distance2(cameraPosition, left.getPosition()) > glm::distance2(cameraPosition, right.getPosition());
+			  });
 
 	for(auto& particle : particles)
 	{
 		particle.render(shader);
 	}
 
-	texture.unbindTexture();
+	texture->unbindTexture();
 }
