@@ -317,7 +317,7 @@ void Maze::initObjModels()
 
 			glm::vec3 torchPos = transformation.objectPosition + glm::vec3{ x + offsetX, -1.05f, y + offsetY };
 			this->pointLights.push_back(Light::Point(torchPos, { 0.6f, 0.5f, 0.5f }));
-			this->torchesParticleEmitters.emplace_back(torchPos);
+			this->torchesParticleEmitters.emplace_back(torchPos, glm::vec3(0.0f, 0.02f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), ResourceManager::getInstance().getTexture("fire"), glm::vec3(0.2f, 0.4f, 1.0f));
 		}
 	}
 
@@ -657,7 +657,9 @@ void Maze::setLightUniforms(ShaderProgram& shader)
 	{
 		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
 		std::string index{ lightIndex };
-		shader->setVec3f(index + "position", pointLights[i].getPosition());
+		shader.setVec3f(index + "position", pointLights[i].getPosition());
+		shader.setVec3f(index + "diffuse", pointLights[i].getDiffuse());
+		shader.setVec3f(index + "specular", pointLights[i].getSpecular());
 
 		shader.setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
 		shader.setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
