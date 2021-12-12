@@ -40,6 +40,7 @@
 #include "../Rendering system/OpenGL Objects/vbo.h"
 #include "../Rendering system/OpenGL Objects/ebo.h"
 #include "../Rendering system/OpenGL Objects/fbo.h"
+#include "../Rendering system/Lighting/point.h"
 
 #include "../Event system/mouse.h"
 #include "../Event system/keyboard.h"

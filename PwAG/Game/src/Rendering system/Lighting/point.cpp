@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "point.h"
+#include "../../Game Objects/maze.h"
 
 Light::Point::Point(const glm::vec3& position, const glm::vec3& color)
 	: Light(color), position(position)
@@ -26,13 +27,14 @@ Light::Point::Point(const glm::vec3& position, const glm::vec3& color)
 	};
 }
 
-void Light::Point::renderDepthMap() const
+void Light::Point::renderDepthMap(const ShaderProgram& shader, const Maze& maze) const
 {
+	shader.setMat4("lightSpaceMatrix", lightSpaceMatrix[0]);
+
 	glViewport(0, 0, depthMap.getWidth(), depthMap.getHeight());
-	
 	fbo.bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 
+
 	fbo.unbind();
-	glViewport(0, 0, Config::g_defaultWidth, Config::g_defaultHeight);
 }

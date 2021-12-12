@@ -2,6 +2,8 @@
 #include "light.h"
 #include "attenuation.h"
 
+class Maze;
+
 namespace Light
 {
 	class Point 
@@ -23,6 +25,10 @@ namespace Light
 		float getRange() const
 		{
 			return range;
+		}
+		const glm::mat4& getLightSpaceMatrix() const
+		{
+			return lightSpaceMatrix[0];
 		}
 	#pragma endregion
 	#pragma region Setters
@@ -47,13 +53,13 @@ namespace Light
 	#pragma endregion
 	#pragma endregion
 
-		void renderDepthMap() const;
+		void renderDepthMap(const ShaderProgram& shader, const Maze& maze) const;
 
 	private:
 		glm::vec3 position;
 
 		Attenuation attenuation;
-		float range = 50;
+		float range = 15;
 
 		FBO fbo;
 		DepthMap depthMap;

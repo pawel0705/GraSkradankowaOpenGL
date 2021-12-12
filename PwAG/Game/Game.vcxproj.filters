@@ -120,6 +120,12 @@
     <ClCompile Include="respawnPoint.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\Game Objects\smokeBomb.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\Texture\depthMap.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PCH\pch.h">
@@ -248,6 +254,12 @@
     <ClInclude Include="respawnPoint.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="src\Game Objects\smokeBomb.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering system\Texture\depthMap.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\text.vert" />
@@ -265,5 +277,7 @@
     <None Include="Shaders\particle.vert" />
     <None Include="Shaders\particle.geom" />
     <None Include="Shaders\particle.frag" />
+    <None Include="Shaders\depthMap.vert" />
+    <None Include="Shaders\depthMap.frag" />
   </ItemGroup>
 </Project>
