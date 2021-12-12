@@ -135,6 +135,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Rendering system\Texture\depthMap.cpp" />
+    <ClCompile Include="src\Rendering system\OpenGL Objects\fbo.cpp" />
     <ClCompile Include="src\Game Objects\smokeBomb.cpp" />
     <ClCompile Include="src\Utilities\resourceManager.cpp" />
     <ClCompile Include="src\Rendering system\Particle system\particleEmitter.cpp" />
