@@ -55,7 +55,8 @@ Particle::Particle(const glm::vec3& startPosition, const glm::vec3& startVelocit
 }
 
 Particle::Particle(Particle&& other) noexcept
-	: position(other.position), velocity(other.velocity), acceleration(other.acceleration), accelerationUpdateFunction(std::move(other.accelerationUpdateFunction)), lifetime(std::move(other.lifetime)), vao(std::move(other.vao)), vbo(std::move(other.vbo))
+	: position(other.position), velocity(other.velocity), acceleration(other.acceleration), accelerationUpdateFunction(std::move(other.accelerationUpdateFunction)),
+	lifetime(std::move(other.lifetime)), vao(std::move(other.vao)), vbo(std::move(other.vbo))
 {
 }
 
@@ -66,7 +67,7 @@ Particle& Particle::operator=(Particle&& other) noexcept
 		position = other.position;
 		velocity = other.velocity;
 		acceleration = other.acceleration;
-		accelerationUpdateFunction = std::move(accelerationUpdateFunction);
+		accelerationUpdateFunction = std::move(other.accelerationUpdateFunction);
 
 		lifetime = other.lifetime;
 		vao = std::move(other.vao);
@@ -78,6 +79,7 @@ Particle& Particle::operator=(Particle&& other) noexcept
 
 void Particle::update(float deltaTime)
 {
+
 	lifetime.passed += deltaTime;
 
 	accelerationUpdateFunction(deltaTime);
@@ -87,6 +89,7 @@ void Particle::update(float deltaTime)
 
 void Particle::render(const ShaderProgram& shader)
 {
+
 	auto model = glm::mat4(1.0f);
 	model = glm::translate(model, this->position);
 	shader.setMat4("ModelMatrix", model);

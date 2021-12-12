@@ -63,13 +63,13 @@
     <ClCompile Include="src\Rendering system\Text\text.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\ABE Objects\vao.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\vao.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\ABE Objects\vbo.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\vbo.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\ebo.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp">
@@ -115,6 +115,12 @@
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
     <ClCompile Include="src\Game Objects\smokeBomb.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\OpenGL Objects\fbo.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Rendering system\Texture\depthMap.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -182,13 +188,13 @@
     <ClInclude Include="src\Rendering system\Text\text.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\ABE Objects\vao.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\vao.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\ABE Objects\vbo.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\vbo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\ABE Objects\ebo.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\ebo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\SourceDep\stb_image.h">
@@ -240,6 +246,12 @@
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
     <ClInclude Include="src\Game Objects\smokeBomb.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering system\OpenGL Objects\fbo.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Rendering system\Texture\depthMap.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

@@ -339,8 +339,6 @@ void Maze::drawMaze(float deltaTime)
 	this->camera->updateEulerAngels();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
-	//setLightUniforms(*this->shaderProgram);
-
 	this->walls->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
@@ -348,16 +346,13 @@ void Maze::drawMaze(float deltaTime)
 
 	this->shaderGrassProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderGrassProgram);
-	//setLightUniforms(*this->shaderGrassProgram);
 
 	this->grass1->draw(this->shaderGrassProgram);
 	this->grass2->draw(this->shaderGrassProgram);
 	this->grass3->draw(this->shaderGrassProgram);
 
-
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
-	//setLightUniforms(*this->shaderPickupProgram);
 
 	for(auto p : this->respawnPickup)
 	{
@@ -370,13 +365,13 @@ void Maze::drawMaze(float deltaTime)
 	{
 		if(emitter.isActive())
 		{
-			emitter.render(shaderParticles);
+			emitter.render(shaderParticles, this->camera->getCameraPosition());
 		}
 	}
 
 	for(auto& smokeBomb : smokeBombs)
 	{
-		smokeBomb.render(deltaTime, shaderParticles);
+		smokeBomb.render(deltaTime, shaderParticles, this->camera->getCameraPosition());
 	}
 }
 
@@ -401,13 +396,14 @@ void Maze::updateMaze(float deltaTime)
 	}
 
 	smokeBombs.erase(
-		std::remove_if(smokeBombs.begin(), smokeBombs.end(),
-					   [&](const SmokeBomb& bomb) -> bool
-					   {
-						   return bomb.getDurationTime() > bomb.getMaxDurationTime();
-					   }),
-		smokeBombs.end()
-						   );
+		std::remove_if(
+			smokeBombs.begin(),
+			smokeBombs.end(),
+			[&](const SmokeBomb& bomb) -> bool
+			{
+				return bomb.getDurationTime() > bomb.getMaxDurationTime();
+			}),
+		smokeBombs.end());
 
 	if(smokeBombCooldownLeft > 0.0f)
 	{

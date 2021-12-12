@@ -7,7 +7,7 @@ public:
 	SmokeBomb(const glm::vec3& position);
 
 	void update(float deltaTime);
-	void render(float deltaTime, const ShaderProgram& particleShader);
+	void render(float deltaTime, const ShaderProgram& particleShader, const glm::vec3& cameraPosition);
 
 #pragma region Inline functions
 	float getMaxDurationTime() const

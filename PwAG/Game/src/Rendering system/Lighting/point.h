@@ -46,10 +46,17 @@ namespace Light
 		}
 	#pragma endregion
 	#pragma endregion
+
+		void renderDepthMap() const;
+
 	private:
 		glm::vec3 position;
 
 		Attenuation attenuation;
 		float range = 50;
+
+		FBO fbo;
+		DepthMap depthMap;
+		std::array<glm::mat4, 6> lightSpaceMatrix;
 	};
 }

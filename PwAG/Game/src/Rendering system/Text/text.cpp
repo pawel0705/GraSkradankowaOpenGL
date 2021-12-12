@@ -9,16 +9,16 @@ Text::Text(int32_t x, int32_t y, std::string text, const Font& font, const glm::
 
 void Text::render(const ShaderProgram& shader)
 {
-	for (auto i = 0; i < text.size(); ++i)
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, fontPtr->atlasTextureID);
+	shader.setVec3f("textColor", color);
+
+	for(auto i = 0; i < text.size(); ++i)
 	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, fontPtr->atlasTextureID);
-		shader.setVec3f("textColor", color);
 		VAOs[i].bind();
 		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
-	VAOs.back().unbind();
 }
 
 void Text::setText(std::string newText)
@@ -53,7 +53,7 @@ void Text::setForNewText()
 	float xPos = static_cast<float>(x);
 	float yPos = static_cast<float>(y);
 
-	for (const auto charInText : this->text)
+	for(const auto charInText : this->text)
 	{
 		const Font::Character& character = fontPtr->characters.at(charInText);
 

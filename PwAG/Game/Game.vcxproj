@@ -147,7 +147,7 @@
     <ClCompile Include="src\Rendering system\Lighting\spot.cpp" />
     <ClCompile Include="src\Rendering system\Lighting\point.cpp" />
     <ClCompile Include="src\Rendering system\Camera\camera.cpp" />
-    <ClCompile Include="src\Rendering system\ABE Objects\ebo.cpp" />
+    <ClCompile Include="src\Rendering system\OpenGL Objects\ebo.cpp" />
     <ClCompile Include="src\Rendering system\Model\dataOBJ.cpp" />
     <ClCompile Include="src\Rendering system\Model\transformationOBJ.cpp" />
     <ClCompile Include="src\Rendering system\Text\font.cpp" />
@@ -176,12 +176,14 @@
     <ClCompile Include="src\Window\window.cpp" />
     <ClCompile Include="src\Rendering system\Text\text.cpp" />
     <ClCompile Include="src\Rendering system\Texture\texture.cpp" />
-    <ClCompile Include="src\Rendering system\ABE Objects\vao.cpp" />
-    <ClCompile Include="src\Rendering system\ABE Objects\vbo.cpp" />
+    <ClCompile Include="src\Rendering system\OpenGL Objects\vao.cpp" />
+    <ClCompile Include="src\Rendering system\OpenGL Objects\vbo.cpp" />
     <ClCompile Include="src\Utilities\timer.cpp" />
     <ClCompile Include="src\Program structure\stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Rendering system\Texture\depthMap.h" />
+    <ClInclude Include="src\Rendering system\OpenGL Objects\fbo.h" />
     <ClInclude Include="src\Game Objects\smokeBomb.h" />
     <ClInclude Include="src\Utilities\resourceManager.h" />
     <ClInclude Include="src\Rendering system\Particle system\particleEmitter.h" />
@@ -197,7 +199,7 @@
     <ClInclude Include="src\Program structure\programState.h" />
     <ClInclude Include="src\Rendering system\Camera\camera.h" />
     <ClInclude Include="src\Rendering system\Model\dataOBJ.h" />
-    <ClInclude Include="src\Rendering system\ABE Objects\ebo.h" />
+    <ClInclude Include="src\Rendering system\OpenGL Objects\ebo.h" />
     <ClInclude Include="src\Rendering system\Text\font.h" />
     <ClInclude Include="src\Game Objects\gameObject.h" />
     <ClInclude Include="src\Rendering system\Model\Material\material.h" />
@@ -219,8 +221,8 @@
     <ClInclude Include="src\Window\windowMode.h" />
     <ClInclude Include="src\Rendering system\Text\text.h" />
     <ClInclude Include="src\Rendering system\Texture\texture.h" />
-    <ClInclude Include="src\Rendering system\ABE Objects\vao.h" />
-    <ClInclude Include="src\Rendering system\ABE Objects\vbo.h" />
+    <ClInclude Include="src\Rendering system\OpenGL Objects\vao.h" />
+    <ClInclude Include="src\Rendering system\OpenGL Objects\vbo.h" />
     <ClInclude Include="src\Game Objects\tileType.h" />
     <ClInclude Include="src\Rendering system\Model\transformationOBJ.h" />
     <ClInclude Include="src\Utilities\timer.h" />

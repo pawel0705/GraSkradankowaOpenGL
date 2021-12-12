@@ -14,7 +14,7 @@ public:
 
 	void update(float deltaTime);
 
-	void render(const ShaderProgram& shader);
+	void render(const ShaderProgram& shader, const glm::vec3& cameraPosition);
 
 #pragma region Inline functions
 	bool isActive() const

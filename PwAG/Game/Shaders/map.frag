@@ -26,19 +26,6 @@ struct PointLight
 	vec3 specular;
 };
 
-//struct SpotLight
-//{
-//	vec3 position;
-//
-//	float constant;
-//	float linear;
-//	float quadratic;
-//
-//	vec3 ambient;
-//	vec3 diffuse;
-//	vec3 specular;
-//};
-
 #define MAX_POINT_LIGHT_COUNT 64
 
 uniform PointLight pointLights[MAX_POINT_LIGHT_COUNT];
@@ -46,11 +33,7 @@ uniform int pointLightsCount;
 
 #define MAX_SPOT_LIGHT_COUNT 16
 
-//uniform SpotLight spotLights[MAX_POINT_LIGHT_COUNT];
-//uniform int spotLightsCount;
-
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
-//vec3 calculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
 void main()
 {
@@ -64,11 +47,6 @@ void main()
 		{
 			result += calculatePointLight(pointLights[i], norm, v_Position, viewDir);
 		}
-		
-		//for(int i = 0; i < spotLightsCount; ++i)
-		//{
-		//	result += calculateSpotLight(spotLights[i], norm, v_Position, viewDir);
-		//}
 
 		gl_FragColor = vec4(result, 1.0);
 	}
@@ -87,6 +65,8 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	// specular light
 	vec3 reflectDirVec = reflect(-posToLightDirectionVector , normal);
 	float specularConstant = pow(max(dot(viewDir, reflectDirVec), 0.0), 105);
+	//vec3 halfwayDir = normalize(posToLightDirectionVector + viewDir);
+	//float specularConstant = pow(max(dot(normal, halfwayDir), 0.0), 205);
 
 	// attentuation
 	float distance = length(light.position - v_Position);

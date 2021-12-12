@@ -14,7 +14,7 @@ void SmokeBomb::update(float deltaTime)
 	emitter.update(deltaTime);
 }
 
-void SmokeBomb::render(float deltaTime, const ShaderProgram& particleShader)
+void SmokeBomb::render(float deltaTime, const ShaderProgram& particleShader, const glm::vec3& cameraPosition)
 {
-	emitter.render(particleShader);
+	emitter.render(particleShader, cameraPosition);
 }
