@@ -36,7 +36,7 @@ void main()
 			vec3 textured = texture(diffuse, v_TextCoord).rgb;
 
 			// ambient light
-			vec3 ambientFinal = pointLights[i].ambient * textured;
+			vec3 ambientFinal = vec3(1.0,1.0,1.0) * textured;
 	
 			// attentuation
 			float distance = length(pointLights[i].position - v_Position);

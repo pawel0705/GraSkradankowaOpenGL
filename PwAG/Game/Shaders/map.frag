@@ -13,6 +13,8 @@ in vec3 v_Position;
 
 in vec3 v_Offset;
 
+in mat3 TBN;
+
 struct PointLight
 {
 	vec3 position;
@@ -40,7 +42,7 @@ void main()
 	if (gl_FrontFacing) {
 		
 		vec3 norm = normalize(v_Normal);
-		vec3 viewDir = normalize(cameraPos - v_Position);
+		vec3 viewDir = normalize(cameraPos - v_Position) * TBN;
 
 		vec3 result = vec3(0, 0, 0);
 		for(int i = 0; i < pointLightsCount; ++i)
@@ -54,17 +56,18 @@ void main()
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
-	vec3 posToLightDirectionVector  = normalize(light.position - fragPos);
+	vec3 posToLightDirectionVectorDiffuse = normalize(light.position + v_Offset - fragPos);
+	vec3 posToLightDirectionVectorSpecular = normalize(light.position - fragPos);
 
 	// diffuse light
 	normal = normal + texture(normalMap, v_TextCoord).rgb;
 	normal = normalize(normal * 2.0 - 1.0);
 
-	float diffuseLight = max(dot(normal, posToLightDirectionVector ), 0.0);
+	float diffuseLight = max(dot(normal, posToLightDirectionVectorDiffuse), 0.0);
 
 	// specular light
-	vec3 reflectDirVec = reflect(-posToLightDirectionVector , normal);
-	float specularConstant = pow(max(dot(viewDir, reflectDirVec), 0.0), 105);
+	vec3 reflectDirVec = reflect(-posToLightDirectionVectorSpecular, normal);
+	float specularConstant = pow(max(dot(viewDir, reflectDirVec), 0.0), 35);
 	//vec3 halfwayDir = normalize(posToLightDirectionVector + viewDir);
 	//float specularConstant = pow(max(dot(normal, halfwayDir), 0.0), 205);
 

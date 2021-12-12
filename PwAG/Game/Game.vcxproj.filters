@@ -114,13 +114,10 @@
     <ClCompile Include="src\Utilities\resourceManager.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Game Objects\smokeBomb.cpp">
+    <ClCompile Include="enemy.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\OpenGL Objects\fbo.cpp">
-      <Filter>Pliki źródłowe</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Rendering system\Texture\depthMap.cpp">
+    <ClCompile Include="respawnPoint.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -245,13 +242,10 @@
     <ClInclude Include="src\Utilities\resourceManager.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Game Objects\smokeBomb.h">
+    <ClInclude Include="enemy.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\OpenGL Objects\fbo.h">
-      <Filter>Pliki nagłówkowe</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Rendering system\Texture\depthMap.h">
+    <ClInclude Include="respawnPoint.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>

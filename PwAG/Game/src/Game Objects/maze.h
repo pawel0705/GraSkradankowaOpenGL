@@ -4,6 +4,8 @@
 #include "../Rendering system/Camera/camera.h"
 #include "../Rendering system/Lighting/point.h"
 #include "../Rendering system/Particle system/particleEmitter.h"
+#include "../../enemy.h"
+#include "../../respawnPoint.h"
 
 class Maze
 {
@@ -35,6 +37,9 @@ private:
 	void setLightUniforms(ShaderProgram& shader);
 	void updateSmokeBombs(float deltaTime);
 
+	void updateEnemy(float deltaTime);
+	void updateRespawnPoint(float deltaTime);
+
 	int mazeDimensionX;
 	int mazeDimensionY;
 	int** mazeIndexData;
@@ -47,7 +52,8 @@ private:
 	GameObject* grass2;
 	GameObject* grass3;
 
-	std::vector<GameObject*> respawnPickup;
+	std::vector<RespawnPoint*> respawnPickup;
+	std::vector<Enemy*> opponents;
 	std::vector<Light::Point> pointLights;
 	std::vector<ParticleEmitter> torchesParticleEmitters;
 
@@ -85,6 +91,8 @@ private:
 	Texture* normalMapWall;
 	Texture* normalMapCeiling;
 	Texture* normalMapFloor;
+
+	Texture* enemyTexture;
 
 	std::vector<GLfloat> offsetsWalls;
 	std::vector<GLfloat> offsetsCeiling;

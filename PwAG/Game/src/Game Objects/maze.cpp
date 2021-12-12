@@ -150,7 +150,9 @@ void Maze::initMazeTextures()
 
 	this->normalMapCeiling = new Texture("res/Textures/ceiling_nrm.png", TextureType::NORMAL_MAP);
 	this->normalMapWall = new Texture("res/Textures/wall_nrm.png", TextureType::NORMAL_MAP);
-	this->normalMapFloor = new Texture("res/Textures/floor_rnm.png", TextureType::NORMAL_MAP);
+	this->normalMapFloor = new Texture("res/Textures/floor_nrm.png", TextureType::NORMAL_MAP);
+
+	this->enemyTexture = new Texture("res/Textures/purple.png", TextureType::BMP);
 
 	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", TextureType::PNG);
 	ResourceManager::getInstance().loadTexture("smoke", "res/Textures/smoke.png", TextureType::PNG);
@@ -164,6 +166,8 @@ void Maze::initObjModels()
 	std::vector<DataOBJ> torchObjects = readObj("res/Models/torch.obj");
 	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
 	std::vector<DataOBJ> spawn_Objects = readObj("res/Models/respawnPickup.obj");
+	std::vector<DataOBJ> enemyObjects = readObj("res/Models/ghost.obj");
+
 
 	int wallInstances = 0;
 	int ceilingInstances = 0;
@@ -187,9 +191,10 @@ void Maze::initObjModels()
 
 				wallInstances++;
 			}
-			else if(this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS)
-			{
-				this->camera = new Camera(glm::vec3(i * 2.f, 0.0f, j * 2.f));
+			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
+				this->camera = new Camera(glm::vec3(i * 2.f, -1.0f, j * 2.f));
+
+				this->startPosition = glm::vec3(i * 2.f, -1.0f, j * 2.f);
 
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
@@ -208,7 +213,10 @@ void Maze::initObjModels()
 				offsetRespawn.emplace_back(0.0f);
 				offsetRespawn.emplace_back(j * 2.f);
 
-				this->respawnPickup.push_back(new GameObject(material, this->spawnActiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
+				GameObject* respawn = new GameObject(material, this->spawnActiveTexture, spawn_Objects, transformation, offsetRespawn, 1);
+
+				this->respawnPickup.push_back(new RespawnPoint(respawn, true));
+				
 			}
 			else if(this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE)
 			{
@@ -242,18 +250,46 @@ void Maze::initObjModels()
 				offsetRespawn.emplace_back(0.0f);
 				offsetRespawn.emplace_back(j * 2.f);
 
-				this->respawnPickup.push_back(new GameObject(material, this->spawnInactiveTexture, spawn_Objects, transformation, offsetRespawn, 1));
+				GameObject* respawn = new GameObject(material, this->spawnInactiveTexture, spawn_Objects, transformation, offsetRespawn, 1);
+
+				this->respawnPickup.push_back(new RespawnPoint(respawn, false));
+			}
+			else if (this->mazeIndexData[i][j] == (int)TileType::ENEMY_SPAWN) {
+				offsetsFloors.emplace_back(i * 2.f);
+				offsetsFloors.emplace_back(-2.0f);
+				offsetsFloors.emplace_back(j * 2.f);
+
+				offsetsCeiling.emplace_back(i * 2.f);
+				offsetsCeiling.emplace_back(1.0f);
+				offsetsCeiling.emplace_back(j * 2.f);
+
+				floorInstances++;
+				ceilingInstances++;
+
+				std::vector<GLfloat> offsetEnemy;
+
+				offsetEnemy.emplace_back(i * 2.f);
+				offsetEnemy.emplace_back(-0.5f);
+				offsetEnemy.emplace_back(j * 2.f);
+
+
+				GameObject* enemyGameObject = new GameObject(material, this->enemyTexture, enemyObjects, transformation, offsetEnemy, 1);
+
+				this->opponents.push_back(new Enemy(enemyGameObject));
 			}
 		}
 	}
 
-	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
-	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
+	this->floors->setNormalMapTexture(this->normalMapFloor);
 
-	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
+	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->walls->setNormalMapTexture(this->normalMapWall);
-	//this->floors->setNormalMapTexture(this->normalMapFloor);
+
+	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
+	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
+	
+
 
 	// randomize torhes
 	for(int i = 0; i < floorInstances; i++)
@@ -279,13 +315,14 @@ void Maze::initObjModels()
 
 			torchInstances++;
 
-			glm::vec3 torchPos = transformation.objectPosition + glm::vec3 { x + offsetX, -1.05f, y + offsetY };
-			this->pointLights.push_back(Light::Point(torchPos, { 0.5f, 0.5f, 0.5f }));
-			this->torchesParticleEmitters.emplace_back(torchPos, glm::vec3(0.0f, 0.02f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), ResourceManager::getInstance().getTexture("fire"), glm::vec3(0.2f, 0.4f, 1.0f));
+			glm::vec3 torchPos = transformation.objectPosition + glm::vec3{ x + offsetX, -1.05f, y + offsetY };
+			this->pointLights.push_back(Light::Point(torchPos, { 0.6f, 0.5f, 0.5f }));
+			this->torchesParticleEmitters.emplace_back(torchPos);
 		}
 	}
 
 	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
+
 	// randomize grass
 	for(int i = 0; i < floorInstances; i++)
 	{
@@ -305,7 +342,7 @@ void Maze::initObjModels()
 		if(randomValue == 0)
 		{
 			offsetsGrass1.emplace_back(x + offsetX);
-			offsetsGrass1.emplace_back(-2.0f);
+			offsetsGrass1.emplace_back(-1.7f);
 			offsetsGrass1.emplace_back(y + offsetY);
 
 			grass1Instances++;
@@ -313,7 +350,7 @@ void Maze::initObjModels()
 		else if(randomValue == 1)
 		{
 			offsetsGrass2.emplace_back(x + offsetX);
-			offsetsGrass2.emplace_back(-2.0f);
+			offsetsGrass2.emplace_back(-1.7f);
 			offsetsGrass2.emplace_back(y + offsetY);
 
 			grass2Instances++;
@@ -321,7 +358,7 @@ void Maze::initObjModels()
 		else
 		{
 			offsetsGrass3.emplace_back(x + offsetX);
-			offsetsGrass3.emplace_back(-2.0f);
+			offsetsGrass3.emplace_back(-1.7f);
 			offsetsGrass3.emplace_back(y + offsetY);
 
 			grass3Instances++;
@@ -356,12 +393,16 @@ void Maze::drawMaze(float deltaTime)
 
 	for(auto p : this->respawnPickup)
 	{
-		p->draw(this->shaderPickupProgram);
+		p->drawRespawnPoint(this->shaderPickupProgram);
 	}
 
+	for (auto p : this->opponents)
+	{
+		p->drawEnemy(this->shaderPickupProgram);
+	}
 	shaderParticles.useShader();
 	this->camera->setCameraUniforms(&shaderParticles);
-	for(auto& emitter : torchesParticleEmitters)
+	for (auto& emitter : torchesParticleEmitters)
 	{
 		if(emitter.isActive())
 		{
@@ -377,7 +418,7 @@ void Maze::drawMaze(float deltaTime)
 
 void Maze::updateMaze(float deltaTime)
 {
-	for(auto& emitter : torchesParticleEmitters)
+	for (auto& emitter : torchesParticleEmitters)
 	{
 		if(glm::distance(emitter.getPosition(), camera->getCameraPosition()) < 15.0f)
 		{
@@ -409,6 +450,108 @@ void Maze::updateMaze(float deltaTime)
 	{
 		smokeBombCooldownLeft -= deltaTime;
 	}
+
+	this->updateEnemy(deltaTime);
+
+	this->updateRespawnPoint(deltaTime);
+}
+
+void Maze::updateRespawnPoint(float deltaTime) {
+	glm::vec3 playerPosition = this->camera->getCameraPosition();
+	int respawnIterator = -1;
+	int respawnActive = -1;
+	for (auto p : this->respawnPickup)
+	{
+		respawnIterator++;
+		p->updateRespawnPoint(deltaTime);
+
+		glm::vec3 respawnPointPos = p->getRespawnPointPosition();
+
+		// kolizja
+		if (respawnPointPos.x - 1.5f < playerPosition.x &&
+			respawnPointPos.x + 1.5f > playerPosition.x &&
+			respawnPointPos.z - 1.5f < playerPosition.z &&
+			respawnPointPos.z + 1.5f > playerPosition.z) {
+
+			respawnActive = respawnIterator;
+		}
+	}
+
+	if (respawnActive != -1) {
+		for (auto p : this->respawnPickup)
+		{
+			p->setRespawnActivation(false);
+			p->setRespawnPointTexture(this->spawnInactiveTexture);
+		}
+
+		this->respawnPickup[respawnActive]->setRespawnActivation(true);
+		this->respawnPickup[respawnActive]->setRespawnPointTexture(this->spawnActiveTexture);
+		glm::vec3 newRespawnPos = this->respawnPickup[respawnActive]->getRespawnPointPosition();
+		this->startPosition = glm::vec3(newRespawnPos.x, this->startPosition.y, newRespawnPos.z);
+	}
+}
+
+void Maze::updateEnemy(float deltaTime) {
+	// przeciwnik
+	glm::vec3 playerPosition = this->camera->getCameraPosition();
+	bool collisionWithPlayer = false;
+	for (auto p : this->opponents)
+	{
+		p->updateEnemy(deltaTime);
+		glm::vec3 enemyPosition = p->getEnemyPosition();
+
+		// kolizja
+		if (enemyPosition.x - 1.0f < playerPosition.x &&
+			enemyPosition.x + 1.0f > playerPosition.x &&
+			enemyPosition.z - 1.0f < playerPosition.z &&
+			enemyPosition.z + 1.0f > playerPosition.z) {
+
+			this->camera->setCameraPosition(this->startPosition);
+			collisionWithPlayer = true;
+		}
+
+		// id� za graczem gdy znajdzie si� w zasi�gu
+		bool followPlayer = false;
+		if (enemyPosition.x - 25.0f < playerPosition.x &&
+			enemyPosition.x + 25.0f > playerPosition.x &&
+			enemyPosition.z - 25.0f < playerPosition.z &&
+			enemyPosition.z + 25.0f > playerPosition.z) {
+
+			followPlayer = true;
+		}
+
+		if (followPlayer == true)
+		{
+			float enemyDirectionX = 0.0f;
+			float enemyDirectionZ = 0.0f;
+
+			if (playerPosition.x > enemyPosition.x + 0.35f) {
+				enemyDirectionX = deltaTime * 0.8f;
+			}
+			else if (playerPosition.x < enemyPosition.x - 0.35f)
+			{
+				enemyDirectionX = -deltaTime * 0.8f;
+			}
+
+			if (playerPosition.z > enemyPosition.z + 0.35f) {
+				enemyDirectionZ = deltaTime * 0.8f;
+			}
+			else if (playerPosition.z < enemyPosition.z - 0.35f) {
+				enemyDirectionZ = -deltaTime * 0.8f;
+			}
+
+			glm::vec3 enemyTransforationPos = p->getEnemyPositionWithoutOffset();
+
+			p->setEnemyPosition(glm::vec3(enemyTransforationPos.x + enemyDirectionX, enemyTransforationPos.y, enemyTransforationPos.z + enemyDirectionZ));
+		}
+	}
+
+	if (collisionWithPlayer == true) {
+		for (auto p : this->opponents)
+		{
+			p->resetEnemyPosition();
+		}
+	}
 }
 
 bool Maze::willBeCollisionWithWall(float deltaTime)
@@ -421,11 +564,10 @@ bool Maze::willBeCollisionWithWall(float deltaTime)
 		float x = this->offsetsWalls[i];
 		float z = this->offsetsWalls[i + 2];
 
-		if(x - 0.5f < playerPosition.x &&
-		   x + 2.5f > playerPosition.x &&
-		   z - 0.5f < playerPosition.z &&
-		   z + 2.5f > playerPosition.z)
-		{
+		if (x - 1.5f < playerPosition.x &&
+			x + 1.5f > playerPosition.x &&
+			z - 1.5f < playerPosition.z &&
+			z + 1.5f > playerPosition.z) {
 
 			isCollision = true;
 		}
@@ -466,6 +608,12 @@ Maze::~Maze()
 	}
 	this->respawnPickup.clear();
 
+	for (auto p : this->opponents)
+	{
+		delete p;
+	}
+	this->opponents.clear();
+
 	delete this->walls;
 
 	delete this->ceilings;
@@ -497,21 +645,19 @@ Maze::~Maze()
 	delete this->spawnInactiveTexture;
 
 	delete this->spawnActiveTexture;
+
+	delete this->enemyTexture;
 }
 
 void Maze::setLightUniforms(ShaderProgram& shader)
 {
 	shader.setInt("pointLightsCount", static_cast<int>(pointLights.size()));
 	char lightIndex[20];
-	for(int i = 0; i < pointLights.size(); ++i)
+	for (int i = 0; i < pointLights.size(); ++i)
 	{
 		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
-		std::string index { lightIndex };
-		shader.setVec3f(index + "position", pointLights[i].getPosition());
-
-		shader.setVec3f(index + "ambient", pointLights[i].getAmbient());
-		shader.setVec3f(index + "diffuse", pointLights[i].getDiffuse());
-		shader.setVec3f(index + "specular", pointLights[i].getSpecular());
+		std::string index{ lightIndex };
+		shader->setVec3f(index + "position", pointLights[i].getPosition());
 
 		shader.setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
 		shader.setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
