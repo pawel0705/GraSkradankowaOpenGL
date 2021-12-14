@@ -62,7 +62,7 @@ namespace Light
 		float range = 15;
 
 		FBO fbo;
-		DepthMap depthMap;
+		Texture depthMap;
 		std::array<glm::mat4, 6> lightSpaceMatrix;
 	};
 }

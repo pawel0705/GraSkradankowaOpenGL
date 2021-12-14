@@ -1,28 +1,42 @@
 #pragma once
 
-enum TextureType {
-	BMP = 0,
-	PNG = 1,
-	NORMAL_MAP = 2
-};
-
-struct BitMapFile
-{
-	int sizeX;
-	int sizeY;
-	int nrChannels;
-	unsigned char* data;
-};
-
 class Texture
 {
+	friend class FBO;
 public:
-	Texture();
-	Texture(const std::string& textureFilePath, TextureType textureType);
+	enum class Type
+	{
+		BMP = 0,
+		PNG = 1,
+		NORMAL_MAP = 2,
+		DEPTH
+	};
+
+	struct BitMapFile
+	{
+		BitMapFile();
+		BitMapFile(const std::string& filePath);
+		BitMapFile(const BitMapFile&) = delete;
+		BitMapFile(BitMapFile&&) noexcept;
+		~BitMapFile();
+
+		BitMapFile& operator=(const BitMapFile&) = delete;
+		BitMapFile& operator=(BitMapFile&&) noexcept;
+
+		void loadFromFile(const std::string& filePath);
+
+		int sizeX {};
+		int sizeY {};
+		int nrChannels {};
+		unsigned char* data {};
+	};
+
+	static Texture createTextureFromFile(const std::string& textureFilePath, Texture::Type textureType);
+	static Texture createDepthTexture();
 	Texture(const Texture&) = delete;
 	Texture(Texture&&) noexcept;
-	virtual ~Texture();
-	
+	~Texture();
+
 	Texture& operator=(const Texture&) = delete;
 	Texture& operator=(Texture&&) noexcept;
 
@@ -34,12 +48,13 @@ public:
 
 
 private:
-	GLuint texture;
-	BitMapFile* bmp;
+	GLuint texture {};
+	BitMapFile bmp;
 
-	TextureType textureType;
+	Texture::Type textureType;
 
-	BitMapFile* readBmpImage(const std::string &filePath);
+	Texture(Texture::Type type);
+	Texture::BitMapFile* readBmpImage(const std::string &filePath);
 
 	void initializeTexture();
 };

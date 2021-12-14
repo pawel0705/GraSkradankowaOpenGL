@@ -1,5 +1,5 @@
 #pragma once
-#include "../Texture/depthMap.h"
+#include "../Texture/texture.h"
 
 class FBO
 {
@@ -67,9 +67,23 @@ public:
 		glReadBuffer(GL_NONE);
 	}
 
-	void attachDepthMap(const DepthMap& texture) const
+	void attachTexture(const Texture& texture, FBO::Type type) const
 	{
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.id, 0);
+		switch(type)
+		{
+			case FBO::Type::eColor:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.texture, 0);
+				break;
+			case FBO::Type::eDepth:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
+				break;
+			case FBO::Type::eStencil:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
+				break;
+			case FBO::Type::eDepthStencil:
+				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
+				break;
+		}
 	}
 private:
 	GLuint id {};

@@ -138,24 +138,24 @@ void Maze::initMazeMaterials()
 
 void Maze::initMazeTextures()
 {
-	this->wallTexture = new Texture("res/Textures/wall.bmp", TextureType::BMP);
-	this->floorTexture = new Texture("res/Textures/floor.bmp", TextureType::BMP);
-	this->ceilingTexture = new Texture("res/Textures/ceiling.bmp", TextureType::BMP);
-	this->torchTexture = new Texture("res/Textures/wood.png", TextureType::PNG);
-	this->grass_1Texture = new Texture("res/Textures/grass1.png", TextureType::PNG);
-	this->grass_2Texture = new Texture("res/Textures/grass2.png", TextureType::PNG);
-	this->grass_3Texture = new Texture("res/Textures/grass3.png", TextureType::PNG);
-	this->spawnActiveTexture = new Texture("res/Textures/spawnActive.png", TextureType::PNG);
-	this->spawnInactiveTexture = new Texture("res/Textures/spawnInactive.png", TextureType::PNG);
+	this->wallTexture = new Texture(Texture::createTextureFromFile("res/Textures/wall.bmp", Texture::Type::BMP));
+	this->floorTexture = new Texture(Texture::createTextureFromFile("res/Textures/floor.bmp", Texture::Type::BMP));
+	this->ceilingTexture = new Texture(Texture::createTextureFromFile("res/Textures/ceiling.bmp", Texture::Type::BMP));
+	this->torchTexture = new Texture(Texture::createTextureFromFile("res/Textures/wood.png", Texture::Type::PNG));
+	this->grass_1Texture = new Texture(Texture::createTextureFromFile("res/Textures/grass1.png", Texture::Type::PNG));
+	this->grass_2Texture = new Texture(Texture::createTextureFromFile("res/Textures/grass2.png", Texture::Type::PNG));
+	this->grass_3Texture = new Texture(Texture::createTextureFromFile("res/Textures/grass3.png", Texture::Type::PNG));
+	this->spawnActiveTexture = new Texture(Texture::createTextureFromFile("res/Textures/spawnActive.png", Texture::Type::PNG));
+	this->spawnInactiveTexture = new Texture(Texture::createTextureFromFile("res/Textures/spawnInactive.png", Texture::Type::PNG));
 
-	this->normalMapCeiling = new Texture("res/Textures/ceiling_nrm.png", TextureType::NORMAL_MAP);
-	this->normalMapWall = new Texture("res/Textures/wall_nrm.png", TextureType::NORMAL_MAP);
-	this->normalMapFloor = new Texture("res/Textures/floor_nrm.png", TextureType::NORMAL_MAP);
+	this->normalMapCeiling = new Texture(Texture::createTextureFromFile("res/Textures/ceiling_nrm.png", Texture::Type::NORMAL_MAP));
+	this->normalMapWall = new Texture(Texture::createTextureFromFile("res/Textures/wall_nrm.png", Texture::Type::NORMAL_MAP));
+	this->normalMapFloor = new Texture(Texture::createTextureFromFile("res/Textures/floor_nrm.png", Texture::Type::NORMAL_MAP));
 
-	this->enemyTexture = new Texture("res/Textures/purple.png", TextureType::BMP);
+	this->enemyTexture = new Texture(Texture::createTextureFromFile("res/Textures/purple.png", Texture::Type::BMP));
 
-	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", TextureType::PNG);
-	ResourceManager::getInstance().loadTexture("smoke", "res/Textures/smoke.png", TextureType::PNG);
+	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", Texture::Type::PNG);
+	ResourceManager::getInstance().loadTexture("smoke", "res/Textures/smoke.png", Texture::Type::PNG);
 }
 
 void Maze::initObjModels()

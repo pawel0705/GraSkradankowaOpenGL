@@ -3,13 +3,13 @@
 #include "../../Game Objects/maze.h"
 
 Light::Point::Point(const glm::vec3& position, const glm::vec3& color)
-	: Light(color), position(position)
+	: Light(color), position(position), depthMap(Texture::createDepthTexture())
 {
 	setColor(color);
 	attenuation.setAttenuationByRange(range);
 
 	fbo.bind();
-	fbo.attachDepthMap(this->depthMap);
+	fbo.attachTexture(this->depthMap, FBO::Type::eDepth);
 	fbo.drawBufferNone();
 	fbo.readBufferNone();
 	fbo.unbind();
@@ -31,7 +31,7 @@ void Light::Point::renderDepthMap(const ShaderProgram& shader, const Maze& maze)
 {
 	shader.setMat4("lightSpaceMatrix", lightSpaceMatrix[0]);
 
-	glViewport(0, 0, depthMap.getWidth(), depthMap.getHeight());
+	glViewport(0, 0, depthMap.getTextureWidth(), depthMap.getTextureHeight());
 	fbo.bind();
 	glClear(GL_DEPTH_BUFFER_BIT);
 
