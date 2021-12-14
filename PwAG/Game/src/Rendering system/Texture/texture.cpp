@@ -5,65 +5,98 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "../SourceDep/stb_image.h"
 
-Texture::Texture() {
+#pragma region BitMapFile
+Texture::BitMapFile::BitMapFile() = default;
 
+Texture::BitMapFile::BitMapFile(const std::string & filePath)
+{
+	this->loadFromFile(filePath);
 }
 
-Texture::Texture(const std::string& textureFilePath, TextureType textureType)
+Texture::BitMapFile::BitMapFile(BitMapFile&& other) noexcept
+	: sizeX(other.sizeX), sizeY(other.sizeY), nrChannels(other.nrChannels)
 {
-	int x;
-	int y;
-	int nrChannels;
-	unsigned char* data = stbi_load(textureFilePath.c_str(), &x, &y, &nrChannels, 0);
+	data = other.data;
+	other.data = nullptr;
+}
 
-	this->bmp = new BitMapFile();
+Texture::BitMapFile::~BitMapFile()
+{
+	if(data)
+	{
+		stbi_image_free(data);
+	}
+}
 
-	this->bmp->data = data;
-	this->bmp->sizeX = x;
-	this->bmp->sizeY = y;
-	this->bmp->nrChannels = nrChannels;
+Texture::BitMapFile& Texture::BitMapFile::operator=(BitMapFile&& other) noexcept
+{
+	if(this != &other)
+	{
+		sizeX = other.sizeX;
+		sizeY = other.sizeY;
 
-	this->textureType = textureType;
+		nrChannels = other.nrChannels;
 
-	if (this->bmp == nullptr) {
-		std::cout << "Failed loading texture: " + textureFilePath << std::endl;
+		data = other.data;
+		other.data = nullptr;
 	}
 
-	this->initializeTexture();
+	return *this;
 }
 
-Texture::Texture(Texture&& other) noexcept
-	: textureType(other.textureType)
+void Texture::BitMapFile::loadFromFile(const std::string & filePath)
 {
-	auto tmp = texture;
-	texture = other.texture;
-	other.texture = tmp;
+	data = stbi_load(filePath.c_str(), &sizeX, &sizeY, &nrChannels, 0);
+	if(data == nullptr)
+	{
+		std::cout << "Failed loading texture: " + filePath << std::endl;
+	}
+}
+#pragma endregion
 
-	bmp = other.bmp;
-	other.bmp = nullptr;
+Texture::Texture(Texture::Type type)
+	: textureType(type)
+{
+	glGenTextures(1, &this->texture);
+}
+
+Texture Texture::createTextureFromFile(const std::string & textureFilePath, Texture::Type textureType)
+{
+	Texture toReturn { textureType };
+	toReturn.bmp.loadFromFile(textureFilePath);
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture Texture::createDepthTexture()
+{
+	Texture toReturn { Texture::Type::DEPTH };
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture::Texture(Texture && other) noexcept
+	: textureType(other.textureType), bmp(std::move(other.bmp))
+{
+	texture = other.texture;
+	other.texture = 0;
 }
 
 Texture::~Texture()
 {
-	if(bmp != nullptr)
-	{
-		stbi_image_free(this->bmp->data);
-		delete this->bmp;
-	}
-
 	glDeleteTextures(1, &this->texture);
 }
 
-Texture& Texture::operator=(Texture&& other) noexcept
+Texture& Texture::operator=(Texture && other) noexcept
 {
 	if(this != &other)
 	{
-		auto tmp = texture;
 		texture = other.texture;
-		other.texture = tmp;
+		other.texture = 0;
 
-		bmp = other.bmp;
-		other.bmp = nullptr;
+		bmp = std::move(other.bmp);
 
 		textureType = other.textureType;
 	}
@@ -71,39 +104,52 @@ Texture& Texture::operator=(Texture&& other) noexcept
 	return *this;
 }
 
-void Texture::initializeTexture() {
-	glGenTextures(1, &this->texture);
+void Texture::initializeTexture()
+{
+
 	glBindTexture(GL_TEXTURE_2D, this->texture);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	if(this->textureType == Texture::Type::DEPTH)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, this->bmp.sizeX, this->bmp.sizeY, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	if (this->textureType == TextureType::NORMAL_MAP) 
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp->data);
-	}
-	else if (this->textureType == TextureType::BMP)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp->data);
-	}
-	else if (this->textureType == TextureType::PNG) 
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp->data);
-	}
-	else 
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp->sizeX, this->bmp->sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp->data);
-	}
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
+		if(this->textureType == Texture::Type::NORMAL_MAP)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp.sizeX, this->bmp.sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp.data);
+		}
+		else if(this->textureType == Texture::Type::BMP)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp.sizeX, this->bmp.sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp.data);
+		}
+		else if(this->textureType == Texture::Type::PNG)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->bmp.sizeX, this->bmp.sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp.data);
+		}
+		else
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->bmp.sizeX, this->bmp.sizeY, 0, GL_RGB, GL_UNSIGNED_BYTE, this->bmp.data);
+		}
+
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
 }
 
 // Routine to read a bitmap file. 
 // Works only for uncompressed bmp files of 24-bit color. !!!
-BitMapFile* Texture::readBmpImage(const std::string& filePath)
+Texture::BitMapFile* Texture::readBmpImage(const std::string& filePath)
 {
 	BitMapFile* bmp = new BitMapFile;
 	unsigned int size, offset, headerSize;
@@ -125,7 +171,7 @@ BitMapFile* Texture::readBmpImage(const std::string& filePath)
 
 	// Allocate buffer for the image.
 	size = bmp->sizeX * bmp->sizeY * 24;
-	bmp->data = new unsigned char[size];
+	bmp->data = new unsigned char[size]; // <- czy to potencjalny wyciek pamiêci?
 
 	// Read bitmap data.
 	infile.seekg(offset);
@@ -143,22 +189,25 @@ BitMapFile* Texture::readBmpImage(const std::string& filePath)
 	return bmp;
 }
 
-void Texture::bindTexture(unsigned int unit) const{
+void Texture::bindTexture(unsigned int unit) const
+{
 	assert(unit >= 0 && unit <= 31);
 
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_2D, this->texture);
 }
 
-void Texture::unbindTexture() const {
+void Texture::unbindTexture() const
+{
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-int Texture::getTextureWidth() const {
-	return this->bmp->sizeX;
+int Texture::getTextureWidth() const
+{
+	return this->bmp.sizeX;
 }
 
-int Texture::getTextureHeight() const {
-	return this->bmp->sizeY;
+int Texture::getTextureHeight() const
+{
+	return this->bmp.sizeY;
 }
-

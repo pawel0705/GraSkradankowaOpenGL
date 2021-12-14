@@ -12,7 +12,7 @@ public:
 	ResourceManager(const ResourceManager&) = delete;
 	ResourceManager& operator=(const ResourceManager&) = delete;
 
-	void loadTexture(const std::string& resourceName, const std::string& textureFilePath, TextureType type);
+	void loadTexture(const std::string& resourceName, const std::string& textureFilePath, Texture::Type type);
 	const Texture& getTexture(const std::string& resourceName) const
 	{
 		return textures.at(resourceName);
