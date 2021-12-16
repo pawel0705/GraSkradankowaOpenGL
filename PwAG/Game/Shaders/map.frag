@@ -1,9 +1,9 @@
 #version 430 
 
 uniform sampler2D diffuse;
+uniform sampler2D specular;
 uniform sampler2D normalMap;
 
-//uniform vec3 ambientLight;
 uniform vec3 cameraPos;
 
 in vec3 v_Color;
@@ -32,8 +32,6 @@ struct PointLight
 
 uniform PointLight pointLights[MAX_POINT_LIGHT_COUNT];
 uniform int pointLightsCount;
-
-#define MAX_SPOT_LIGHT_COUNT 16
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
@@ -75,11 +73,12 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	float distance = length(light.position - v_Position);
 	float attentuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 	
-	vec3 textured = texture(diffuse, v_TextCoord).rgb;
+	vec3 diffuseTextured = texture(diffuse, v_TextCoord).rgb;
+	vec3 specularTextured = texture(specular, v_TextCoord).rgb;
 	
-	vec3 ambientFinal = light.ambient * textured;
-	vec3 diffuseFinal = light.diffuse * diffuseLight * textured;
-	vec3 specularFinal = light.specular * specularConstant * textured;
+	vec3 ambientFinal = light.ambient * diffuseTextured;
+	vec3 diffuseFinal = light.diffuse * diffuseLight * diffuseTextured;
+	vec3 specularFinal = light.specular * specularConstant * specularTextured;
 
 	ambientFinal *= attentuation;
 	diffuseFinal *= attentuation;

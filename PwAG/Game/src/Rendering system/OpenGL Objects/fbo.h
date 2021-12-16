@@ -41,6 +41,8 @@ public:
 			id = other.id;
 			other.id = 0;
 		}
+
+		return *this;
 	}
 
 	bool checkStatus() const
@@ -57,6 +59,10 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	void drawBuffers(GLsizei count, GLenum attachments[])
+	{
+		glDrawBuffers(count, attachments);
+	}
 	void drawBufferNone() const
 	{
 		glDrawBuffer(GL_NONE);
@@ -67,23 +73,23 @@ public:
 		glReadBuffer(GL_NONE);
 	}
 
-	void attachTexture(const Texture& texture, FBO::Type type) const
+	void setColorAttachment(const Texture& texture, uint32_t attachment) const
 	{
-		switch(type)
-		{
-			case FBO::Type::eColor:
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture.texture, 0);
-				break;
-			case FBO::Type::eDepth:
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
-				break;
-			case FBO::Type::eStencil:
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
-				break;
-			case FBO::Type::eDepthStencil:
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
-				break;
-		}
+		assert(attachment >= 0 && attachment <= 31);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + attachment, GL_TEXTURE_2D, texture.texture, 0);
+	}
+	void setDepthAttachment(const Texture& texture) const
+	{
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
+	}
+	void setStencilAttachment(const Texture& texture) const
+	{
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
+	}
+	void setDepthStencilAttachment(const Texture& texture) const
+	{
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, texture.texture, 0);
 	}
 private:
 	GLuint id {};

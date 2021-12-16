@@ -2,8 +2,14 @@
 #include "menuState.h"
 
 MenuState::MenuState(GameReference gameReference)
+	: newGameButton("New game", {700, 400}, {1.0, 1.0, 0.0})
 {
 	this->gameReference = gameReference;
+
+	newGameButton.setAction([this]()
+							{
+
+							});
 }
 
 MenuState::~MenuState()

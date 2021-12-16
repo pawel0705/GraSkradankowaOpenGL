@@ -123,10 +123,13 @@
     <ClCompile Include="src\Game Objects\smokeBomb.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\Texture\depthMap.cpp">
+    <ClCompile Include="src\Rendering system\OpenGL Objects\fbo.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
-    <ClCompile Include="src\Rendering system\OpenGL Objects\fbo.cpp">
+    <ClCompile Include="src\Rendering system\Deferred rendering\deferredRenderer.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GUI\button.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
   </ItemGroup>
@@ -260,10 +263,13 @@
     <ClInclude Include="src\Game Objects\smokeBomb.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\Texture\depthMap.h">
+    <ClInclude Include="src\Rendering system\OpenGL Objects\fbo.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
-    <ClInclude Include="src\Rendering system\OpenGL Objects\fbo.h">
+    <ClInclude Include="src\Rendering system\Deferred rendering\deferredRenderer.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GUI\button.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
   </ItemGroup>
@@ -285,5 +291,6 @@
     <None Include="Shaders\particle.frag" />
     <None Include="Shaders\depthMap.vert" />
     <None Include="Shaders\depthMap.frag" />
+    <None Include="Shaders\map_deferred.frag" />
   </ItemGroup>
 </Project>

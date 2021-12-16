@@ -42,6 +42,19 @@ const glm::vec3& Text::getColor() const
 	return color;
 }
 
+void Text::setPosition(const glm::vec2& newPosition)
+{
+	this->x = newPosition.x;
+	this->y = newPosition.y;
+
+	this->setForNewText();
+}
+
+glm::vec2 Text::getPosition() const
+{
+	return glm::vec2(this->x, this->y);
+}
+
 void Text::setForNewText()
 {
 	VBOs.clear();
@@ -59,6 +72,9 @@ void Text::setForNewText()
 
 		float width = static_cast<float>(character.size.x);
 		float height = static_cast<float>(character.size.y);
+
+		this->width += width;
+		this->height = std::max(this->height, static_cast<int32_t>(height));
 
 		float x1 = xPos + character.bearing.x;
 		float y1 = yPos + character.bearing.y;

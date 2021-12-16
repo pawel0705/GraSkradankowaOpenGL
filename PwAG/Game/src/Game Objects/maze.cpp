@@ -152,6 +152,11 @@ void Maze::initMazeTextures()
 	this->normalMapWall = new Texture(Texture::createTextureFromFile("res/Textures/wall_nrm.png", Texture::Type::NORMAL_MAP));
 	this->normalMapFloor = new Texture(Texture::createTextureFromFile("res/Textures/floor_nrm.png", Texture::Type::NORMAL_MAP));
 
+	this->specularMapWall = new Texture(Texture::createTextureFromFile("res/Textures/wall_specular.png", Texture::Type::SPECULAR));
+	this->specularMapCeiling = new Texture(Texture::createTextureFromFile("res/Textures/ceiling_specular.png", Texture::Type::SPECULAR));
+	this->specularMapFloor = new Texture(Texture::createTextureFromFile("res/Textures/floor_specular.png", Texture::Type::SPECULAR));
+	this->specularMapWood = new Texture(Texture::createTextureFromFile("res/Textures/wood_specular.png", Texture::Type::SPECULAR));
+
 	this->enemyTexture = new Texture(Texture::createTextureFromFile("res/Textures/purple.png", Texture::Type::BMP));
 
 	ResourceManager::getInstance().loadTexture("fire", "res/Textures/fire.png", Texture::Type::PNG);
@@ -282,13 +287,16 @@ void Maze::initObjModels()
 
 	this->floors = new GameObject(material, this->floorTexture, planeObjects, transformation, offsetsFloors, floorInstances);
 	this->floors->setNormalMapTexture(this->normalMapFloor);
+	this->floors->setSpecular(this->specularMapFloor);
 
 	this->walls = new GameObject(material, this->wallTexture, cubeObjects, transformation, offsetsWalls, wallInstances);
 	this->walls->setNormalMapTexture(this->normalMapWall);
+	this->walls->setSpecular(this->specularMapWall);
 
 	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
 	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
-	
+	this->ceilings->setSpecular(this->specularMapCeiling);
+
 
 
 	// randomize torhes
@@ -322,6 +330,7 @@ void Maze::initObjModels()
 	}
 
 	this->torches = new GameObject(material, this->torchTexture, torchObjects, transformation, offsetsTorches, torchInstances);
+	this->torches->setSpecular(this->specularMapWood);
 
 	// randomize grass
 	for(int i = 0; i < floorInstances; i++)
