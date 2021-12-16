@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "application.h"
 #include "../Program structure/gameState.h"
+#include "../Program structure/menuState.h"
 
 Application::Application()
 	: tmpDefaultFont(std::move(Font("res/Fonts/Segan.ttf", 18))),
@@ -43,7 +44,7 @@ void Application::run()
 
 	// tutaj na razie od razu gra, nim siê zrobi menu g³ówne
 	// by przejœæ do innego stanu np. z menu 
-    this->gameReference->m_stateMachine.addNewState(StateReference(new GameState(this->gameReference))); 
+    this->gameReference->m_stateMachine.addNewState(StateReference(new MenuState(this->gameReference))); 
 	this->gameReference->window = this->window.getGLFWWindow();
 
 	while (mainLoopCondition)

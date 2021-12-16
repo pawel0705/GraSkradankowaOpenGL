@@ -9,6 +9,7 @@ private:
 	GameReference gameReference;
 
 	Button newGameButton;
+	Camera camera;
 public:
 	MenuState(GameReference gameReference);
 	~MenuState();
