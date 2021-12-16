@@ -26,6 +26,7 @@ public:
 	void setNormalMapTexture(Texture* normalMapTexture);
 
 	void setTexture(Texture* texture);
+	void setSpecular(Texture* texture);
 
 	glm::vec3 getPosition();
 	glm::vec3 getRotation();
@@ -38,6 +39,7 @@ private:
 	TransformationOBJ transformation;
 
 	Texture* texture;
+	Texture* specular;
 	Texture* normalMapTexture;
 
 	Material* material;

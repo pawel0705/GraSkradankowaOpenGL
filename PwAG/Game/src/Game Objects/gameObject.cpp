@@ -102,9 +102,13 @@ void GameObject::draw(ShaderProgram* shaderProgram) {
 	shaderProgram->useShader();
 	
 	this->texture->bindTexture(0);
+	if(this->specular)
+	{
+		this->specular->bindTexture(1);
+	}
 
 	if (this->normalMapTexture != nullptr) {
-		this->normalMapTexture->bindTexture(1);
+		this->normalMapTexture->bindTexture(2);
 	}
 
 	this->mesh->setMeshUniform(shaderProgram);
@@ -155,6 +159,11 @@ void GameObject::setNormalMapTexture(Texture* normalMapTexture)
 void GameObject::setTexture(Texture* texture)
 {
 	this->texture = texture;
+}
+
+void GameObject::setSpecular(Texture* texture)
+{
+	this->specular = texture;
 }
 
 glm::vec3 GameObject::getPosition() {

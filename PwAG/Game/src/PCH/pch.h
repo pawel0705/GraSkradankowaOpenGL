@@ -18,6 +18,7 @@
 #include <functional>
 #include <utility>
 #include <array>
+#include <cassert>
 
 // additional dependencies
 #include "glad/glad.h"
@@ -49,5 +50,7 @@
 
 #include "../Utilities/timer.h"
 #include "../Utilities/resourceManager.h"
+
+#include "../GUI/button.h"
 
 #endif

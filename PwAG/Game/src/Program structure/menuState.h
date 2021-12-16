@@ -8,6 +8,7 @@ class MenuState : public ProgramState
 private:
 	GameReference gameReference;
 
+	Button newGameButton;
 public:
 	MenuState(GameReference gameReference);
 	~MenuState();

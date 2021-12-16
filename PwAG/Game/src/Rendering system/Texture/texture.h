@@ -9,7 +9,13 @@ public:
 		BMP = 0,
 		PNG = 1,
 		NORMAL_MAP = 2,
-		DEPTH
+		SPECULAR,
+
+		DEPTH,
+
+		G_BUFFER_POSITION,
+		G_BUFFER_NORMAL,
+		G_BUFFER_ALBEDO
 	};
 
 	struct BitMapFile
@@ -33,6 +39,11 @@ public:
 
 	static Texture createTextureFromFile(const std::string& textureFilePath, Texture::Type textureType);
 	static Texture createDepthTexture();
+#pragma region Textures for G-buffer
+	static Texture createTextureForPositionBuffer();
+	static Texture createTextureForNormalBuffer();
+	static Texture createTextureForAlbedoBuffer();
+#pragma endregion
 	Texture(const Texture&) = delete;
 	Texture(Texture&&) noexcept;
 	~Texture();
@@ -54,7 +65,7 @@ private:
 	Texture::Type textureType;
 
 	Texture(Texture::Type type);
-	Texture::BitMapFile* readBmpImage(const std::string &filePath);
+	Texture::BitMapFile* readBmpImage(const std::string& filePath);
 
 	void initializeTexture();
 };

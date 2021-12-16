@@ -9,7 +9,7 @@ Light::Point::Point(const glm::vec3& position, const glm::vec3& color)
 	attenuation.setAttenuationByRange(range);
 
 	fbo.bind();
-	fbo.attachTexture(this->depthMap, FBO::Type::eDepth);
+	fbo.setDepthAttachment(this->depthMap);
 	fbo.drawBufferNone();
 	fbo.readBufferNone();
 	fbo.unbind();

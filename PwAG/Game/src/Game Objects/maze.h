@@ -92,6 +92,11 @@ private:
 	Texture* normalMapCeiling;
 	Texture* normalMapFloor;
 
+	Texture* specularMapWall;
+	Texture* specularMapCeiling;
+	Texture* specularMapFloor;
+	Texture* specularMapWood;
+
 	Texture* enemyTexture;
 
 	std::vector<GLfloat> offsetsWalls;

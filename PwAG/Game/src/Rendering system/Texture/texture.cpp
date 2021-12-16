@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "texture.h"
-#include <cassert>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "../SourceDep/stb_image.h"
@@ -77,6 +76,30 @@ Texture Texture::createDepthTexture()
 	return toReturn;
 }
 
+Texture Texture::createTextureForPositionBuffer()
+{
+	Texture toReturn { Texture::Type::G_BUFFER_POSITION };
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture Texture::createTextureForNormalBuffer()
+{
+	Texture toReturn { Texture::Type::G_BUFFER_NORMAL };
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture Texture::createTextureForAlbedoBuffer()
+{
+	Texture toReturn { Texture::Type::G_BUFFER_ALBEDO };
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
 Texture::Texture(Texture && other) noexcept
 	: textureType(other.textureType), bmp(std::move(other.bmp))
 {
@@ -118,6 +141,24 @@ void Texture::initializeTexture()
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	}
+	else if(this->textureType == Texture::Type::G_BUFFER_POSITION || this->textureType == Texture::Type::G_BUFFER_NORMAL || this->textureType == Texture::Type::G_BUFFER_ALBEDO)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		if(this->textureType == Texture::Type::G_BUFFER_POSITION)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RGB, GL_FLOAT, nullptr);
+		}
+		else if(this->textureType == Texture::Type::G_BUFFER_NORMAL)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RGB, GL_FLOAT, nullptr);
+		}
+		else if(this->textureType == Texture::Type::G_BUFFER_ALBEDO)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		}
+	}
 	else
 	{
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -137,6 +178,23 @@ void Texture::initializeTexture()
 		else if(this->textureType == Texture::Type::PNG)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, this->bmp.sizeX, this->bmp.sizeY, 0, GL_RGBA, GL_UNSIGNED_BYTE, this->bmp.data);
+		}
+		else if(this->textureType == Texture::Type::SPECULAR)
+		{
+			GLenum format;
+			if(bmp.nrChannels == 1)
+			{
+				format = GL_RED;
+			}
+			else if(bmp.nrChannels == 3)
+			{
+				format = GL_RGB;
+			}
+			else if(bmp.nrChannels == 4)
+			{
+				format = GL_RGBA;
+			}
+			glTexImage2D(GL_TEXTURE_2D, 0, format, this->bmp.sizeX, this->bmp.sizeY, 0, format, GL_UNSIGNED_BYTE, this->bmp.data);
 		}
 		else
 		{

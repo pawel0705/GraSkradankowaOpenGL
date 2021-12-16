@@ -11,6 +11,9 @@ Application::Application()
 {
 	glfwInit();
 
+	ResourceManager::getInstance().loadFont("default", "res/Fonts/Segan.ttf", 32);
+	ResourceManager::getInstance().addShaderProgram("text", "Shaders/text.vert", "Shaders/text.frag");
+
 	eventManager.registerKeyboard(keyboard);
 	eventManager.registerMouse(mouse);
 
