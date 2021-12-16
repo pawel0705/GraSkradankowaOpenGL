@@ -19,7 +19,7 @@ public:
 	const std::string& getText() const;
 
 	void update(const Mouse& mouse);
-	void draw(const Mouse& mouse);
+	void draw();
 
 	void setAction(std::function<void(void)> action);
 
@@ -30,6 +30,7 @@ private:
 
 	bool enabled = true;
 
+	const ShaderProgram& shaderRef;
 	Text text;
 
 	std::function<void(void)> action =

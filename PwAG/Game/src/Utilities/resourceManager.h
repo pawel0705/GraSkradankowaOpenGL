@@ -27,9 +27,9 @@ public:
 
 	void addShaderProgram(const std::string& resourceName, const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 	void addShaderProgram(const std::string& resourceName, const std::string& vertexShaderFilePath, const std::string& geometryShaderFilePath, const std::string& fragmentShaderFilePath);
-	const Font& getShader(const std::string& resourceName)
+	const ShaderProgram& getShader(const std::string& resourceName)
 	{
-		return fonts.at(resourceName);
+		return shaders.at(resourceName);
 	}
 private:
 	ResourceManager() = default;
