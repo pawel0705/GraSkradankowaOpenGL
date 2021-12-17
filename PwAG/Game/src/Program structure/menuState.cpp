@@ -2,7 +2,7 @@
 #include "menuState.h"
 
 MenuState::MenuState(GameReference gameReference)
-	: newGameButton("New game", {700, 400}, {0.7, 0.7, 0.0}), camera(glm::vec3(0,0,0))
+	: newGameButton("New game", {700, 100}, {0.7, 0.7, 0.0}), camera(glm::vec3(0,0,0))
 {
 	this->gameReference = gameReference;
 

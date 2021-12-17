@@ -2,7 +2,7 @@
 #include "button.h"
 
 Button::Button(const std::string& text, const glm::vec2& position, const glm::vec3& color)
-	: text(position.x, position.y, text, ResourceManager::getInstance().getFont("default")), shaderRef(ResourceManager::getInstance().getShader("text")), position(position), color(color)
+	: text(position.x, Config::g_defaultHeight - position.y, text, ResourceManager::getInstance().getFont("default")), shaderRef(ResourceManager::getInstance().getShader("text")), position(position), color(color)
 {
 	this->size = { this->text.width, this->text.height };
 }
@@ -63,7 +63,7 @@ void Button::update(const Mouse& mouse)
 	   mouse.posY < this->position.y + this->size.y + 10
 	   )
 	{
-		this->text.color = this->color * 1.1f;
+		this->text.color = this->color * 1.5f;
 		if(mouse.buttonState[static_cast<int>(Mouse::Button::eLeft)])
 		{
 			action();
