@@ -3,6 +3,7 @@
 #include "../Game Objects/maze.h"
 #include "stateMachine.h"
 #include "gameAssets.h"
+#include "gameOverState.h"
 
 class GameState : public ProgramState
 {

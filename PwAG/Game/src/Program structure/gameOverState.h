@@ -2,11 +2,15 @@
 #include "programState.h"
 #include "stateMachine.h"
 #include "gameAssets.h"
+#include "menuState.h"
 
 class GameOverState : public ProgramState
 {
 private:
 	GameReference gameReference;
+
+	Button winLabel;
+	Button menuButton;
 
 public:
 	GameOverState(GameReference gameReference);

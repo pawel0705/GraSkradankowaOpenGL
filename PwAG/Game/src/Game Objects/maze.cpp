@@ -147,15 +147,18 @@ void Maze::initMazeTextures()
 	this->grass_3Texture = new Texture(Texture::createTextureFromFile("res/Textures/grass3.png", Texture::Type::PNG));
 	this->spawnActiveTexture = new Texture(Texture::createTextureFromFile("res/Textures/spawnActive.png", Texture::Type::PNG));
 	this->spawnInactiveTexture = new Texture(Texture::createTextureFromFile("res/Textures/spawnInactive.png", Texture::Type::PNG));
+	this->exitDoorTexture = new Texture(Texture::createTextureFromFile("res/Textures/doors.png", Texture::Type::BMP));
 
 	this->normalMapCeiling = new Texture(Texture::createTextureFromFile("res/Textures/ceiling_nrm.png", Texture::Type::NORMAL_MAP));
 	this->normalMapWall = new Texture(Texture::createTextureFromFile("res/Textures/wall_nrm.png", Texture::Type::NORMAL_MAP));
 	this->normalMapFloor = new Texture(Texture::createTextureFromFile("res/Textures/floor_nrm.png", Texture::Type::NORMAL_MAP));
+	this->normalMapDoors = new Texture(Texture::createTextureFromFile("res/Textures/doors_nrm.png", Texture::Type::NORMAL_MAP));
 
 	this->specularMapWall = new Texture(Texture::createTextureFromFile("res/Textures/wall_specular.png", Texture::Type::SPECULAR));
 	this->specularMapCeiling = new Texture(Texture::createTextureFromFile("res/Textures/ceiling_specular.png", Texture::Type::SPECULAR));
 	this->specularMapFloor = new Texture(Texture::createTextureFromFile("res/Textures/floor_specular.png", Texture::Type::SPECULAR));
 	this->specularMapWood = new Texture(Texture::createTextureFromFile("res/Textures/wood_specular.png", Texture::Type::SPECULAR));
+	this->specularDoors = new Texture(Texture::createTextureFromFile("res/Textures/doors_specular.png", Texture::Type::SPECULAR));
 
 	this->enemyTexture = new Texture(Texture::createTextureFromFile("res/Textures/purple.png", Texture::Type::BMP));
 
@@ -172,6 +175,7 @@ void Maze::initObjModels()
 	std::vector<DataOBJ> grass_Objects = readObj("res/Models/square.obj");
 	std::vector<DataOBJ> spawn_Objects = readObj("res/Models/respawnPickup.obj");
 	std::vector<DataOBJ> enemyObjects = readObj("res/Models/ghost.obj");
+	std::vector<DataOBJ> exitDoorsObjects = readObj("res/Models/exit.obj");
 
 
 	int wallInstances = 0;
@@ -181,6 +185,7 @@ void Maze::initObjModels()
 	int grass1Instances = 0;
 	int grass2Instances = 0;
 	int grass3Instances = 0;
+	int exitInstances = 0;
 
 	TransformationOBJ transformation = TransformationOBJ();
 
@@ -195,6 +200,13 @@ void Maze::initObjModels()
 				offsetsWalls.emplace_back(j * 2.f);
 
 				wallInstances++;
+			}
+			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_END_POS) {
+				offsetsExitDoors.emplace_back(i * 2.f);
+				offsetsExitDoors.emplace_back(0.0f);
+				offsetsExitDoors.emplace_back(j * 2.f);
+
+				exitInstances++;
 			}
 			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_START_POS) {
 				this->camera = new Camera(glm::vec3(i * 2.f, -1.0f, j * 2.f));
@@ -293,11 +305,13 @@ void Maze::initObjModels()
 	this->walls->setNormalMapTexture(this->normalMapWall);
 	this->walls->setSpecular(this->specularMapWall);
 
+	this->exitDoors = new GameObject(material, this->exitDoorTexture, exitDoorsObjects, transformation, offsetsExitDoors, exitInstances);
+	this->exitDoors->setNormalMapTexture(this->normalMapDoors);
+	this->exitDoors->setSpecular(this->specularDoors);
+
 	this->ceilings = new GameObject(material, this->ceilingTexture, planeUpObjects, transformation, offsetsCeiling, ceilingInstances);
 	this->ceilings->setNormalMapTexture(this->normalMapCeiling);
 	this->ceilings->setSpecular(this->specularMapCeiling);
-
-
 
 	// randomize torhes
 	for(int i = 0; i < floorInstances; i++)
@@ -386,6 +400,7 @@ void Maze::drawMaze(float deltaTime)
 	this->camera->setCameraUniforms(this->shaderProgram);
 
 	this->walls->draw(this->shaderProgram);
+	this->exitDoors->draw(this->shaderProgram);
 	this->floors->draw(this->shaderProgram);
 	this->ceilings->draw(this->shaderProgram);
 	this->torches->draw(this->shaderProgram);
@@ -585,6 +600,27 @@ bool Maze::willBeCollisionWithWall(float deltaTime)
 	return isCollision;
 }
 
+bool Maze::willBeCollisionWithExit() {
+	glm::vec3 playerPosition = this->camera->getFutureCameraPosition();
+	bool isCollision = false;
+
+	for (int i = 0; i < this->offsetsExitDoors.size(); i += 3)
+	{
+		float x = this->offsetsExitDoors[i];
+		float z = this->offsetsExitDoors[i + 2];
+
+		if (x - 1.5f < playerPosition.x &&
+			x + 1.5f > playerPosition.x &&
+			z - 1.5f < playerPosition.z &&
+			z + 1.5f > playerPosition.z) {
+
+			isCollision = true;
+		}
+	}
+
+	return isCollision;
+}
+
 void Maze::useSmokeBomb()
 {
 	if(smokeBombCooldownLeft > 0.0f)
@@ -624,6 +660,8 @@ Maze::~Maze()
 	this->opponents.clear();
 
 	delete this->walls;
+
+	delete this->exitDoors;
 
 	delete this->ceilings;
 
