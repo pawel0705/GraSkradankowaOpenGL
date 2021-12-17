@@ -20,7 +20,7 @@ bool Button::isEnabled() const
 void Button::setPosition(const glm::vec2& position)
 {
 	this->position = position;
-	this->text.setPosition(position + glm::vec2(10, 10));
+	this->text.setPosition(position);
 }
 
 const glm::vec2& Button::getPosition() const
@@ -42,6 +42,7 @@ const glm::vec3& Button::getColor() const
 void Button::setText(const std::string& text)
 {
 	this->text.setText(text);
+	this->size = { this->text.width, this->text.height };
 }
 
 const std::string& Button::getText() const
@@ -52,15 +53,15 @@ const std::string& Button::getText() const
 void Button::update(const Mouse& mouse)
 {
 	if(enabled && 
-	   mouse.posX > this->position.x - 10
+	   mouse.posX > this->position.x
 	   &&
-	   mouse.posX < this->position.x + this->size.x + 10
+	   mouse.posX < this->position.x + this->size.x
 
 	   &&
 
-	   mouse.posY > this->position.y - 10
+	   mouse.posY > this->position.y
 	   &&
-	   mouse.posY < this->position.y + this->size.y + 10
+	   mouse.posY < this->position.y + this->size.y 
 	   )
 	{
 		this->text.color = this->color * 1.5f;
