@@ -73,11 +73,19 @@ void Text::setForNewText()
 		float width = static_cast<float>(character.size.x);
 		float height = static_cast<float>(character.size.y);
 
-		this->width += width;
+		this->width += character.size.x + character.bearing.x;
 		this->height = std::max(this->height, static_cast<int32_t>(height));
+	}
 
+	for(const auto charInText : this->text)
+	{
+		const Font::Character& character = fontPtr->characters.at(charInText);
+
+		float width = static_cast<float>(character.size.x);
+		float height = static_cast<float>(character.size.y);
+		
 		float x1 = xPos + character.bearing.x;
-		float y1 = yPos + character.bearing.y;
+		float y1 = yPos + character.bearing.y - this->height;
 
 		float x2 = x1 + width;
 		float y2 = y1 - height;
@@ -106,5 +114,7 @@ void Text::setForNewText()
 
 		xPos += character.advance.x;
 		yPos += character.advance.y;
+
+		this->width = xPos - x;
 	}
 }
