@@ -29,6 +29,7 @@ public:
 	void updateMaze(float deltaTime);
 
 	bool willBeCollisionWithWall(float deltaTime);
+	bool willBeCollisionWithExit();
 
 	void useSmokeBomb();
 
@@ -52,6 +53,7 @@ private:
 	GameObject* floors;
 	GameObject* ceilings;
 	GameObject* torches;
+	GameObject* exitDoors;
 	GameObject* grass1;
 	GameObject* grass2;
 	GameObject* grass3;
@@ -86,6 +88,7 @@ private:
 	Texture* floorTexture;
 	Texture* ceilingTexture;
 	Texture* torchTexture;
+	Texture* exitDoorTexture;
 	Texture* grass_1Texture;
 	Texture* grass_2Texture;
 	Texture* grass_3Texture;
@@ -95,11 +98,13 @@ private:
 	Texture* normalMapWall;
 	Texture* normalMapCeiling;
 	Texture* normalMapFloor;
+	Texture* normalMapDoors;
 
 	Texture* specularMapWall;
 	Texture* specularMapCeiling;
 	Texture* specularMapFloor;
 	Texture* specularMapWood;
+	Texture* specularDoors;
 
 	Texture* enemyTexture;
 
@@ -107,6 +112,7 @@ private:
 	std::vector<GLfloat> offsetsCeiling;
 	std::vector<GLfloat> offsetsFloors;
 	std::vector<GLfloat> offsetsTorches;
+	std::vector<GLfloat> offsetsExitDoors;
 	std::vector<GLfloat> offsetsGrass1;
 	std::vector<GLfloat> offsetsGrass2;
 	std::vector<GLfloat> offsetsGrass3;
