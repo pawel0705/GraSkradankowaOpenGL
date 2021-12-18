@@ -291,6 +291,9 @@
     <None Include="Shaders\particle.frag" />
     <None Include="Shaders\depthMap.vert" />
     <None Include="Shaders\depthMap.frag" />
+    <None Include="Shaders\map_gBuffer.frag" />
     <None Include="Shaders\map_deferred.frag" />
+    <None Include="Shaders\map_gBuffer.vert" />
+    <None Include="Shaders\map_deferred.vert" />
   </ItemGroup>
 </Project>

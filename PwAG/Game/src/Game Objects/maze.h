@@ -6,6 +6,7 @@
 #include "../Rendering system/Particle system/particleEmitter.h"
 #include "../../enemy.h"
 #include "../../respawnPoint.h"
+#include "../Rendering system/Deferred rendering/deferredRenderer.h"
 
 class Maze
 {
@@ -34,6 +35,9 @@ public:
 	virtual ~Maze();
 
 private:
+	void deferred_geometryPass();
+	void deferred_lightingPass();
+
 	void setLightUniforms(ShaderProgram& shader);
 	void updateSmokeBombs(float deltaTime);
 
@@ -107,5 +111,6 @@ private:
 	std::vector<GLfloat> offsetsGrass2;
 	std::vector<GLfloat> offsetsGrass3;
 
+	DeferredRenderer deferred;
 };
 

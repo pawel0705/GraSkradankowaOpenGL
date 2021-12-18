@@ -58,7 +58,7 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	vec3 posToLightDirectionVectorSpecular = normalize(light.position - fragPos);
 
 	// diffuse light
-	normal = normal + texture(normalMap, v_TextCoord).rgb;
+	normal = texture(normalMap, v_TextCoord).rgb;
 	normal = normalize(normal * 2.0 - 1.0);
 
 	float diffuseLight = max(dot(normal, posToLightDirectionVectorDiffuse), 0.0);

@@ -658,6 +658,12 @@ Maze::~Maze()
 	delete this->enemyTexture;
 }
 
+void Maze::deferred_geometryPass()
+{
+	deferred.gBuffer.bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 void Maze::setLightUniforms(ShaderProgram& shader)
 {
 	shader.setInt("pointLightsCount", static_cast<int>(pointLights.size()));
