@@ -41,6 +41,9 @@ void GameState::processInput(float deltaTime, Keyboard& keyboard, Mouse& mouse)
 		this->maze->useSmokeBomb();
 	}
 
+	if (this->maze->willBeCollisionWithExit()) {
+		this->gameReference->m_stateMachine.addNewState(StateReference(new GameOverState(this->gameReference)));
+	}
 
 	if (this->maze->willBeCollisionWithWall(deltaTime)) {
 		this->maze->camera->revertCameraPosition();

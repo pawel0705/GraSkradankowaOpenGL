@@ -1,7 +1,8 @@
 #pragma once
 #include "programState.h"
 #include "stateMachine.h"
-#include "gameAssets.h"
+#include "menuState.h"
+#include "gameState.h"
 
 class MenuState : public ProgramState
 {
@@ -9,6 +10,7 @@ private:
 	GameReference gameReference;
 
 	Button newGameButton;
+	Button exitGameButton;
 	Camera camera;
 public:
 	MenuState(GameReference gameReference);
