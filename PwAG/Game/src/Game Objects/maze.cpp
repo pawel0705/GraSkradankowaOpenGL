@@ -715,7 +715,7 @@ void Maze::updateMaze(float deltaTime)
 {
 	for (auto& emitter : torchesParticleEmitters)
 	{
-		if(glm::distance(emitter.getPosition(), camera->getCameraPosition()) < 15.0f)
+		if(glm::distance(emitter.getPosition(), camera->getCameraPosition()) < 30.0f)
 		{
 			emitter.setActive(true);
 			emitter.update(deltaTime);
