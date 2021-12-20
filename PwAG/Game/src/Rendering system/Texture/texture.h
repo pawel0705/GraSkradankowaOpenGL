@@ -15,7 +15,12 @@ public:
 
 		G_BUFFER_POSITION,
 		G_BUFFER_NORMAL,
-		G_BUFFER_ALBEDO
+		G_BUFFER_ALBEDO,
+
+		OIT_OPAQUE,
+		OIT_DEPTH,
+		OIT_ACCUM,
+		OIT_REVEAL
 	};
 
 	struct BitMapFile
@@ -44,6 +49,14 @@ public:
 	static Texture createTextureForNormalBuffer();
 	static Texture createTextureForAlbedoBuffer();
 #pragma endregion
+
+#pragma region Textures for OIT
+	static Texture createTexture_OIT_opaque();
+	static Texture createTexture_OIT_depth();
+	static Texture createTexture_OIT_accum();
+	static Texture createTexture_OIT_reveal();
+#pragma endregion
+
 	Texture(const Texture&) = delete;
 	Texture(Texture&&) noexcept;
 	~Texture();

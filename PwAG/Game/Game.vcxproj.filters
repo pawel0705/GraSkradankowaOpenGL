@@ -132,6 +132,9 @@
     <ClCompile Include="src\GUI\button.cpp">
       <Filter>Pliki źródłowe</Filter>
     </ClCompile>
+    <ClCompile Include="src\Rendering system\OIT\oit.cpp">
+      <Filter>Pliki źródłowe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\PCH\pch.h">
@@ -272,6 +275,9 @@
     <ClInclude Include="src\GUI\button.h">
       <Filter>Pliki nagłówkowe</Filter>
     </ClInclude>
+    <ClInclude Include="src\Rendering system\OIT\oit.h">
+      <Filter>Pliki nagłówkowe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\text.vert" />
@@ -291,6 +297,13 @@
     <None Include="Shaders\particle.frag" />
     <None Include="Shaders\depthMap.vert" />
     <None Include="Shaders\depthMap.frag" />
+    <None Include="Shaders\map_gBuffer.frag" />
     <None Include="Shaders\map_deferred.frag" />
+    <None Include="Shaders\map_gBuffer.vert" />
+    <None Include="Shaders\map_deferred.vert" />
+    <None Include="Shaders\OIT_composite.vert" />
+    <None Include="Shaders\OIT_composite.frag" />
+    <None Include="Shaders\OIT_screen.vert" />
+    <None Include="Shaders\OIT_screen.frag" />
   </ItemGroup>
 </Project>

@@ -6,6 +6,8 @@
 #include "../Rendering system/Particle system/particleEmitter.h"
 #include "../../enemy.h"
 #include "../../respawnPoint.h"
+#include "../Rendering system/Deferred rendering/deferredRenderer.h"
+#include "../Rendering system/OIT/oit.h"
 
 class Maze
 {
@@ -35,6 +37,17 @@ public:
 	virtual ~Maze();
 
 private:
+	void defaultRender(float deltaTime);
+	
+	void deferred_geometryPass(float deltaTime);
+	void deferred_lightingPass(float deltaTime);
+
+	void OIT_render(float deltaTime);
+	void OIT_solidPass(float deltaTime);
+	void OIT_transparentPass(float deltaTime);
+	void OIT_compositePass(float deltaTime);
+	void OIT_finalPass(float deltaTime);
+
 	void setLightUniforms(ShaderProgram& shader);
 	void updateSmokeBombs(float deltaTime);
 
@@ -113,5 +126,15 @@ private:
 	std::vector<GLfloat> offsetsGrass2;
 	std::vector<GLfloat> offsetsGrass3;
 
+	DeferredRenderer deferred;
+	ShaderProgram shaderGeometryPass;
+	ShaderProgram shaderLightingPass;
+
+	OIT oit;
+	VAO quadVAO;
+	VBO quadVBO;
+
+	ShaderProgram shaderOITcomposite;
+	ShaderProgram shaderOITscreen;
 };
 

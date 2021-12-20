@@ -1,5 +1,7 @@
 #version 430 
 
+layout (location = 0) out vec4 frag;
+
 uniform sampler2D diffuse;
 uniform sampler2D specular;
 uniform sampler2D normalMap;
@@ -48,7 +50,7 @@ void main()
 			result += calculatePointLight(pointLights[i], norm, v_Position, viewDir);
 		}
 
-		gl_FragColor = vec4(result, 1.0);
+		frag = vec4(result, 1.0);
 	}
 }
 

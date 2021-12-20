@@ -19,6 +19,7 @@
 #include <utility>
 #include <array>
 #include <cassert>
+#include <random>
 
 // additional dependencies
 #include "glad/glad.h"

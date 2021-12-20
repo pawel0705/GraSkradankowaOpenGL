@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Rendering system\OIT\oit.cpp" />
     <ClCompile Include="src\GUI\button.cpp" />
     <ClCompile Include="src\Rendering system\Deferred rendering\deferredRenderer.cpp" />
     <ClCompile Include="enemy.cpp" />
@@ -187,6 +188,7 @@
     <ClCompile Include="src\Program structure\stateMachine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Rendering system\OIT\oit.h" />
     <ClInclude Include="src\GUI\button.h" />
     <ClInclude Include="src\Rendering system\Deferred rendering\deferredRenderer.h" />
     <ClInclude Include="enemy.h" />
@@ -244,6 +246,13 @@
     <None Include="Shaders\mapGrass.frag" />
     <None Include="Shaders\mapPickup.frag" />
     <None Include="Shaders\map_deferred.frag" />
+    <None Include="Shaders\map_deferred.vert" />
+    <None Include="Shaders\map_gBuffer.frag" />
+    <None Include="Shaders\map_gBuffer.vert" />
+    <None Include="Shaders\OIT_composite.frag" />
+    <None Include="Shaders\OIT_composite.vert" />
+    <None Include="Shaders\OIT_screen.frag" />
+    <None Include="Shaders\OIT_screen.vert" />
     <None Include="Shaders\particle.frag" />
     <None Include="Shaders\particle.geom" />
     <None Include="Shaders\particle.vert" />
