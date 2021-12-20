@@ -82,7 +82,7 @@ void GameState::update(float deltaTime)
 	this->maze->updateMaze(deltaTime);
 }
 
-void GameState::render(float deltaTime)
+void GameState::render(float deltaTime, bool wireframe)
 {
-	this->maze->drawMaze(deltaTime);
+	this->maze->drawMaze(deltaTime, wireframe);
 }

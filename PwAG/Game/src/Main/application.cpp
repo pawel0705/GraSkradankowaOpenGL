@@ -143,7 +143,7 @@ void Application::render()
 		}
 
 		if (this->loopedRender) {
-			this->gameReference->m_stateMachine.getCurrentState()->render(renderDeltaTime);
+			this->gameReference->m_stateMachine.getCurrentState()->render(renderDeltaTime, this->wireframeMode);
 		}
 
 		if (this->wireframeMode) {

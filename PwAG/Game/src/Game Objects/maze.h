@@ -26,7 +26,7 @@ public:
 
 	Camera* camera;
 
-	void drawMaze(float deltaTime);
+	void drawMaze(float deltaTime, bool wireframe);
 	void updateMaze(float deltaTime);
 
 	bool willBeCollisionWithWall(float deltaTime);
@@ -42,7 +42,7 @@ private:
 	void deferred_geometryPass(float deltaTime);
 	void deferred_lightingPass(float deltaTime);
 
-	void OIT_render(float deltaTime);
+	void OIT_render(float deltaTime, bool wireframe);
 	void OIT_solidPass(float deltaTime);
 	void OIT_transparentPass(float deltaTime);
 	void OIT_compositePass(float deltaTime);
@@ -134,6 +134,8 @@ private:
 	VAO quadVAO;
 	VBO quadVBO;
 
+	ShaderProgram shaderOITpickup;
+	ShaderProgram shaderOITparticle;
 	ShaderProgram shaderOITcomposite;
 	ShaderProgram shaderOITscreen;
 };
