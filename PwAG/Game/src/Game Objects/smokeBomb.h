@@ -18,8 +18,13 @@ public:
 	{
 		return durationTime;
 	}
+	const glm::vec3& getPosition() const
+	{
+		return position;
+	}
 #pragma endregion
 private:
+	glm::vec3 position;
 	ParticleEmitter emitter;
 	static float maxDurationTime; //in sec
 	float durationTime = 0.0f;

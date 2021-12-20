@@ -40,7 +40,7 @@ void MenuState::update(float deltaTime)
 
 }
 
-void MenuState::render(float deltaTime)
+void MenuState::render(float deltaTime, bool wireframe)
 {
 	newGameButton.draw();
 	exitGameButton.draw();

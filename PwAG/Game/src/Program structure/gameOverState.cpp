@@ -34,7 +34,7 @@ void GameOverState::update(float deltaTime)
 
 }
 
-void GameOverState::render(float deltaTime)
+void GameOverState::render(float deltaTime, bool wireframe)
 {
 	menuButton.draw();
 	winLabel.draw();

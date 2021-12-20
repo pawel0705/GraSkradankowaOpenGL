@@ -85,6 +85,14 @@ void Maze::initMatrixMVP()
 	this->shaderGeometryPass.useShader();
 	this->shaderGeometryPass.setMat4("ProjectionMatrix", projectionMatrix);
 	this->camera->setCameraUniforms(&this->shaderGeometryPass);
+
+	this->shaderOITpickup.useShader();
+	this->shaderOITpickup.setMat4("ProjectionMatrix", projectionMatrix);
+	this->camera->setCameraUniforms(&this->shaderOITpickup);
+
+	this->shaderOITparticle.useShader();
+	this->shaderOITparticle.setMat4("ProjectionMatrix", projectionMatrix);
+	this->camera->setCameraUniforms(&this->shaderOITparticle);
 }
 
 void Maze::initMazeShaders()
@@ -123,6 +131,8 @@ void Maze::initMazeShaders()
 	shaderParticles.attachShader(particlesFrag);
 	shaderParticles.linkShaderProgram();
 
+	
+	
 	Shader geometryPassVert = Shader::createShaderFromFile("Shaders/map_gBuffer.vert", Shader::Type::eVertex);
 	Shader geometryPassFrag = Shader::createShaderFromFile("Shaders/map_gBuffer.frag", Shader::Type::eFragment);
 
@@ -137,15 +147,33 @@ void Maze::initMazeShaders()
 	shaderLightingPass.attachShader(lightingPassFrag);
 	shaderLightingPass.linkShaderProgram();
 
-	Shader compositePassVert = Shader::createShaderFromFile("Shaders/OIT_composite.vert", Shader::Type::eVertex);
-	Shader compositePassFrag = Shader::createShaderFromFile("Shaders/OIT_composite.frag", Shader::Type::eFragment);
+	
+	
+	Shader OITpickupVert = Shader::createShaderFromFile("Shaders/OIT/map.vert", Shader::Type::eVertex);
+	Shader OITpickupFrag = Shader::createShaderFromFile("Shaders/OIT/mapPickup.frag", Shader::Type::eFragment);
+
+	shaderOITpickup.attachShader(OITpickupVert);
+	shaderOITpickup.attachShader(OITpickupFrag);
+	shaderOITpickup.linkShaderProgram();
+
+	Shader OITparticleVert = Shader::createShaderFromFile("Shaders/OIT/particle.vert", Shader::Type::eVertex);
+	Shader OITparticleGeom = Shader::createShaderFromFile("Shaders/OIT/particle.geom", Shader::Type::eGeometry);
+	Shader OITparticleFrag = Shader::createShaderFromFile("Shaders/OIT/particle.frag", Shader::Type::eFragment);
+
+	shaderOITparticle.attachShader(OITparticleVert);
+	shaderOITparticle.attachShader(OITparticleGeom);
+	shaderOITparticle.attachShader(OITparticleFrag);
+	shaderOITparticle.linkShaderProgram();
+
+	Shader compositePassVert = Shader::createShaderFromFile("Shaders/OIT/OIT_composite.vert", Shader::Type::eVertex);
+	Shader compositePassFrag = Shader::createShaderFromFile("Shaders/OIT/OIT_composite.frag", Shader::Type::eFragment);
 
 	shaderOITcomposite.attachShader(compositePassVert);
 	shaderOITcomposite.attachShader(compositePassFrag);
 	shaderOITcomposite.linkShaderProgram();
 
-	Shader screenVert = Shader::createShaderFromFile("Shaders/OIT_screen.vert", Shader::Type::eVertex);
-	Shader screenFrag = Shader::createShaderFromFile("Shaders/OIT_screen.frag", Shader::Type::eFragment);
+	Shader screenVert = Shader::createShaderFromFile("Shaders/OIT/OIT_screen.vert", Shader::Type::eVertex);
+	Shader screenFrag = Shader::createShaderFromFile("Shaders/OIT/OIT_screen.frag", Shader::Type::eFragment);
 
 	shaderOITscreen.attachShader(screenVert);
 	shaderOITscreen.attachShader(screenFrag);
@@ -159,6 +187,9 @@ void Maze::initMazeShaders()
 
 	shaderPickupProgram->useShader();
 	setLightUniforms(*shaderPickupProgram);
+
+	shaderOITpickup.useShader();
+	setLightUniforms(shaderOITpickup);
 
 }
 
@@ -442,12 +473,242 @@ void Maze::initObjModels()
 	quadVAO.unbind();
 }
 
-void Maze::drawMaze(float deltaTime)
+void Maze::drawMaze(float deltaTime, bool wireframe)
 {
 	//this->defaultRender(deltaTime);
+	this->OIT_render(deltaTime, wireframe);
 
-	this->OIT_render(deltaTime);
+}
 
+void Maze::OIT_render(float deltaTime, bool wireframe)
+{
+	if(wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	}
+	this->OIT_solidPass(deltaTime);
+	this->OIT_transparentPass(deltaTime);
+	if(wireframe)
+	{
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	}
+
+	this->OIT_compositePass(deltaTime);
+	this->OIT_finalPass(deltaTime);
+
+	glEnable(GL_DEPTH_TEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
+void Maze::OIT_solidPass(float deltaTime)
+{
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+	oit.opaque.bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	this->shaderProgram->useShader();
+	this->camera->updateEulerAngels();
+	this->camera->setCameraUniforms(this->shaderProgram);
+
+	this->walls->draw(this->shaderProgram);
+	this->exitDoors->draw(this->shaderProgram);
+	this->floors->draw(this->shaderProgram);
+	this->ceilings->draw(this->shaderProgram);
+	this->torches->draw(this->shaderProgram);
+
+	this->shaderGrassProgram->useShader();
+	this->camera->setCameraUniforms(this->shaderGrassProgram);
+
+	this->grass1->draw(this->shaderGrassProgram);
+	this->grass2->draw(this->shaderGrassProgram);
+	this->grass3->draw(this->shaderGrassProgram);
+}
+
+void Maze::OIT_transparentPass(float deltaTime)
+{
+	glDepthMask(GL_FALSE);
+	glEnable(GL_BLEND);
+	glBlendFunci(0, GL_ONE, GL_ONE);
+	glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
+	glBlendEquation(GL_FUNC_ADD);
+
+	oit.transparent.bind();
+
+	const GLfloat zeroFillerVec[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	glClearBufferfv(GL_COLOR, 0, &zeroFillerVec[0]);
+	const GLfloat oneFillerVec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+	glClearBufferfv(GL_COLOR, 1, &oneFillerVec[0]);
+
+	shaderOITparticle.useShader();
+	this->camera->setCameraUniforms(&shaderOITparticle);
+	for(auto& emitter : torchesParticleEmitters)
+	{
+		if(emitter.isActive())
+		{
+			emitter.render(shaderOITparticle, this->camera->getCameraPosition());
+		}
+	}
+
+	for(auto& smokeBomb : smokeBombs)
+	{
+		smokeBomb.render(deltaTime, shaderOITparticle, this->camera->getCameraPosition());
+	}
+
+	this->shaderOITpickup.useShader();
+	this->camera->setCameraUniforms(&this->shaderOITpickup);
+
+	for(auto p : this->respawnPickup)
+	{
+		p->drawRespawnPoint(&this->shaderOITpickup);
+	}
+
+	for(auto p : this->opponents)
+	{
+		p->drawEnemy(&this->shaderOITpickup);
+	}
+}
+
+void Maze::OIT_compositePass(float deltaTime)
+{
+	glDepthFunc(GL_ALWAYS);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	oit.opaque.bind();
+
+	shaderOITcomposite.useShader();
+
+	oit.accumTex.bindTexture(0);
+	oit.revealTex.bindTexture(1);
+	quadVAO.bind();
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Maze::OIT_finalPass(float deltaTime)
+{
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	shaderOITscreen.useShader();
+	oit.opaqueTex.bindTexture(0);
+	quadVAO.bind();
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+void Maze::setLightUniforms(ShaderProgram& shader)
+{
+	shader.setInt("pointLightsCount", static_cast<int>(pointLights.size()));
+	char lightIndex[20];
+	for(int i = 0; i < pointLights.size(); ++i)
+	{
+		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
+		std::string index { lightIndex };
+		shader.setVec3f(index + "position", pointLights[i].getPosition());
+		shader.setVec3f(index + "diffuse", pointLights[i].getDiffuse());
+		shader.setVec3f(index + "specular", pointLights[i].getSpecular());
+
+		shader.setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
+		shader.setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
+		shader.setFloat(index + "quadratic", pointLights[i].getAttenuation().getQuadratic());
+	}
+}
+
+void Maze::defaultRender(float deltaTime)
+{
+	this->shaderProgram->useShader();
+	this->camera->updateEulerAngels();
+	this->camera->setCameraUniforms(this->shaderProgram);
+
+	this->walls->draw(this->shaderProgram);
+	this->exitDoors->draw(this->shaderProgram);
+	this->floors->draw(this->shaderProgram);
+	this->ceilings->draw(this->shaderProgram);
+	this->torches->draw(this->shaderProgram);
+
+
+	this->shaderGrassProgram->useShader();
+	this->camera->setCameraUniforms(this->shaderGrassProgram);
+
+	this->grass1->draw(this->shaderGrassProgram);
+	this->grass2->draw(this->shaderGrassProgram);
+	this->grass3->draw(this->shaderGrassProgram);
+
+	this->shaderPickupProgram->useShader();
+	this->camera->setCameraUniforms(this->shaderPickupProgram);
+
+	for(auto p : this->respawnPickup)
+	{
+		p->drawRespawnPoint(this->shaderPickupProgram);
+	}
+
+	for(auto p : this->opponents)
+	{
+		p->drawEnemy(this->shaderPickupProgram);
+	}
+	shaderParticles.useShader();
+	this->camera->setCameraUniforms(&shaderParticles);
+	for(auto& emitter : torchesParticleEmitters)
+	{
+		if(emitter.isActive())
+		{
+			emitter.render(shaderParticles, this->camera->getCameraPosition());
+		}
+	}
+
+	for(auto& smokeBomb : smokeBombs)
+	{
+		smokeBomb.render(deltaTime, shaderParticles, this->camera->getCameraPosition());
+	}
+}
+
+void Maze::deferred_geometryPass(float deltaTime)
+{
+	deferred.gBuffer.bind();
+	glClearColor(0.0, 0.0, 0.0, 1.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	shaderGeometryPass.useShader();
+
+	this->camera->updateEulerAngels();
+	this->camera->setCameraUniforms(&shaderGeometryPass);
+
+	this->walls->draw(&shaderGeometryPass);
+	this->exitDoors->draw(&shaderGeometryPass);
+	this->floors->draw(&shaderGeometryPass);
+	this->ceilings->draw(&shaderGeometryPass);
+	this->torches->draw(&shaderGeometryPass);
+
+	deferred.gBuffer.unbind();
+}
+
+void Maze::deferred_lightingPass(float deltaTime)
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	shaderLightingPass.useShader();
+
+	for(uint32_t i = 0; i < deferred.attachmentsCount; ++i)
+	{
+		deferred.attachments[i].bindTexture(i);
+	}
+	setLightUniforms(shaderLightingPass);
+	this->camera->setCameraUniforms(&shaderLightingPass);
+
+	deferred.gBuffer.bindRead();
+	deferred.gBuffer.unbindDraw();
+	deferred.gBuffer.blit(0, 0, Config::g_defaultWidth, Config::g_defaultHeight, 0, 0, Config::g_defaultWidth, Config::g_defaultHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	deferred.gBuffer.unbind();
 }
 
 void Maze::updateMaze(float deltaTime)
@@ -544,12 +805,27 @@ void Maze::updateEnemy(float deltaTime) {
 			collisionWithPlayer = true;
 		}
 
+		bool isInSmoke = false;
+		for(auto& smokeBomb : smokeBombs)
+		{
+			if(glm::distance(enemyPosition, smokeBomb.getPosition()) < 3.8f)
+			{
+				isInSmoke = true;
+				break;
+			}
+		}
+
+		if(isInSmoke)
+		{
+			continue;
+		}
+
 		// id� za graczem gdy znajdzie si� w zasi�gu
 		bool followPlayer = false;
-		if (enemyPosition.x - 25.0f < playerPosition.x &&
-			enemyPosition.x + 25.0f > playerPosition.x &&
-			enemyPosition.z - 25.0f < playerPosition.z &&
-			enemyPosition.z + 25.0f > playerPosition.z) {
+		if (enemyPosition.x - 10.0f < playerPosition.x &&
+			enemyPosition.x + 10.0f > playerPosition.x &&
+			enemyPosition.z - 10.0f < playerPosition.z &&
+			enemyPosition.z + 10.0f > playerPosition.z) {
 
 			followPlayer = true;
 		}
@@ -646,6 +922,23 @@ void Maze::useSmokeBomb()
 	smokeBombs.emplace_back(pos);
 }
 
+void Maze::updateSmokeBombs(float deltaTime)
+{
+	if(smokeBombCooldownLeft > 0.0f)
+	{
+		smokeBombCooldownLeft -= deltaTime;
+	}
+
+	for(auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
+	{
+		iter->update(deltaTime);
+		if(iter->getDurationTime() >= iter->getMaxDurationTime())
+		{
+			iter = smokeBombs.erase(iter);
+		}
+	}
+}
+
 Maze::~Maze()
 {
 	if(this->mazeIndexData != nullptr)
@@ -704,245 +997,4 @@ Maze::~Maze()
 	delete this->spawnActiveTexture;
 
 	delete this->enemyTexture;
-}
-
-void Maze::defaultRender(float deltaTime)
-{
-	this->shaderProgram->useShader();
-	this->camera->updateEulerAngels();
-	this->camera->setCameraUniforms(this->shaderProgram);
-
-	this->walls->draw(this->shaderProgram);
-	this->exitDoors->draw(this->shaderProgram);
-	this->floors->draw(this->shaderProgram);
-	this->ceilings->draw(this->shaderProgram);
-	this->torches->draw(this->shaderProgram);
-
-
-	this->shaderGrassProgram->useShader();
-	this->camera->setCameraUniforms(this->shaderGrassProgram);
-
-	this->grass1->draw(this->shaderGrassProgram);
-	this->grass2->draw(this->shaderGrassProgram);
-	this->grass3->draw(this->shaderGrassProgram);
-
-	this->shaderPickupProgram->useShader();
-	this->camera->setCameraUniforms(this->shaderPickupProgram);
-
-	for(auto p : this->respawnPickup)
-	{
-		p->drawRespawnPoint(this->shaderPickupProgram);
-	}
-
-	for(auto p : this->opponents)
-	{
-		p->drawEnemy(this->shaderPickupProgram);
-	}
-	shaderParticles.useShader();
-	this->camera->setCameraUniforms(&shaderParticles);
-	for(auto& emitter : torchesParticleEmitters)
-	{
-		if(emitter.isActive())
-		{
-			emitter.render(shaderParticles, this->camera->getCameraPosition());
-		}
-	}
-
-	for(auto& smokeBomb : smokeBombs)
-	{
-		smokeBomb.render(deltaTime, shaderParticles, this->camera->getCameraPosition());
-	}
-}
-
-void Maze::deferred_geometryPass(float deltaTime)
-{
-	deferred.gBuffer.bind();
-	glClearColor(0.0, 0.0, 0.0, 1.0);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	shaderGeometryPass.useShader();
-
-	this->camera->updateEulerAngels();
-	this->camera->setCameraUniforms(&shaderGeometryPass);
-
-	this->walls->draw(&shaderGeometryPass);
-	this->exitDoors->draw(&shaderGeometryPass);
-	this->floors->draw(&shaderGeometryPass);
-	this->ceilings->draw(&shaderGeometryPass);
-	this->torches->draw(&shaderGeometryPass);
-
-	deferred.gBuffer.unbind();
-}
-
-void Maze::deferred_lightingPass(float deltaTime)
-{
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	
-	shaderLightingPass.useShader();
-
-	for(uint32_t i = 0; i < deferred.attachmentsCount; ++i)
-	{
-		deferred.attachments[i].bindTexture(i);
-	}
-	setLightUniforms(shaderLightingPass);
-	this->camera->setCameraUniforms(&shaderLightingPass);
-
-	//renderQuad();
-
-	deferred.gBuffer.bindRead();
-	deferred.gBuffer.unbindDraw();
-	deferred.gBuffer.blit(0, 0, Config::g_defaultWidth, Config::g_defaultHeight, 0, 0, Config::g_defaultWidth, Config::g_defaultHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-	deferred.gBuffer.unbind();
-}
-
-void Maze::OIT_render(float deltaTime)
-{
-	this->OIT_solidPass(deltaTime);
-	this->OIT_transparentPass(deltaTime);
-	this->OIT_compositePass(deltaTime);
-	this->OIT_finalPass(deltaTime);
-
-	glEnable(GL_DEPTH_TEST);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-}
-
-void Maze::OIT_solidPass(float deltaTime)
-{
-	glEnable(GL_DEPTH_TEST);
-	glDepthFunc(GL_LESS);
-	glDepthMask(GL_TRUE);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-
-	oit.opaque.bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	this->shaderProgram->useShader();
-	this->camera->updateEulerAngels();
-	this->camera->setCameraUniforms(this->shaderProgram);
-
-	this->walls->draw(this->shaderProgram);
-	this->exitDoors->draw(this->shaderProgram);
-	this->floors->draw(this->shaderProgram);
-	this->ceilings->draw(this->shaderProgram);
-	this->torches->draw(this->shaderProgram);
-
-	this->shaderGrassProgram->useShader();
-	this->camera->setCameraUniforms(this->shaderGrassProgram);
-
-	this->grass1->draw(this->shaderGrassProgram);
-	this->grass2->draw(this->shaderGrassProgram);
-	this->grass3->draw(this->shaderGrassProgram);
-}
-
-void Maze::OIT_transparentPass(float deltaTime)
-{
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	glBlendFunci(0, GL_ONE, GL_ONE);
-	glBlendFunci(1, GL_ZERO, GL_ONE_MINUS_SRC_COLOR);
-	glBlendEquation(GL_FUNC_ADD);
-
-	oit.transparent.bind();
-
-	const GLfloat zeroFillerVec[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	glClearBufferfv(GL_COLOR, 0, &zeroFillerVec[0]);
-	const GLfloat oneFillerVec[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glClearBufferfv(GL_COLOR, 1, &oneFillerVec[0]);
-
-	shaderParticles.useShader();
-	this->camera->setCameraUniforms(&shaderParticles);
-	for(auto& emitter : torchesParticleEmitters)
-	{
-		if(emitter.isActive())
-		{
-			emitter.render(shaderParticles, this->camera->getCameraPosition());
-		}
-	}
-
-	for(auto& smokeBomb : smokeBombs)
-	{
-		smokeBomb.render(deltaTime, shaderParticles, this->camera->getCameraPosition());
-	}
-
-	this->shaderPickupProgram->useShader();
-	this->camera->setCameraUniforms(this->shaderPickupProgram);
-
-	for(auto p : this->respawnPickup)
-	{
-		p->drawRespawnPoint(this->shaderPickupProgram);
-	}
-
-	for(auto p : this->opponents)
-	{
-		p->drawEnemy(this->shaderPickupProgram);
-	}
-}
-
-void Maze::OIT_compositePass(float deltaTime)
-{
-	glDepthFunc(GL_ALWAYS);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	oit.opaque.bind();
-
-	shaderOITcomposite.useShader();
-
-	oit.accumTex.bindTexture(0);
-	oit.revealTex.bindTexture(1);
-	quadVAO.bind();
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-}
-
-void Maze::OIT_finalPass(float deltaTime)
-{
-	glDisable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
-	glDisable(GL_BLEND);
-
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-
-	shaderOITscreen.useShader();
-	oit.opaqueTex.bindTexture(0);
-	quadVAO.bind();
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-}
-
-void Maze::setLightUniforms(ShaderProgram& shader)
-{
-	shader.setInt("pointLightsCount", static_cast<int>(pointLights.size()));
-	char lightIndex[20];
-	for (int i = 0; i < pointLights.size(); ++i)
-	{
-		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
-		std::string index{ lightIndex };
-		shader.setVec3f(index + "position", pointLights[i].getPosition());
-		shader.setVec3f(index + "diffuse", pointLights[i].getDiffuse());
-		shader.setVec3f(index + "specular", pointLights[i].getSpecular());
-
-		shader.setFloat(index + "constant", pointLights[i].getAttenuation().getConstant());
-		shader.setFloat(index + "linear", pointLights[i].getAttenuation().getLinear());
-		shader.setFloat(index + "quadratic", pointLights[i].getAttenuation().getQuadratic());
-	}
-}
-
-void Maze::updateSmokeBombs(float deltaTime)
-{
-	if(smokeBombCooldownLeft > 0.0f)
-	{
-		smokeBombCooldownLeft -= deltaTime;
-	}
-
-	for(auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
-	{
-		iter->update(deltaTime);
-		if(iter->getDurationTime() >= iter->getMaxDurationTime())
-		{
-			iter = smokeBombs.erase(iter);
-		}
-	}
 }
