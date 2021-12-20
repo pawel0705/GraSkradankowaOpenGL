@@ -136,7 +136,7 @@ void Application::render()
 		
 		timer.startTimer("render");
 
-		window.clearToColor(80, 80, 80);
+		window.clearToColor(0, 0, 0);
 
 		if (this->wireframeMode) {
 			this->wireframeModeOn(); // wireframe mode on

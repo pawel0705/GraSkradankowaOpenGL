@@ -100,6 +100,38 @@ Texture Texture::createTextureForAlbedoBuffer()
 	return toReturn;
 }
 
+Texture Texture::createTexture_OIT_opaque()
+{
+	Texture toReturn(Texture::Type::OIT_OPAQUE);
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture Texture::createTexture_OIT_depth()
+{
+	Texture toReturn(Texture::Type::OIT_DEPTH);
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture Texture::createTexture_OIT_accum()
+{
+	Texture toReturn(Texture::Type::OIT_ACCUM);
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
+Texture Texture::createTexture_OIT_reveal()
+{
+	Texture toReturn(Texture::Type::OIT_REVEAL);
+	toReturn.initializeTexture();
+
+	return toReturn;
+}
+
 Texture::Texture(Texture && other) noexcept
 	: textureType(other.textureType), bmp(std::move(other.bmp))
 {
@@ -157,6 +189,38 @@ void Texture::initializeTexture()
 		else if(this->textureType == Texture::Type::G_BUFFER_ALBEDO)
 		{
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		}
+	}
+	else if(this->textureType >= Texture::Type::OIT_OPAQUE && this->textureType <= Texture::Type::OIT_REVEAL)
+	{
+		if(this->textureType == Texture::Type::OIT_OPAQUE)
+		{
+			glBindTexture(GL_TEXTURE_2D, this->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RGBA, GL_HALF_FLOAT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		else if(this->textureType == Texture::Type::OIT_DEPTH)
+		{
+			glBindTexture(GL_TEXTURE_2D, this->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
+		else if(this->textureType == Texture::Type::OIT_ACCUM)
+		{
+			glBindTexture(GL_TEXTURE_2D, this->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RGBA, GL_HALF_FLOAT, nullptr);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		}
+		else
+		{
+			glBindTexture(GL_TEXTURE_2D, this->texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_R8, Config::g_defaultWidth, Config::g_defaultHeight, 0, GL_RED, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 	else

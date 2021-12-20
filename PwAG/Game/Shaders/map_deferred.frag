@@ -7,8 +7,6 @@ uniform sampler2D gAlbedoSpec;
 uniform vec3 cameraPos;
 
 in vec2 v_TextCoord;
-in vec3 v_Offset;
-in mat3 TBN;
 
 struct PointLight
 {
@@ -36,10 +34,10 @@ void main()
 
 		vec3 FragPos = texture(gPosition, v_TextCoord).rgb;
 		vec3 Normal = texture(gNormal, v_TextCoord).rgb;
-		vec3 Albedo = texture(gAlbedoSpec, v_TextCoord).rgb;
+		vec3 Albedo = texture(gAlbedoSpec, v_TextCoord).rgb * 0.1;
 		float Specular = texture(gAlbedoSpec, v_TextCoord).a;
 		
-		vec3 viewDir = normalize(cameraPos - FragPos) * TBN;
+		vec3 viewDir = normalize(cameraPos - FragPos);
 
 		vec3 result = vec3(0, 0, 0);
 		for(int i = 0; i < pointLightsCount; ++i)
@@ -53,13 +51,10 @@ void main()
 
 vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 Albedo, float Specular)
 {
-	vec3 posToLightDirectionVectorDiffuse = normalize(light.position + v_Offset - fragPos);
+	vec3 posToLightDirectionVectorDiffuse = normalize(light.position - fragPos);
 	vec3 posToLightDirectionVectorSpecular = normalize(light.position - fragPos);
 
 	// diffuse light
-	normal = normal + texture(normalMap, v_TextCoord).rgb;
-	normal = normalize(normal * 2.0 - 1.0);
-
 	float diffuseLight = max(dot(normal, posToLightDirectionVectorDiffuse), 0.0);
 
 	// specular light

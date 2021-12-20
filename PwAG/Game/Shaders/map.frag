@@ -1,5 +1,7 @@
 #version 430 
 
+layout (location = 0) out vec4 frag;
+
 uniform sampler2D diffuse;
 uniform sampler2D specular;
 uniform sampler2D normalMap;
@@ -48,7 +50,7 @@ void main()
 			result += calculatePointLight(pointLights[i], norm, v_Position, viewDir);
 		}
 
-		gl_FragColor = vec4(result, 1.0);
+		frag = vec4(result, 1.0);
 	}
 }
 
@@ -58,7 +60,7 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	vec3 posToLightDirectionVectorSpecular = normalize(light.position - fragPos);
 
 	// diffuse light
-	normal = texture(normalMap, v_TextCoord).rgb;
+	normal = normal + texture(normalMap, v_TextCoord).rgb;
 	normal = normalize(normal * 2.0 - 1.0);
 
 	float diffuseLight = max(dot(normal, posToLightDirectionVectorDiffuse), 0.0);

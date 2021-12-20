@@ -31,12 +31,12 @@ void main() {
 
 	TBN = mat3(T, B, N);
 
-  gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(v_position + offset, 1.0f);
+	gl_Position = ProjectionMatrix * ViewMatrix * ModelMatrix * vec4(v_position + offset, 1.0f);
 
-  v_Color = v_color;
-  v_TextCoord = v_textcoord;  
-  v_Normal = mat3(transpose(inverse(ModelMatrix))) * normalize((v_normal + offset));
-  v_Position =  vec3(ModelMatrix * vec4(v_position + offset, 1.0));
+	v_Color = v_color;
+	v_TextCoord = v_textcoord;  
+	v_Normal = mat3(transpose(inverse(ModelMatrix))) * normalize((v_normal + offset));
+	v_Position =  vec3(ModelMatrix * vec4(v_position + offset, 1.0));
 
-  v_Offset = offset;
+	v_Offset = offset;
 }

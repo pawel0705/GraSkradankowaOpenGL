@@ -5,7 +5,7 @@
 class ParticleEmitter
 {
 public:
-	ParticleEmitter(const glm::vec3& position, const glm::vec3& startVelocity, const glm::vec3& startAcceleration, const Texture& texture, const glm::vec2& scale = { 1.0f, 1.0f });
+	ParticleEmitter(const glm::vec3& position, const glm::vec3& startVelocity, const glm::vec3& startAcceleration, const glm::vec3& range, const Texture& texture, const glm::vec2& scale = { 1.0f, 1.0f });
 	ParticleEmitter(const ParticleEmitter&) = delete;
 	ParticleEmitter(ParticleEmitter&&) noexcept;
 
@@ -45,6 +45,8 @@ private:
 	std::function<void(float deltaTime)> accelerationUpdateFunction =
 		[&](float) mutable -> void
 	{};
+
+	glm::vec3 range;
 
 	glm::vec2 scale;
 	const Texture* texture;
