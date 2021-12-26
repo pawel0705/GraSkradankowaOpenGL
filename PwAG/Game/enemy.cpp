@@ -54,3 +54,36 @@ glm::vec3 Enemy::getEnemyPositionWithoutOffset() const {
 void Enemy::resetEnemyPosition() {
 	this->enemyModel->setPosition(this->enemyStartPosition);
 }
+
+bool Enemy::canMakeNewMovementDecision()
+{
+	decisionIterator++;
+
+	if (decisionIterator >= 100) {
+		decisionIterator = 0;
+
+		return true;
+	}
+
+	return false;
+}
+
+void Enemy::setLastEnemyDirectionX(float dirX)
+{
+	this->lastEnemyDirectionX = dirX;
+}
+
+void Enemy::setLastEnemyDirectionY(float dirY)
+{
+	this->lastEnemyDirectionY = dirY;
+}
+
+float Enemy::getLastEnemyDirectionX() const
+{
+	return this->lastEnemyDirectionX;
+}
+
+float Enemy::getLastEnemyDirectionY() const
+{
+	return this->lastEnemyDirectionY;
+}

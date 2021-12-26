@@ -19,10 +19,6 @@ Mesh::Mesh(DataOBJ* vertices, int verticesSize, GLuint* indices, int indicesSize
 	for (int i = 0; i < this->indicesSize; i++) {
 		this->indices[i] = indices[i];
 	}
-
-	
-
-
 }
 
 void Mesh::setMeshUniform(ShaderProgram* shaderProgram) {

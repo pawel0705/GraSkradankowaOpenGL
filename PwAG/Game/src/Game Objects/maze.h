@@ -9,6 +9,13 @@
 #include "../Rendering system/Deferred rendering/deferredRenderer.h"
 #include "../Rendering system/OIT/oit.h"
 
+// Creating a shortcut for int, int pair type
+typedef std::pair<int, int> Pair;
+typedef std::pair<float, float> PairFloat;
+
+// Creating a shortcut for pair<int, pair<int, int>> type
+typedef std::pair<double, std::pair<int, int>> pPair;
+
 class Maze
 {
 public:
@@ -54,8 +61,8 @@ private:
 	void updateEnemy(float deltaTime);
 	void updateRespawnPoint(float deltaTime);
 
-	int mazeDimensionX;
-	int mazeDimensionY;
+	int mazeDimensionX = 30;
+	int mazeDimensionY = 30;
 	int** mazeIndexData;
 
 	GameObject* walls;
@@ -138,5 +145,24 @@ private:
 	ShaderProgram shaderOITparticle;
 	ShaderProgram shaderOITcomposite;
 	ShaderProgram shaderOITscreen;
+
+	// A* algorithm
+
+	// A structure to hold the necessary parameters
+	struct cell {
+		// Row and Column index of its parent
+		// Note that 0 <= i <= ROW-1 & 0 <= j <= COL-1
+		int parent_i, parent_j;
+		// f = g + h
+		double f, g, h;
+	};
+
+	bool isValid(int row, int col);
+	bool isUnBlocked(int row, int col);
+	bool isDestination(int row, int col, Pair dest);
+	double calculateHValue(int row, int col, Pair dest);
+	PairFloat tracePath(cell cellDetails[][30], Pair dest);
+	PairFloat aStarSearch(Pair src, Pair dest);
+	Pair positionToXY(PairFloat position);
 };
 

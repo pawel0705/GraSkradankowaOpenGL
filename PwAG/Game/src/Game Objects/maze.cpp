@@ -2,6 +2,7 @@
 #include "maze.h"
 #include "../Rendering system/Model/objReader.h"
 #include "tileType.h"
+#include <set>
 
 Maze::Maze()
 {
@@ -15,7 +16,7 @@ void Maze::initMaze()
 	std::ifstream mazefile;
 	mazefile.open(mazeDataFileName);
 
-	if(!mazefile.is_open())
+	if (!mazefile.is_open())
 	{
 		std::cout << "Error while reading maze data file" << std::endl;
 		exit(EXIT_FAILURE);
@@ -29,18 +30,18 @@ void Maze::initMaze()
 	this->mazeDimensionY = atoi(singleline.c_str());
 	this->mazeIndexData = new int* [this->mazeDimensionX];
 
-	for(int i = 0; i < this->mazeDimensionX; i++)
+	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
 		this->mazeIndexData[i] = new int[this->mazeDimensionY];
 	}
 
 
-	for(int j = 0; !mazefile.eof(); j++)
+	for (int j = 0; !mazefile.eof(); j++)
 	{
 		std::getline(mazefile, singleline);
 
 		std::stringstream maze_line(singleline);
-		for(int i = 0; i < this->mazeDimensionY; i++)
+		for (int i = 0; i < this->mazeDimensionY; i++)
 		{
 			maze_line >> this->mazeIndexData[i][j];
 		}
@@ -131,8 +132,8 @@ void Maze::initMazeShaders()
 	shaderParticles.attachShader(particlesFrag);
 	shaderParticles.linkShaderProgram();
 
-	
-	
+
+
 	Shader geometryPassVert = Shader::createShaderFromFile("Shaders/map_gBuffer.vert", Shader::Type::eVertex);
 	Shader geometryPassFrag = Shader::createShaderFromFile("Shaders/map_gBuffer.frag", Shader::Type::eFragment);
 
@@ -147,8 +148,8 @@ void Maze::initMazeShaders()
 	shaderLightingPass.attachShader(lightingPassFrag);
 	shaderLightingPass.linkShaderProgram();
 
-	
-	
+
+
 	Shader OITpickupVert = Shader::createShaderFromFile("Shaders/OIT/map.vert", Shader::Type::eVertex);
 	Shader OITpickupFrag = Shader::createShaderFromFile("Shaders/OIT/mapPickup.frag", Shader::Type::eFragment);
 
@@ -251,11 +252,11 @@ void Maze::initObjModels()
 
 	TransformationOBJ transformation = TransformationOBJ();
 
-	for(int i = 0; i < this->mazeDimensionX; i++)
+	for (int i = 0; i < this->mazeDimensionX; i++)
 	{
-		for(int j = 0; j < this->mazeDimensionY; j++)
+		for (int j = 0; j < this->mazeDimensionY; j++)
 		{
-			if(this->mazeIndexData[i][j] == (int)TileType::WALL)
+			if (this->mazeIndexData[i][j] == (int)TileType::WALL)
 			{
 				offsetsWalls.emplace_back(i * 2.f);
 				offsetsWalls.emplace_back(0.0f);
@@ -295,9 +296,9 @@ void Maze::initObjModels()
 				GameObject* respawn = new GameObject(material, this->spawnActiveTexture, spawn_Objects, transformation, offsetRespawn, 1);
 
 				this->respawnPickup.push_back(new RespawnPoint(respawn, true));
-				
+
 			}
-			else if(this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE)
+			else if (this->mazeIndexData[i][j] == (int)TileType::EMPTY_SPACE)
 			{
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
@@ -310,7 +311,7 @@ void Maze::initObjModels()
 				floorInstances++;
 				ceilingInstances++;
 			}
-			else if(this->mazeIndexData[i][j] == (int)TileType::PLAYER_RESPAWN)
+			else if (this->mazeIndexData[i][j] == (int)TileType::PLAYER_RESPAWN)
 			{
 				offsetsFloors.emplace_back(i * 2.f);
 				offsetsFloors.emplace_back(-2.0f);
@@ -376,12 +377,12 @@ void Maze::initObjModels()
 	this->ceilings->setSpecular(this->specularMapCeiling);
 
 	// randomize torhes
-	for(int i = 0; i < floorInstances; i++)
+	for (int i = 0; i < floorInstances; i++)
 	{
 		int randomValue = rand() % 10;
 
 		// some chance to spawn torch
-		if(randomValue == 0)
+		if (randomValue == 0)
 		{
 			int j = 3 * i;
 			float x = offsetsFloors[j];
@@ -409,7 +410,7 @@ void Maze::initObjModels()
 	this->torches->setSpecular(this->specularMapWood);
 
 	// randomize grass
-	for(int i = 0; i < floorInstances; i++)
+	for (int i = 0; i < floorInstances; i++)
 	{
 
 		int j = 3 * i;
@@ -424,7 +425,7 @@ void Maze::initObjModels()
 
 		int randomValue = rand() % 3;
 
-		if(randomValue == 0)
+		if (randomValue == 0)
 		{
 			offsetsGrass1.emplace_back(x + offsetX);
 			offsetsGrass1.emplace_back(-1.7f);
@@ -432,7 +433,7 @@ void Maze::initObjModels()
 
 			grass1Instances++;
 		}
-		else if(randomValue == 1)
+		else if (randomValue == 1)
 		{
 			offsetsGrass2.emplace_back(x + offsetX);
 			offsetsGrass2.emplace_back(-1.7f);
@@ -455,14 +456,14 @@ void Maze::initObjModels()
 	this->grass3 = new GameObject(material, this->grass_3Texture, grass_Objects, transformation, offsetsGrass3, grass3Instances);
 
 	float quadVertices[] = {
-	// positions				// uv
-	-1.0f, -1.0f, 0.0f,			0.0f, 0.0f,
-	 1.0f, -1.0f, 0.0f,			1.0f, 0.0f,
-	 1.0f,  1.0f, 0.0f,			1.0f, 1.0f,
+		// positions				// uv
+		-1.0f, -1.0f, 0.0f,			0.0f, 0.0f,
+		 1.0f, -1.0f, 0.0f,			1.0f, 0.0f,
+		 1.0f,  1.0f, 0.0f,			1.0f, 1.0f,
 
-	 1.0f,  1.0f, 0.0f,			1.0f, 1.0f,
-	-1.0f,  1.0f, 0.0f,			0.0f, 1.0f,
-	-1.0f, -1.0f, 0.0f,			0.0f, 0.0f
+		 1.0f,  1.0f, 0.0f,			1.0f, 1.0f,
+		-1.0f,  1.0f, 0.0f,			0.0f, 1.0f,
+		-1.0f, -1.0f, 0.0f,			0.0f, 0.0f
 	};
 
 	quadVAO.bind();
@@ -482,13 +483,13 @@ void Maze::drawMaze(float deltaTime, bool wireframe)
 
 void Maze::OIT_render(float deltaTime, bool wireframe)
 {
-	if(wireframe)
+	if (wireframe)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	}
 	this->OIT_solidPass(deltaTime);
 	this->OIT_transparentPass(deltaTime);
-	if(wireframe)
+	if (wireframe)
 	{
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	}
@@ -547,15 +548,15 @@ void Maze::OIT_transparentPass(float deltaTime)
 
 	shaderOITparticle.useShader();
 	this->camera->setCameraUniforms(&shaderOITparticle);
-	for(auto& emitter : torchesParticleEmitters)
+	for (auto& emitter : torchesParticleEmitters)
 	{
-		if(emitter.isActive())
+		if (emitter.isActive())
 		{
 			emitter.render(shaderOITparticle, this->camera->getCameraPosition());
 		}
 	}
 
-	for(auto& smokeBomb : smokeBombs)
+	for (auto& smokeBomb : smokeBombs)
 	{
 		smokeBomb.render(deltaTime, shaderOITparticle, this->camera->getCameraPosition());
 	}
@@ -563,12 +564,12 @@ void Maze::OIT_transparentPass(float deltaTime)
 	this->shaderOITpickup.useShader();
 	this->camera->setCameraUniforms(&this->shaderOITpickup);
 
-	for(auto p : this->respawnPickup)
+	for (auto p : this->respawnPickup)
 	{
 		p->drawRespawnPoint(&this->shaderOITpickup);
 	}
 
-	for(auto p : this->opponents)
+	for (auto p : this->opponents)
 	{
 		p->drawEnemy(&this->shaderOITpickup);
 	}
@@ -610,10 +611,10 @@ void Maze::setLightUniforms(ShaderProgram& shader)
 {
 	shader.setInt("pointLightsCount", static_cast<int>(pointLights.size()));
 	char lightIndex[20];
-	for(int i = 0; i < pointLights.size(); ++i)
+	for (int i = 0; i < pointLights.size(); ++i)
 	{
 		sprintf_s(lightIndex, 20, "pointLights[%d].", i);
-		std::string index { lightIndex };
+		std::string index{ lightIndex };
 		shader.setVec3f(index + "position", pointLights[i].getPosition());
 		shader.setVec3f(index + "diffuse", pointLights[i].getDiffuse());
 		shader.setVec3f(index + "specular", pointLights[i].getSpecular());
@@ -647,26 +648,26 @@ void Maze::defaultRender(float deltaTime)
 	this->shaderPickupProgram->useShader();
 	this->camera->setCameraUniforms(this->shaderPickupProgram);
 
-	for(auto p : this->respawnPickup)
+	for (auto p : this->respawnPickup)
 	{
 		p->drawRespawnPoint(this->shaderPickupProgram);
 	}
 
-	for(auto p : this->opponents)
+	for (auto p : this->opponents)
 	{
 		p->drawEnemy(this->shaderPickupProgram);
 	}
 	shaderParticles.useShader();
 	this->camera->setCameraUniforms(&shaderParticles);
-	for(auto& emitter : torchesParticleEmitters)
+	for (auto& emitter : torchesParticleEmitters)
 	{
-		if(emitter.isActive())
+		if (emitter.isActive())
 		{
 			emitter.render(shaderParticles, this->camera->getCameraPosition());
 		}
 	}
 
-	for(auto& smokeBomb : smokeBombs)
+	for (auto& smokeBomb : smokeBombs)
 	{
 		smokeBomb.render(deltaTime, shaderParticles, this->camera->getCameraPosition());
 	}
@@ -698,7 +699,7 @@ void Maze::deferred_lightingPass(float deltaTime)
 
 	shaderLightingPass.useShader();
 
-	for(uint32_t i = 0; i < deferred.attachmentsCount; ++i)
+	for (uint32_t i = 0; i < deferred.attachmentsCount; ++i)
 	{
 		deferred.attachments[i].bindTexture(i);
 	}
@@ -715,7 +716,7 @@ void Maze::updateMaze(float deltaTime)
 {
 	for (auto& emitter : torchesParticleEmitters)
 	{
-		if(glm::distance(emitter.getPosition(), camera->getCameraPosition()) < 30.0f)
+		if (glm::distance(emitter.getPosition(), camera->getCameraPosition()) < 30.0f)
 		{
 			emitter.setActive(true);
 			emitter.update(deltaTime);
@@ -726,7 +727,7 @@ void Maze::updateMaze(float deltaTime)
 		}
 	}
 
-	for(auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
+	for (auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
 	{
 		iter->update(deltaTime);
 	}
@@ -741,7 +742,7 @@ void Maze::updateMaze(float deltaTime)
 			}),
 		smokeBombs.end());
 
-	if(smokeBombCooldownLeft > 0.0f)
+	if (smokeBombCooldownLeft > 0.0f)
 	{
 		smokeBombCooldownLeft -= deltaTime;
 	}
@@ -786,6 +787,275 @@ void Maze::updateRespawnPoint(float deltaTime) {
 	}
 }
 
+bool Maze::isValid(int row, int col)
+{
+	// Returns true if row number and column number
+	// is in range
+	return (row >= 0) && (row < this->mazeDimensionX) && (col >= 0)
+		&& (col < this->mazeDimensionY);
+}
+
+bool Maze::isUnBlocked(int row, int col)
+{
+
+	if (this->mazeIndexData[row][col] == (int)TileType::WALL)
+		return false;
+	else
+		return true;
+}
+
+bool Maze::isDestination(int row, int col, Pair dest)
+{
+	if (row == dest.first && col == dest.second)
+		return true;
+	else
+		return false;
+}
+
+// A Utility Function to calculate the 'h' heuristics.
+double Maze::calculateHValue(int row, int col, Pair dest)
+{
+	return ((double)sqrt(
+		(row - dest.first) * (row - dest.first)
+		+ (col - dest.second) * (col - dest.second)));
+}
+
+PairFloat Maze::tracePath(cell cellDetails[][30], Pair dest)
+{
+	int row = dest.first;
+	int col = dest.second;
+
+	int maxIterations = 50;
+	int i = 0;
+
+	std::vector<Pair> Path;
+
+	while (!(cellDetails[row][col].parent_i == row
+		&& cellDetails[row][col].parent_j == col)) {
+		Path.push_back(std::make_pair(row, col));
+		int temp_row = cellDetails[row][col].parent_i;
+		int temp_col = cellDetails[row][col].parent_j;
+		row = temp_row;
+		col = temp_col;
+
+		i++;
+
+		if (i > maxIterations) {
+			break;
+		}
+	}
+
+	if (Path.size() < 1) {
+		return PairFloat(0.0f, 0.0f);
+	}
+
+	Path.push_back(std::make_pair(row, col));
+
+	std::pair<int, int> origin = Path[Path.size() - 1];
+
+	std::pair<int, int> nextPath = Path[Path.size() - 2];
+
+	float enemyDirectionX = 0.0f;
+	float enemyDirectionZ = 0.0f;
+
+	if (nextPath.first > origin.first) {
+		enemyDirectionX = 1.2f;
+	}
+	else if (nextPath.first < origin.first) {
+		enemyDirectionX = -1.2f;
+	}
+	else if (nextPath.second > origin.second) {
+		enemyDirectionZ = 1.2f;
+	}
+	else if (nextPath.second < origin.second) {
+		enemyDirectionZ = -1.2f;
+	}
+
+	return PairFloat(enemyDirectionX, enemyDirectionZ);
+}
+
+PairFloat Maze::aStarSearch(Pair src, Pair dest)
+{
+	// If the source is out of range
+	if (isValid(src.first, src.second) == false) {
+		return PairFloat(0, 0);
+	}
+
+	// If the destination is out of range
+	if (isValid(dest.first, dest.second) == false) {
+		return PairFloat(0, 0);
+	}
+
+	if (isUnBlocked(src.first, src.second) == false
+		|| isUnBlocked(dest.first, dest.second)
+		== false) {
+		return PairFloat(0, 0);
+	}
+
+	bool closedList[30][30];
+	memset(closedList, false, sizeof(closedList));
+
+	cell cellDetails[30][30];
+
+	int i, j;
+
+	for (i = 0; i < this->mazeDimensionX; i++) {
+		for (j = 0; j < this->mazeDimensionY; j++) {
+			cellDetails[i][j].f = FLT_MAX;
+			cellDetails[i][j].g = FLT_MAX;
+			cellDetails[i][j].h = FLT_MAX;
+			cellDetails[i][j].parent_i = -1;
+			cellDetails[i][j].parent_j = -1;
+		}
+	}
+
+	i = src.first, j = src.second;
+	cellDetails[i][j].f = 0.0;
+	cellDetails[i][j].g = 0.0;
+	cellDetails[i][j].h = 0.0;
+	cellDetails[i][j].parent_i = i;
+	cellDetails[i][j].parent_j = j;
+
+	std::set<pPair> openList;
+
+	openList.insert(std::make_pair(0.0, std::make_pair(i, j)));
+
+	while (!openList.empty()) {
+		pPair p = *openList.begin();
+
+		openList.erase(openList.begin());
+
+		i = p.second.first;
+		j = p.second.second;
+		closedList[i][j] = true;
+
+		double gNew, hNew, fNew;
+
+		//----------- 1st Successor (North) ------------
+		if (isValid(i - 1, j) == true) {
+			if (isDestination(i - 1, j, dest) == true) {
+				// Set the Parent of the destination cell
+				cellDetails[i - 1][j].parent_i = i;
+				cellDetails[i - 1][j].parent_j = j;
+				return tracePath(cellDetails, dest);
+			}
+			else if (closedList[i - 1][j] == false
+				&& isUnBlocked(i - 1, j)
+				== true) {
+				gNew = cellDetails[i][j].g + 1.0;
+				hNew = calculateHValue(i - 1, j, dest);
+				fNew = gNew + hNew;
+				if (cellDetails[i - 1][j].f == FLT_MAX
+					|| cellDetails[i - 1][j].f > fNew) {
+					openList.insert(std::make_pair(
+						fNew, std::make_pair(i - 1, j)));
+
+					// Update the details of this cell
+					cellDetails[i - 1][j].f = fNew;
+					cellDetails[i - 1][j].g = gNew;
+					cellDetails[i - 1][j].h = hNew;
+					cellDetails[i - 1][j].parent_i = i;
+					cellDetails[i - 1][j].parent_j = j;
+				}
+			}
+		}
+
+		//----------- 2nd Successor (South) ------------
+		if (isValid(i + 1, j) == true) {
+			if (isDestination(i + 1, j, dest) == true) {
+				// Set the Parent of the destination cell
+				cellDetails[i + 1][j].parent_i = i;
+				cellDetails[i + 1][j].parent_j = j;
+				return tracePath(cellDetails, dest);
+			}
+			else if (closedList[i + 1][j] == false
+				&& isUnBlocked(i + 1, j)
+				== true) {
+				gNew = cellDetails[i][j].g + 1.0;
+				hNew = calculateHValue(i + 1, j, dest);
+				fNew = gNew + hNew;
+				if (cellDetails[i + 1][j].f == FLT_MAX
+					|| cellDetails[i + 1][j].f > fNew) {
+					openList.insert(std::make_pair(
+						fNew, std::make_pair(i + 1, j)));
+					// Update the details of this cell
+					cellDetails[i + 1][j].f = fNew;
+					cellDetails[i + 1][j].g = gNew;
+					cellDetails[i + 1][j].h = hNew;
+					cellDetails[i + 1][j].parent_i = i;
+					cellDetails[i + 1][j].parent_j = j;
+				}
+			}
+		}
+
+		//----------- 3rd Successor (East) ------------
+		if (isValid(i, j + 1) == true) {
+			if (isDestination(i, j + 1, dest) == true) {
+				// Set the Parent of the destination cell
+				cellDetails[i][j + 1].parent_i = i;
+				cellDetails[i][j + 1].parent_j = j;
+				return tracePath(cellDetails, dest);
+			}
+			else if (closedList[i][j + 1] == false
+				&& isUnBlocked(i, j + 1)
+				== true) {
+				gNew = cellDetails[i][j].g + 1.0;
+				hNew = calculateHValue(i, j + 1, dest);
+				fNew = gNew + hNew;
+				if (cellDetails[i][j + 1].f == FLT_MAX
+					|| cellDetails[i][j + 1].f > fNew) {
+					openList.insert(std::make_pair(
+						fNew, std::make_pair(i, j + 1)));
+
+					// Update the details of this cell
+					cellDetails[i][j + 1].f = fNew;
+					cellDetails[i][j + 1].g = gNew;
+					cellDetails[i][j + 1].h = hNew;
+					cellDetails[i][j + 1].parent_i = i;
+					cellDetails[i][j + 1].parent_j = j;
+				}
+			}
+		}
+
+		//----------- 4th Successor (West) ------------
+		if (isValid(i, j - 1) == true) {
+			if (isDestination(i, j - 1, dest) == true) {
+
+				cellDetails[i][j - 1].parent_i = i;
+				cellDetails[i][j - 1].parent_j = j;
+				return tracePath(cellDetails, dest);
+			}
+			else if (closedList[i][j - 1] == false
+				&& isUnBlocked(i, j - 1)
+				== true) {
+				gNew = cellDetails[i][j].g + 1.0;
+				hNew = calculateHValue(i, j - 1, dest);
+				fNew = gNew + hNew;
+
+				if (cellDetails[i][j - 1].f == FLT_MAX
+					|| cellDetails[i][j - 1].f > fNew) {
+					openList.insert(std::make_pair(
+						fNew, std::make_pair(i, j - 1)));
+
+					// Update the details of this cell
+					cellDetails[i][j - 1].f = fNew;
+					cellDetails[i][j - 1].g = gNew;
+					cellDetails[i][j - 1].h = hNew;
+					cellDetails[i][j - 1].parent_i = i;
+					cellDetails[i][j - 1].parent_j = j;
+				}
+			}
+		}
+	}
+
+	return PairFloat(0, 0);
+}
+
+Pair Maze::positionToXY(PairFloat position)
+{
+	return Pair(int((position.first + 1.0f) / 2.0f), int((position.second + 1.0f) / 2.0f));
+}
+
 void Maze::updateEnemy(float deltaTime) {
 	// przeciwnik
 	glm::vec3 playerPosition = this->camera->getCameraPosition();
@@ -796,26 +1066,26 @@ void Maze::updateEnemy(float deltaTime) {
 		glm::vec3 enemyPosition = p->getEnemyPosition();
 
 		// kolizja
-		if (enemyPosition.x - 1.0f < playerPosition.x &&
-			enemyPosition.x + 1.0f > playerPosition.x &&
-			enemyPosition.z - 1.0f < playerPosition.z &&
-			enemyPosition.z + 1.0f > playerPosition.z) {
+		if (enemyPosition.x - 1.25f < playerPosition.x &&
+			enemyPosition.x + 1.25f > playerPosition.x &&
+			enemyPosition.z - 1.25f < playerPosition.z &&
+			enemyPosition.z + 1.25f > playerPosition.z) {
 
 			this->camera->setCameraPosition(this->startPosition);
 			collisionWithPlayer = true;
 		}
 
 		bool isInSmoke = false;
-		for(auto& smokeBomb : smokeBombs)
+		for (auto& smokeBomb : smokeBombs)
 		{
-			if(glm::distance(enemyPosition, smokeBomb.getPosition()) < 3.8f)
+			if (glm::distance(enemyPosition, smokeBomb.getPosition()) < 3.8f)
 			{
 				isInSmoke = true;
 				break;
 			}
 		}
 
-		if(isInSmoke)
+		if (isInSmoke)
 		{
 			continue;
 		}
@@ -832,27 +1102,21 @@ void Maze::updateEnemy(float deltaTime) {
 
 		if (followPlayer == true)
 		{
-			float enemyDirectionX = 0.0f;
-			float enemyDirectionZ = 0.0f;
+			Pair enemyPosXY = positionToXY(PairFloat(enemyPosition.x, enemyPosition.z));
+			Pair playerPosXY = positionToXY(PairFloat(playerPosition.x, playerPosition.z));
 
-			if (playerPosition.x > enemyPosition.x + 0.35f) {
-				enemyDirectionX = deltaTime * 0.8f;
-			}
-			else if (playerPosition.x < enemyPosition.x - 0.35f)
-			{
-				enemyDirectionX = -deltaTime * 0.8f;
-			}
-
-			if (playerPosition.z > enemyPosition.z + 0.35f) {
-				enemyDirectionZ = deltaTime * 0.8f;
-			}
-			else if (playerPosition.z < enemyPosition.z - 0.35f) {
-				enemyDirectionZ = -deltaTime * 0.8f;
-			}
+		//	std::cout << "PLAYER: " << playerPosXY.first << " " << playerPosXY.second << " ENEMY: " << enemyPosXY.first << " " << enemyPosXY.second << std::endl;
 
 			glm::vec3 enemyTransforationPos = p->getEnemyPositionWithoutOffset();
 
-			p->setEnemyPosition(glm::vec3(enemyTransforationPos.x + enemyDirectionX, enemyTransforationPos.y, enemyTransforationPos.z + enemyDirectionZ));
+			PairFloat enemyDirection = aStarSearch(enemyPosXY, playerPosXY);
+			p->setLastEnemyDirectionX(enemyDirection.first);
+			p->setLastEnemyDirectionY(enemyDirection.second);
+
+			float addToX = deltaTime * p->getLastEnemyDirectionX();
+			float addToZ = deltaTime * p->getLastEnemyDirectionY();
+
+			p->setEnemyPosition(glm::vec3(enemyTransforationPos.x + addToX, enemyTransforationPos.y, enemyTransforationPos.z + addToZ));
 		}
 	}
 
@@ -869,15 +1133,15 @@ bool Maze::willBeCollisionWithWall(float deltaTime)
 	glm::vec3 playerPosition = this->camera->getFutureCameraPosition();
 	bool isCollision = false;
 
-	for(int i = 0; i < this->offsetsWalls.size(); i += 3)
+	for (int i = 0; i < this->offsetsWalls.size(); i += 3)
 	{
 		float x = this->offsetsWalls[i];
 		float z = this->offsetsWalls[i + 2];
 
-		if (x - 1.5f < playerPosition.x &&
-			x + 1.5f > playerPosition.x &&
-			z - 1.5f < playerPosition.z &&
-			z + 1.5f > playerPosition.z) {
+		if (x - 1.65f < playerPosition.x &&
+			x + 1.65f > playerPosition.x &&
+			z - 1.65f < playerPosition.z &&
+			z + 1.65f > playerPosition.z) {
 
 			isCollision = true;
 		}
@@ -909,7 +1173,7 @@ bool Maze::willBeCollisionWithExit() {
 
 void Maze::useSmokeBomb()
 {
-	if(smokeBombCooldownLeft > 0.0f)
+	if (smokeBombCooldownLeft > 0.0f)
 	{
 		return;
 	}
@@ -924,15 +1188,15 @@ void Maze::useSmokeBomb()
 
 void Maze::updateSmokeBombs(float deltaTime)
 {
-	if(smokeBombCooldownLeft > 0.0f)
+	if (smokeBombCooldownLeft > 0.0f)
 	{
 		smokeBombCooldownLeft -= deltaTime;
 	}
 
-	for(auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
+	for (auto iter = smokeBombs.begin(); iter != smokeBombs.end(); ++iter)
 	{
 		iter->update(deltaTime);
-		if(iter->getDurationTime() >= iter->getMaxDurationTime())
+		if (iter->getDurationTime() >= iter->getMaxDurationTime())
 		{
 			iter = smokeBombs.erase(iter);
 		}
@@ -941,16 +1205,16 @@ void Maze::updateSmokeBombs(float deltaTime)
 
 Maze::~Maze()
 {
-	if(this->mazeIndexData != nullptr)
+	if (this->mazeIndexData != nullptr)
 	{
-		for(int i = 0; i < this->mazeDimensionX; i++)
+		for (int i = 0; i < this->mazeDimensionX; i++)
 		{
 			delete[] this->mazeIndexData[i];
 		}
 		delete[] this->mazeIndexData;
 	}
 
-	for(auto p : this->respawnPickup)
+	for (auto p : this->respawnPickup)
 	{
 		delete p;
 	}

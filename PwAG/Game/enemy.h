@@ -16,8 +16,21 @@ public:
 
 	void resetEnemyPosition();
 
+	bool canMakeNewMovementDecision();
+
+	void setLastEnemyDirectionX(float dirX);
+	void setLastEnemyDirectionY(float dirY);
+
+	float getLastEnemyDirectionX() const;
+	float getLastEnemyDirectionY() const;
+
 private:
 	float enemyRotation = 0;
+
+	int decisionIterator = 0;
+
+	float lastEnemyDirectionX = 0.0f;
+	float lastEnemyDirectionY = 0.0f;
 
 	GameObject* enemyModel;
 
