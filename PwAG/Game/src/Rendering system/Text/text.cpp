@@ -16,7 +16,7 @@ void Text::render(const ShaderProgram& shader)
 	for(auto i = 0; i < text.size(); ++i)
 	{
 		VAOs[i].bind();
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -95,9 +95,14 @@ void Text::setForNewText()
 			x2,			y1,				character.atlasOffset.x / fontPtr->atlasSize.x + width / fontPtr->atlasSize.x,			0,
 			x1,			y2,				character.atlasOffset.x / fontPtr->atlasSize.x,											height / fontPtr->atlasSize.y,
 
-			x2,			y1,				character.atlasOffset.x / fontPtr->atlasSize.x + width / fontPtr->atlasSize.x,			0,
-			x1,			y2,				character.atlasOffset.x / fontPtr->atlasSize.x,											height / fontPtr->atlasSize.y,
+			//x2,			y1,				character.atlasOffset.x / fontPtr->atlasSize.x + width / fontPtr->atlasSize.x,			0,
+			//x1,			y2,				character.atlasOffset.x / fontPtr->atlasSize.x,											height / fontPtr->atlasSize.y,
 			x2,			y2,				character.atlasOffset.x / fontPtr->atlasSize.x + width / fontPtr->atlasSize.x,			height / fontPtr->atlasSize.y
+		};
+
+		unsigned int indices[] = {
+			0, 1, 2,
+			1, 2, 3
 		};
 
 		VAOs.emplace_back();
@@ -107,6 +112,11 @@ void Text::setForNewText()
 		VBOs.back().bind();
 
 		VBOs.back().bufferData(vertices, sizeof(vertices), GL_DYNAMIC_DRAW);
+
+		EBOs.emplace_back();
+		EBOs.back().bind();
+
+		EBOs.back().bufferData(indices, sizeof(indices), GL_DYNAMIC_DRAW);
 		VBOs.back().setAttributesPointers(0, 4, GL_FLOAT, 4 * sizeof(float), nullptr);
 
 		VBOs.back().unbind();

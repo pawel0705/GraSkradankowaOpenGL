@@ -32,5 +32,6 @@ private:
 
 	std::vector<VAO> VAOs;
 	std::vector<VBO> VBOs;
+	std::vector<EBO> EBOs;
 };
 
