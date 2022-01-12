@@ -24,9 +24,7 @@ layout(location = 6) in vec3 offset;
 void main() {
 	vec3 T = normalize(vec3(ModelMatrix * vec4(aTangent, 0.0)));
 	vec3 N = normalize(vec3(ModelMatrix * vec4(v_normal + offset, 0.0)));
-	// re-orthogonalize T with respect to N
 	T = normalize(T - dot(T, N) * N);
-	// then retrieve perpendicular vector B with the cross product of T and N
 	vec3 B = cross(N, T);
 
 	TBN = mat3(T, B, N);
