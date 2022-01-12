@@ -7,7 +7,7 @@ public:
 	Camera();
 	Camera(glm::vec3 position = glm::vec3(.0f));
 
-	void updateEulerAngels();
+	void updateCameraEulerAng();
 	void setCameraUniforms(ShaderProgram* shaderProgram);
 	void updateInput(const float& deltaTime, const int direction, const float& x, const float& y);
 	void setCameraPosition(glm::vec3 position);

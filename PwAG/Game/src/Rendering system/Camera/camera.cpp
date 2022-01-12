@@ -19,19 +19,20 @@ Camera::Camera(glm::vec3 position) {
 	this->zoom = 45.0f;
 	this->sensitivity = .05f;
 
-	this->updateEulerAngels();
+	this->updateCameraEulerAng();
 }
 
-void Camera::updateEulerAngels() {
-
-	// recalculate camera's front vector
+void Camera::updateCameraEulerAng() {
+	// rotacje
 	this->transformation.cameraFront = glm::normalize(glm::vec3(
 		cos(glm::radians(this->transformation.cameraYaw)) * cos(glm::radians(this->transformation.cameraPitch)),
 		sin(glm::radians(this->transformation.cameraPitch)),
 		sin(glm::radians(this->transformation.cameraYaw)) * cos(glm::radians(this->transformation.cameraPitch))));
 
-	// recalculate camera's positions vectors
+	// left
 	this->transformation.cameraRightLeft = glm::normalize(glm::cross(this->transformation.cameraFront, this->transformation.cameraToWorldUp));
+
+	// up
 	this->transformation.cameraUpDown = glm::normalize(glm::cross(this->transformation.cameraRightLeft, this->transformation.cameraFront));
 }
 

@@ -9,12 +9,9 @@
 #include "../Rendering system/Deferred rendering/deferredRenderer.h"
 #include "../Rendering system/OIT/oit.h"
 
-// Creating a shortcut for int, int pair type
+typedef std::pair<double, std::pair<int, int>> pPair;
 typedef std::pair<int, int> Pair;
 typedef std::pair<float, float> PairFloat;
-
-// Creating a shortcut for pair<int, pair<int, int>> type
-typedef std::pair<double, std::pair<int, int>> pPair;
 
 class Maze
 {
@@ -146,23 +143,18 @@ private:
 	ShaderProgram shaderOITcomposite;
 	ShaderProgram shaderOITscreen;
 
-	// A* algorithm
-
-	// A structure to hold the necessary parameters
+	// A star algorithm
 	struct cell {
-		// Row and Column index of its parent
-		// Note that 0 <= i <= ROW-1 & 0 <= j <= COL-1
 		int parent_i, parent_j;
-		// f = g + h
 		double f, g, h;
 	};
 
-	bool isValid(int row, int col);
-	bool isUnBlocked(int row, int col);
-	bool isDestination(int row, int col, Pair dest);
-	double calculateHValue(int row, int col, Pair dest);
 	PairFloat tracePath(cell cellDetails[][30], Pair dest);
-	PairFloat aStarSearch(Pair src, Pair dest);
-	Pair positionToXY(PairFloat position);
+	PairFloat aStarSearchPath(Pair src, Pair dest);
+	Pair positionToXYPath(PairFloat position);
+	bool isUnBlockedPath(int row, int col);
+	bool isDestinationPath(int row, int col, Pair dest);
+	double calculateHValuePath(int row, int col, Pair dest);
+	bool isValidPath(int row, int col);
 };
 

@@ -514,7 +514,7 @@ void Maze::OIT_solidPass(float deltaTime)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	this->shaderProgram->useShader();
-	this->camera->updateEulerAngels();
+	this->camera->updateCameraEulerAng();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
 	this->walls->draw(this->shaderProgram);
@@ -628,7 +628,7 @@ void Maze::setLightUniforms(ShaderProgram& shader)
 void Maze::defaultRender(float deltaTime)
 {
 	this->shaderProgram->useShader();
-	this->camera->updateEulerAngels();
+	this->camera->updateCameraEulerAng();
 	this->camera->setCameraUniforms(this->shaderProgram);
 
 	this->walls->draw(this->shaderProgram);
@@ -681,7 +681,7 @@ void Maze::deferred_geometryPass(float deltaTime)
 
 	shaderGeometryPass.useShader();
 
-	this->camera->updateEulerAngels();
+	this->camera->updateCameraEulerAng();
 	this->camera->setCameraUniforms(&shaderGeometryPass);
 
 	this->walls->draw(&shaderGeometryPass);
@@ -787,33 +787,35 @@ void Maze::updateRespawnPoint(float deltaTime) {
 	}
 }
 
-bool Maze::isValid(int row, int col)
+bool Maze::isValidPath(int row, int col)
 {
-	// Returns true if row number and column number
-	// is in range
-	return (row >= 0) && (row < this->mazeDimensionX) && (col >= 0)
-		&& (col < this->mazeDimensionY);
+	bool val = (row >= 0) && (row < this->mazeDimensionX) && (col >= 0) && (col < this->mazeDimensionY);
+
+	return val;
 }
 
-bool Maze::isUnBlocked(int row, int col)
+bool Maze::isUnBlockedPath(int row, int col)
 {
-
-	if (this->mazeIndexData[row][col] == (int)TileType::WALL)
+	if (this->mazeIndexData[row][col] == (int)TileType::WALL) {
 		return false;
-	else
+	}
+	else {
 		return true;
+	}
 }
 
-bool Maze::isDestination(int row, int col, Pair dest)
+bool Maze::isDestinationPath(int row, int col, Pair dest)
 {
 	if (row == dest.first && col == dest.second)
+	{
 		return true;
-	else
+	}
+	else {
 		return false;
+	}
 }
 
-// A Utility Function to calculate the 'h' heuristics.
-double Maze::calculateHValue(int row, int col, Pair dest)
+double Maze::calculateHValuePath(int row, int col, Pair dest)
 {
 	return ((double)sqrt(
 		(row - dest.first) * (row - dest.first)
@@ -874,20 +876,18 @@ PairFloat Maze::tracePath(cell cellDetails[][30], Pair dest)
 	return PairFloat(enemyDirectionX, enemyDirectionZ);
 }
 
-PairFloat Maze::aStarSearch(Pair src, Pair dest)
+PairFloat Maze::aStarSearchPath(Pair src, Pair dest)
 {
-	// If the source is out of range
-	if (isValid(src.first, src.second) == false) {
+	if (this->isValidPath(src.first, src.second) == false) {
 		return PairFloat(0, 0);
 	}
 
-	// If the destination is out of range
-	if (isValid(dest.first, dest.second) == false) {
+	if (isValidPath(dest.first, dest.second) == false) {
 		return PairFloat(0, 0);
 	}
 
-	if (isUnBlocked(src.first, src.second) == false
-		|| isUnBlocked(dest.first, dest.second)
+	if (isUnBlockedPath(src.first, src.second) == false
+		|| this->isUnBlockedPath(dest.first, dest.second)
 		== false) {
 		return PairFloat(0, 0);
 	}
@@ -910,11 +910,12 @@ PairFloat Maze::aStarSearch(Pair src, Pair dest)
 	}
 
 	i = src.first, j = src.second;
+
+	cellDetails[i][j].parent_i = i;
+	cellDetails[i][j].parent_j = j;
 	cellDetails[i][j].f = 0.0;
 	cellDetails[i][j].g = 0.0;
 	cellDetails[i][j].h = 0.0;
-	cellDetails[i][j].parent_i = i;
-	cellDetails[i][j].parent_j = j;
 
 	std::set<pPair> openList;
 
@@ -929,120 +930,102 @@ PairFloat Maze::aStarSearch(Pair src, Pair dest)
 		j = p.second.second;
 		closedList[i][j] = true;
 
-		double gNew, hNew, fNew;
+		double gNew;
+		double hNew;
+		double fNew;
 
-		//----------- 1st Successor (North) ------------
-		if (isValid(i - 1, j) == true) {
-			if (isDestination(i - 1, j, dest) == true) {
-				// Set the Parent of the destination cell
+		if (this->isValidPath(i - 1, j)) {
+			if (this->isDestinationPath(i - 1, j, dest)) {
 				cellDetails[i - 1][j].parent_i = i;
 				cellDetails[i - 1][j].parent_j = j;
 				return tracePath(cellDetails, dest);
 			}
 			else if (closedList[i - 1][j] == false
-				&& isUnBlocked(i - 1, j)
+				&& this->isUnBlockedPath(i - 1, j)
 				== true) {
 				gNew = cellDetails[i][j].g + 1.0;
-				hNew = calculateHValue(i - 1, j, dest);
+				hNew = this->calculateHValuePath(i - 1, j, dest);
 				fNew = gNew + hNew;
-				if (cellDetails[i - 1][j].f == FLT_MAX
-					|| cellDetails[i - 1][j].f > fNew) {
-					openList.insert(std::make_pair(
-						fNew, std::make_pair(i - 1, j)));
+				if (cellDetails[i - 1][j].f == FLT_MAX || cellDetails[i - 1][j].f > fNew) {
+					openList.insert(std::make_pair(fNew, std::make_pair(i - 1, j)));
 
-					// Update the details of this cell
+					cellDetails[i - 1][j].parent_i = i;
+					cellDetails[i - 1][j].parent_j = j;
+
 					cellDetails[i - 1][j].f = fNew;
 					cellDetails[i - 1][j].g = gNew;
 					cellDetails[i - 1][j].h = hNew;
-					cellDetails[i - 1][j].parent_i = i;
-					cellDetails[i - 1][j].parent_j = j;
 				}
 			}
 		}
 
-		//----------- 2nd Successor (South) ------------
-		if (isValid(i + 1, j) == true) {
-			if (isDestination(i + 1, j, dest) == true) {
-				// Set the Parent of the destination cell
+		if (this->isValidPath(i + 1, j)) {
+			if (this->isDestinationPath(i + 1, j, dest) == true) {
 				cellDetails[i + 1][j].parent_i = i;
 				cellDetails[i + 1][j].parent_j = j;
 				return tracePath(cellDetails, dest);
 			}
-			else if (closedList[i + 1][j] == false
-				&& isUnBlocked(i + 1, j)
-				== true) {
-				gNew = cellDetails[i][j].g + 1.0;
-				hNew = calculateHValue(i + 1, j, dest);
-				fNew = gNew + hNew;
+			else if (closedList[i + 1][j] == false && this->isUnBlockedPath(i + 1, j) == true) {
+				gNew = cellDetails[i][j].g + 1.0; hNew = this->calculateHValuePath(i + 1, j, dest); fNew = gNew + hNew;
 				if (cellDetails[i + 1][j].f == FLT_MAX
 					|| cellDetails[i + 1][j].f > fNew) {
 					openList.insert(std::make_pair(
 						fNew, std::make_pair(i + 1, j)));
-					// Update the details of this cell
+
+					cellDetails[i + 1][j].parent_i = i;
+					cellDetails[i + 1][j].parent_j = j;
+
 					cellDetails[i + 1][j].f = fNew;
 					cellDetails[i + 1][j].g = gNew;
 					cellDetails[i + 1][j].h = hNew;
-					cellDetails[i + 1][j].parent_i = i;
-					cellDetails[i + 1][j].parent_j = j;
 				}
 			}
 		}
 
-		//----------- 3rd Successor (East) ------------
-		if (isValid(i, j + 1) == true) {
-			if (isDestination(i, j + 1, dest) == true) {
-				// Set the Parent of the destination cell
+		if (this->isValidPath(i, j + 1) == true) {
+			if (this->isDestinationPath(i, j + 1, dest)) {
 				cellDetails[i][j + 1].parent_i = i;
 				cellDetails[i][j + 1].parent_j = j;
 				return tracePath(cellDetails, dest);
 			}
-			else if (closedList[i][j + 1] == false
-				&& isUnBlocked(i, j + 1)
-				== true) {
-				gNew = cellDetails[i][j].g + 1.0;
-				hNew = calculateHValue(i, j + 1, dest);
-				fNew = gNew + hNew;
+			else if (closedList[i][j + 1] == false == true) {
+				gNew = cellDetails[i][j].g + 1.0; hNew = this->calculateHValuePath(i, j + 1, dest); fNew = gNew + hNew;
 				if (cellDetails[i][j + 1].f == FLT_MAX
 					|| cellDetails[i][j + 1].f > fNew) {
 					openList.insert(std::make_pair(
 						fNew, std::make_pair(i, j + 1)));
 
-					// Update the details of this cell
+
+					cellDetails[i][j + 1].parent_i = i;
+					cellDetails[i][j + 1].parent_j = j;
+
 					cellDetails[i][j + 1].f = fNew;
 					cellDetails[i][j + 1].g = gNew;
 					cellDetails[i][j + 1].h = hNew;
-					cellDetails[i][j + 1].parent_i = i;
-					cellDetails[i][j + 1].parent_j = j;
 				}
 			}
 		}
-
-		//----------- 4th Successor (West) ------------
-		if (isValid(i, j - 1) == true) {
-			if (isDestination(i, j - 1, dest) == true) {
+		if (this->isValidPath(i, j - 1) == true) {
+			if (this->isDestinationPath(i, j - 1, dest) == true) {
 
 				cellDetails[i][j - 1].parent_i = i;
 				cellDetails[i][j - 1].parent_j = j;
 				return tracePath(cellDetails, dest);
 			}
 			else if (closedList[i][j - 1] == false
-				&& isUnBlocked(i, j - 1)
-				== true) {
-				gNew = cellDetails[i][j].g + 1.0;
-				hNew = calculateHValue(i, j - 1, dest);
-				fNew = gNew + hNew;
-
+				&& this->isUnBlockedPath(i, j - 1) == true) {
+				gNew = cellDetails[i][j].g + 1.0; hNew = this->calculateHValuePath(i, j - 1, dest); fNew = gNew + hNew;
 				if (cellDetails[i][j - 1].f == FLT_MAX
 					|| cellDetails[i][j - 1].f > fNew) {
 					openList.insert(std::make_pair(
 						fNew, std::make_pair(i, j - 1)));
 
-					// Update the details of this cell
+					cellDetails[i][j - 1].parent_i = i;
+					cellDetails[i][j - 1].parent_j = j;
+
 					cellDetails[i][j - 1].f = fNew;
 					cellDetails[i][j - 1].g = gNew;
 					cellDetails[i][j - 1].h = hNew;
-					cellDetails[i][j - 1].parent_i = i;
-					cellDetails[i][j - 1].parent_j = j;
 				}
 			}
 		}
@@ -1051,7 +1034,7 @@ PairFloat Maze::aStarSearch(Pair src, Pair dest)
 	return PairFloat(0, 0);
 }
 
-Pair Maze::positionToXY(PairFloat position)
+Pair Maze::positionToXYPath(PairFloat position)
 {
 	return Pair(int((position.first + 1.0f) / 2.0f), int((position.second + 1.0f) / 2.0f));
 }
@@ -1102,14 +1085,14 @@ void Maze::updateEnemy(float deltaTime) {
 
 		if (followPlayer == true)
 		{
-			Pair enemyPosXY = positionToXY(PairFloat(enemyPosition.x, enemyPosition.z));
-			Pair playerPosXY = positionToXY(PairFloat(playerPosition.x, playerPosition.z));
+			Pair enemyPosXY = this->positionToXYPath(PairFloat(enemyPosition.x, enemyPosition.z));
+			Pair playerPosXY = this->positionToXYPath(PairFloat(playerPosition.x, playerPosition.z));
 
-		//	std::cout << "PLAYER: " << playerPosXY.first << " " << playerPosXY.second << " ENEMY: " << enemyPosXY.first << " " << enemyPosXY.second << std::endl;
+			//	std::cout << "PLAYER: " << playerPosXY.first << " " << playerPosXY.second << " ENEMY: " << enemyPosXY.first << " " << enemyPosXY.second << std::endl;
 
 			glm::vec3 enemyTransforationPos = p->getEnemyPositionWithoutOffset();
 
-			PairFloat enemyDirection = aStarSearch(enemyPosXY, playerPosXY);
+			PairFloat enemyDirection = this->aStarSearchPath(enemyPosXY, playerPosXY);
 			p->setLastEnemyDirectionX(enemyDirection.first);
 			p->setLastEnemyDirectionY(enemyDirection.second);
 

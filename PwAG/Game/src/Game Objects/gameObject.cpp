@@ -12,7 +12,7 @@ GameObject::GameObject(
 	TransformationOBJ transformation,
 	std::vector<GLfloat> offsets,
 	int instances) {
-	
+
 	this->transformation = transformation;
 	this->offsets = offsets;
 	this->instances = instances;
@@ -21,36 +21,36 @@ GameObject::GameObject(
 	this->texture = texture;
 
 	if (mesh.size() > 0) {
-		for (int i = 0; i < mesh.size(); i+=3) {
-			// Shortcuts for vertices
-			glm::vec3& v0 = mesh[i + 0].vertex;
-			glm::vec3& v1 = mesh[i + 1].vertex;
-			glm::vec3& v2 = mesh[i + 2].vertex;
 
-			// Shortcuts for UVs
-			glm::vec2& uv0 = mesh[i + 0].uv;
-			glm::vec2& uv1 = mesh[i + 1].uv;
-			glm::vec2& uv2 = mesh[i + 2].uv;
+		int size = mesh.size();
 
-			// Edges of the triangle : position delta
-			glm::vec3 deltaPos1 = v1 - v0;
-			glm::vec3 deltaPos2 = v2 - v0;
+		for (int j = 0; j < size; j += 3) {
 
-			// UV delta
-			glm::vec2 deltaUV1 = uv1 - uv0;
-			glm::vec2 deltaUV2 = uv2 - uv0;
+			glm::vec2& uv_0 = mesh[0 + j].uv;
+			glm::vec2& uv_1 = mesh[1 + j].uv;
+			glm::vec2& uv_2 = mesh[2 + j].uv;
 
-			float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-			glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
-			glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
+			glm::vec3& v_0 = mesh[0 + j].vertex;
+			glm::vec3& v_1 = mesh[1 + j].vertex;
+			glm::vec3& v_2 = mesh[2 + j].vertex;
 
-			mesh[i + 0].tangent = tangent;
-			mesh[i + 1].tangent = tangent;
-			mesh[i + 2].tangent = tangent;
+			glm::vec3 deltaPosition_1 = v_1 - v_0;
+			glm::vec3 deltaPosition_2 = v_2 - v_0;
 
-			mesh[i + 0].bittangent = bitangent;
-			mesh[i + 1].bittangent = bitangent;
-			mesh[i + 2].bittangent = bitangent;
+			glm::vec2 delta_UV_1 = uv_1 - uv_0;
+			glm::vec2 delta_UV_2 = uv_2 - uv_0;
+
+			float r = 1.0f / (delta_UV_1.x * delta_UV_2.y - delta_UV_1.y * delta_UV_2.x);
+			glm::vec3 tangent = (deltaPosition_1 * delta_UV_2.y - deltaPosition_2 * delta_UV_1.y) * r;
+			glm::vec3 bitangent = (deltaPosition_2 * delta_UV_1.x - deltaPosition_1 * delta_UV_2.x) * r;
+
+			mesh[0 + j].bittangent = bitangent;
+			mesh[1 + j].bittangent = bitangent;
+			mesh[2 + j].bittangent = bitangent;
+
+			mesh[0 + j].tangent = tangent;
+			mesh[1 + j].tangent = tangent;
+			mesh[2 + j].tangent = tangent;
 		}
 
 		this->mesh = new Mesh(mesh.data(), mesh.size(), nullptr, 0);
@@ -100,9 +100,9 @@ void GameObject::initGameObject() {
 
 void GameObject::draw(ShaderProgram* shaderProgram) {
 	shaderProgram->useShader();
-	
+
 	this->texture->bindTexture(0);
-	if(this->specular)
+	if (this->specular)
 	{
 		this->specular->bindTexture(1);
 	}
@@ -123,12 +123,7 @@ void GameObject::draw(ShaderProgram* shaderProgram) {
 
 	glBindVertexArray(this->mesh->VAO);
 
-	if (this->mesh->indicesSize > 0) {
-		glDrawElementsInstanced(GL_TRIANGLES, this->mesh->indicesSize, GL_UNSIGNED_INT, 0, this->instances);
-	}
-	else {
-		glDrawArraysInstanced(GL_TRIANGLES, 0, this->mesh->verticesSize, this->instances);
-	}
+	glDrawArraysInstanced(GL_TRIANGLES, 0, this->mesh->verticesSize, this->instances);
 }
 
 void GameObject::setPosition(const glm::vec3 position)
