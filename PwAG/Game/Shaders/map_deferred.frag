@@ -1,8 +1,8 @@
 #version 430 
 
-uniform sampler2D gPosition;
-uniform sampler2D gNormal;
-uniform sampler2D gAlbedoSpec;
+uniform sampler2D gBuffer_Position;
+uniform sampler2D gBuffer_Normal;
+uniform sampler2D gBuffer_AlbedoSpec;
 
 uniform vec3 cameraPos;
 
@@ -26,16 +26,16 @@ struct PointLight
 uniform PointLight pointLights[MAX_POINT_LIGHT_COUNT];
 uniform int pointLightsCount;
 
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 Albedo, float Specular);
+vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 fragColor, float Specular);
 
 void main()
 {
 	if (gl_FrontFacing) {
 
-		vec3 FragPos = texture(gPosition, v_TextCoord).rgb;
-		vec3 Normal = texture(gNormal, v_TextCoord).rgb;
-		vec3 Albedo = texture(gAlbedoSpec, v_TextCoord).rgb * 0.1;
-		float Specular = texture(gAlbedoSpec, v_TextCoord).a;
+		vec3 FragPos = texture(gBuffer_Position, v_TextCoord).rgb;
+		vec3 Normal = texture(gBuffer_Normal, v_TextCoord).rgb;
+		vec3 Albedo = texture(gBuffer_AlbedoSpec, v_TextCoord).rgb * 0.1;
+		float Specular = texture(gBuffer_AlbedoSpec, v_TextCoord).a;
 		
 		vec3 viewDir = normalize(cameraPos - FragPos);
 
@@ -49,7 +49,7 @@ void main()
 	}
 }
 
-vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 Albedo, float Specular)
+vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 fragColor, float Specular)
 {
 	vec3 posToLightDirectionVectorDiffuse = normalize(light.position - fragPos);
 	vec3 posToLightDirectionVectorSpecular = normalize(light.position - fragPos);
@@ -67,8 +67,8 @@ vec3 calculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewD
 	float distance = length(light.position - fragPos);
 	float attentuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));
 	
-	vec3 ambientFinal = light.ambient * Albedo;
-	vec3 diffuseFinal = light.diffuse * diffuseLight * Albedo;
+	vec3 ambientFinal = light.ambient * fragColor;
+	vec3 diffuseFinal = light.diffuse * diffuseLight * fragColor;
 	vec3 specularFinal = light.specular * specularConstant * Specular;
 
 	ambientFinal *= attentuation;
