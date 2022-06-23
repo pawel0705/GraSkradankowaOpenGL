@@ -5,8 +5,12 @@ Celem projektu było utworzenie gry 3D. Wykorzystano API graficzne OpenGL 4.3 or
 
 ## Wygląd gry
 
-![screenshot](/images/Screenshot_1.png)
-![screenshot](/images/Screenshot_2.png)
+<p align="center">
+<br>
+<img src="/images/Screenshot_1.png" width="50%"/>
+<img src="/images/Screenshot_2.png" width="50%"/>
+</p>
+
 
 ## Współautor
 Projekt współtworzony był wraz z:
