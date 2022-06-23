@@ -7,3 +7,7 @@ Celem projektu było utworzenie gry 3D. Wykorzystano API graficzne OpenGL 4.3 or
 
 ![screenshot](/images/Screenshot_1.png)
 ![screenshot](/images/Screenshot_2.png)
+
+## Współautor
+Projekt współtworzony był wraz z:
+- [OftenDeadKanji](https://github.com/OftenDeadKanji)
